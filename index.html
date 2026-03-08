@@ -2381,6 +2381,23 @@ details:not([open]) .ae-twisty{ transform: rotate(-90deg); }
   const gifCursor = document.getElementById("gifCursor");  
   const gifCursorImg = document.getElementById("gifCursorImg");  
   const CAN_HOVER = matchMedia("(hover:hover) and (pointer:fine)").matches;  
+
+  if (CAN_HOVER) {
+  const forceHideCursorStyle = document.createElement("style");
+  forceHideCursorStyle.textContent = `
+    html, body, body *, a, button, input, textarea, select, label, video, audio,
+    [role="button"], [type="range"], input[type="range"],
+    input[type="range"]::-webkit-slider-thumb,
+    input[type="range"]::-webkit-slider-runnable-track,
+    input[type="range"]::-moz-range-thumb,
+    input[type="range"]::-moz-range-track,
+    :fullscreen, :fullscreen *,
+    :-webkit-full-screen, :-webkit-full-screen * {
+      cursor: none !important;
+    }
+  `;
+  document.head.appendChild(forceHideCursorStyle);
+}
   
   function preloadGifs(){  
     Object.values(CURSOR_GIFS).forEach(src=>{  
