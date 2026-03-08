@@ -1879,8 +1879,150 @@ details:not([open]) .ae-twisty{ transform: rotate(-90deg); }
       scale(0.25);
   }
 }
+    /* =========================
+   AMBIENT BACKGROUND PARTICLES
+   ========================= */
+.ambient-particles{
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ambient-particles::before,
+.ambient-particles::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  opacity:0;
+  transition: opacity .8s ease;
+}
+
+/* subtle warm wash always on */
+.ambient-particles::before{
+  opacity:.35;
+  background:
+    radial-gradient(circle at 20% 25%, rgba(255,210,70,0.05), rgba(0,0,0,0) 28%),
+    radial-gradient(circle at 78% 70%, rgba(255,200,60,0.04), rgba(0,0,0,0) 30%);
+}
+
+/* extra rare aura */
+body.rare-ambient .ambient-particles::after{
+  opacity:1;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(255,230,120,0.10), rgba(0,0,0,0) 24%),
+    radial-gradient(circle at 82% 72%, rgba(255,210,80,0.10), rgba(0,0,0,0) 24%),
+    radial-gradient(circle at 50% 45%, rgba(255,220,90,0.05), rgba(0,0,0,0) 36%);
+  filter: blur(22px);
+}
+
+.ambient-particle{
+  position:absolute;
+  left:0;
+  top:0;
+  border-radius:999px;
+  pointer-events:none;
+  opacity:0;
+  will-change: transform, opacity, filter;
+  transform: translate3d(0,0,0);
+
+  background: radial-gradient(
+    circle,
+    rgba(255,248,210,0.95) 0%,
+    rgba(255,222,110,0.82) 34%,
+    rgba(255,190,60,0.16) 72%,
+    rgba(255,190,60,0) 100%
+  );
+
+  box-shadow:
+    0 0 8px rgba(255,228,120,0.45),
+    0 0 18px rgba(255,200,60,0.22),
+    0 0 32px rgba(255,175,20,0.08);
+
+  animation: ambientFloat linear infinite;
+}
+
+.ambient-particle::after{
+  content:"";
+  position:absolute;
+  inset:-45%;
+  border-radius:999px;
+  background: radial-gradient(circle, rgba(255,245,180,0.18), rgba(255,210,90,0) 72%);
+  filter: blur(2px);
+}
+
+/* prettier rare mode */
+body.rare-ambient .ambient-particle{
+  background: radial-gradient(
+    circle,
+    rgba(255,255,230,1) 0%,
+    rgba(255,235,140,0.95) 30%,
+    rgba(255,205,90,0.30) 70%,
+    rgba(255,190,60,0) 100%
+  );
+
+  box-shadow:
+    0 0 10px rgba(255,240,160,0.75),
+    0 0 24px rgba(255,215,110,0.42),
+    0 0 48px rgba(255,190,70,0.24),
+    0 0 90px rgba(255,180,40,0.10);
+
+  filter: saturate(1.15) brightness(1.08);
+}
+
+body.rare-ambient .ambient-particle.sparkle{
+  animation-name: ambientFloat, ambientPulse;
+  animation-iteration-count: infinite, infinite;
+  animation-timing-function: linear, ease-in-out;
+}
+
+@keyframes ambientFloat{
+  0%{
+    opacity:0;
+    transform:translate3d(var(--x0), var(--y0), 0) scale(var(--scale));
+  }
+  10%{
+    opacity:var(--alpha);
+  }
+  85%{
+    opacity:var(--alpha);
+  }
+  100%{
+    opacity:0;
+    transform:translate3d(var(--x1), var(--y1), 0) scale(calc(var(--scale) * 1.08));
+  }
+}
+
+@keyframes ambientPulse{
+  0%,100%{
+    filter:saturate(1.1) brightness(1.02);
+  }
+  50%{
+    filter:saturate(1.25) brightness(1.26);
+  }
+}
+
+/* keep content above particles */
+.hero,
+.portfolio,
+.contact,
+footer,
+.p5-music-hero,
+.intro,
+.gif-cursor,
+.rare-track-fx,
+.p5-layout-panel,
+.p5-editor-toggle,
+.p5-editor-toggle-desktop{
+  position: relative;
+  z-index: 1;
+}
     
-</style>  </head>  <body oncontextmenu="return false;">  <!-- ✅ BIG P5 HERO MUSIC PLAYER (MOVED TO TOP OF BODY) -->  <div id="p5MusicHero" class="p5-music-hero" data-cursor="normal" aria-live="polite">  
+</style>  </head>  <body oncontextmenu="return false;">
+  <div id="ambientParticles" class="ambient-particles" aria-hidden="true"></div>
+  <!-- ✅ BIG P5 HERO MUSIC PLAYER (MOVED TO TOP OF BODY) -->  <div id="p5MusicHero" class="p5-music-hero" data-cursor="normal" aria-live="polite">  
   <div class="p5-music-frame">  
     <div class="p5-music-left">  
       <div class="p5-cover-wrap">  
@@ -3001,6 +3143,77 @@ music.addEventListener("ended", syncHeroIcon);
 ];
   
   const heroPlayer = document.getElementById("p5MusicHero");  
+    /* =========================
+   AMBIENT PARTICLES ENGINE
+   ========================= */
+const ambientWrap = document.getElementById("ambientParticles");
+
+function rand(min, max){
+  return min + Math.random() * (max - min);
+}
+
+function ambientCount(){
+  const mobile = window.innerWidth <= 820;
+  const rare = document.body.classList.contains("rare-ambient");
+  if(rare) return mobile ? 36 : 70;
+  return mobile ? 18 : 34;
+}
+
+function makeAmbientParticle(isRare){
+  const el = document.createElement("span");
+  el.className = "ambient-particle" + (isRare ? " sparkle" : "");
+
+  const size = isRare ? rand(3, 9) : rand(2, 6);
+  const x0 = rand(-5, 105);
+  const x1 = x0 + rand(-12, 12);
+  const y0 = rand(100, 112);
+  const y1 = rand(-12, 8);
+
+  const alpha = isRare ? rand(0.22, 0.75) : rand(0.08, 0.30);
+  const scale = rand(0.85, 1.4);
+
+  const floatDur = isRare ? rand(8, 18) : rand(12, 24);
+  const pulseDur = rand(2.2, 4.8);
+
+  el.style.width = `${size}px`;
+  el.style.height = `${size}px`;
+
+  el.style.setProperty("--x0", `${x0}vw`);
+  el.style.setProperty("--y0", `${y0}vh`);
+  el.style.setProperty("--x1", `${x1}vw`);
+  el.style.setProperty("--y1", `${y1}vh`);
+  el.style.setProperty("--alpha", alpha);
+  el.style.setProperty("--scale", scale);
+
+  if(isRare){
+    el.style.animationDuration = `${floatDur}s, ${pulseDur}s`;
+    el.style.animationDelay = `${rand(-18, 0)}s, ${rand(-5, 0)}s`;
+  }else{
+    el.style.animationDuration = `${floatDur}s`;
+    el.style.animationDelay = `${rand(-18, 0)}s`;
+  }
+
+  return el;
+}
+
+function buildAmbientParticles(){
+  if(!ambientWrap) return;
+
+  const rare = document.body.classList.contains("rare-ambient");
+  const count = ambientCount();
+
+  ambientWrap.innerHTML = "";
+
+  for(let i = 0; i < count; i++){
+    ambientWrap.appendChild(makeAmbientParticle(rare));
+  }
+}
+
+function syncAmbientMode(){
+  const rare = heroPlayer && heroPlayer.classList.contains("rare-active");
+  document.body.classList.toggle("rare-ambient", !!rare);
+  buildAmbientParticles();
+}
   const coverImg   = document.getElementById("p5Cover");  
   const titleEl    = document.getElementById("p5TrackTitle");  
   const artistEl   = document.getElementById("p5TrackArtist");  
@@ -3030,7 +3243,9 @@ function setRareVisualState(isRare){
 }
 
 function syncRareVisualState(){
-  setRareVisualState(currentIndex === RARE_TRACK_INDEX);
+  const isRare = currentIndex === RARE_TRACK_INDEX;
+  setRareVisualState(isRare);
+  document.body.classList.toggle("rare-ambient", isRare);
 }
 
 
@@ -3160,7 +3375,8 @@ function setMuteIcon(){
 
   /* turn rare bar visuals on/off depending on current track */
   syncRareVisualState();
-
+  buildAmbientParticles();
+   
   if(allowRareFx && currentIndex === RARE_TRACK_INDEX){
     triggerRareTrackFx();
   }
@@ -3943,6 +4159,14 @@ window.addEventListener("load", () => {
   }
 });
 
+    window.addEventListener("load", () => {
+  buildAmbientParticles();
+  syncAmbientMode();
+});
+
+window.addEventListener("resize", () => {
+  buildAmbientParticles();
+});
     
 </script>  
 </body>  
