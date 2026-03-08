@@ -56,12 +56,19 @@
   --char-right-rot: 4deg;
   --char-right-max-h: 95vh;
 
-  /* Mobile shared character */
-  --m-char-x: 0px;
-  --m-char-y: 690px;
-  --m-char-scale: 2.1;
-  --m-char-rot: 0deg;
-  --m-char-max-h: 85vh;
+   /* Mobile left character */
+  --m-left-x: 0px;
+  --m-left-y: 0px;
+  --m-left-scale: 1;
+  --m-left-rot: 0deg;
+  --m-left-max-h: 85vh;
+
+  /* Mobile right character */
+  --m-right-x: 0px;
+  --m-right-y: 0px;
+  --m-right-scale: 1;
+  --m-right-rot: 0deg;
+  --m-right-max-h: 85vh;
 }
   
   /* Hide system cursor ONLY on non-touch devices */  
@@ -974,18 +981,31 @@
   .button{padding:14px 28px;}
 
   /* Mobile: hide both first, JS will show one random one */
-  .enkidu-left,
+    .enkidu-left,
   .enkidu-right{
     display:none;
     left:50% !important;
     right:auto !important;
     bottom:0 !important;
-    max-height: var(--m-char-max-h) !important;
+    transform-origin: bottom center !important;
+  }
+
+  .enkidu-left{
+    max-height: var(--m-left-max-h) !important;
     transform:
       translateX(-50%)
-      translate(var(--m-char-x), var(--m-char-y))
-      rotate(var(--m-char-rot))
-      scale(var(--m-char-scale)) !important;
+      translate(var(--m-left-x), var(--m-left-y))
+      rotate(var(--m-left-rot))
+      scale(var(--m-left-scale)) !important;
+  }
+
+  .enkidu-right{
+    max-height: var(--m-right-max-h) !important;
+    transform:
+      translateX(-50%)
+      translate(var(--m-right-x), var(--m-right-y))
+      rotate(var(--m-right-rot))
+      scale(var(--m-right-scale)) !important;
   }
 
   .p5-controls{ left:14px; right:14px; flex-wrap:wrap; row-gap:8px; padding:12px 12px; }
@@ -2527,55 +2547,93 @@ footer{
 <div class="p5-layout-panel" id="p5LayoutPanel">
   <h3>AE Mobile Character Editor</h3>
 
-  <div class="ae-group">
-    <div class="ae-group-title">Mobile Character</div>
+   <div class="ae-group">
+    <div class="ae-group-title">Mobile Left Character</div>
 
     <div class="ae-row">
-      <div class="ae-label">Character X</div>
+      <div class="ae-label">Left X</div>
       <div class="ae-fields">
-        <input data-var="--m-char-x" type="number" value="0" aria-label="Mobile Character X">
+        <input data-var="--m-left-x" type="number" value="0" aria-label="Mobile Left X">
         <span class="ae-unit">px</span>
       </div>
     </div>
 
     <div class="ae-row">
-      <div class="ae-label">Character Y</div>
+      <div class="ae-label">Left Y</div>
       <div class="ae-fields">
-        <input data-var="--m-char-y" type="number" value="0" aria-label="Mobile Character Y">
+        <input data-var="--m-left-y" type="number" value="0" aria-label="Mobile Left Y">
         <span class="ae-unit">px</span>
       </div>
     </div>
 
     <div class="ae-row">
-      <div class="ae-label">Character Scale</div>
+      <div class="ae-label">Left Scale</div>
       <div class="ae-fields">
-        <input data-var="--m-char-scale" data-unit="" type="number" step="0.01" value="1" aria-label="Mobile Character Scale">
+        <input data-var="--m-left-scale" data-unit="" type="number" step="0.01" value="1" aria-label="Mobile Left Scale">
         <span class="ae-unit">x</span>
       </div>
     </div>
 
     <div class="ae-row">
-      <div class="ae-label">Character Rotation</div>
+      <div class="ae-label">Left Rotation</div>
       <div class="ae-fields">
-        <input data-var="--m-char-rot" data-unit="deg" type="number" value="0" aria-label="Mobile Character Rotation">
+        <input data-var="--m-left-rot" data-unit="deg" type="number" value="0" aria-label="Mobile Left Rotation">
         <span class="ae-unit">deg</span>
       </div>
     </div>
 
     <div class="ae-row">
-      <div class="ae-label">Character Max Height</div>
+      <div class="ae-label">Left Max Height</div>
       <div class="ae-fields">
-        <input data-var="--m-char-max-h" data-unit="vh" type="number" value="85" aria-label="Mobile Character Max Height">
+        <input data-var="--m-left-max-h" data-unit="vh" type="number" value="85" aria-label="Mobile Left Max Height">
         <span class="ae-unit">vh</span>
       </div>
     </div>
   </div>
 
-  <div class="p5-layout-actions">
-    <button type="button" id="p5CopyMobileCSS">Copy Permanent CSS</button>
-    <button type="button" class="secondary" id="p5ResetMobileCSS">Reset</button>
+  <div class="ae-group">
+    <div class="ae-group-title">Mobile Right Character</div>
+
+    <div class="ae-row">
+      <div class="ae-label">Right X</div>
+      <div class="ae-fields">
+        <input data-var="--m-right-x" type="number" value="0" aria-label="Mobile Right X">
+        <span class="ae-unit">px</span>
+      </div>
+    </div>
+
+    <div class="ae-row">
+      <div class="ae-label">Right Y</div>
+      <div class="ae-fields">
+        <input data-var="--m-right-y" type="number" value="0" aria-label="Mobile Right Y">
+        <span class="ae-unit">px</span>
+      </div>
+    </div>
+
+    <div class="ae-row">
+      <div class="ae-label">Right Scale</div>
+      <div class="ae-fields">
+        <input data-var="--m-right-scale" data-unit="" type="number" step="0.01" value="1" aria-label="Mobile Right Scale">
+        <span class="ae-unit">x</span>
+      </div>
+    </div>
+
+    <div class="ae-row">
+      <div class="ae-label">Right Rotation</div>
+      <div class="ae-fields">
+        <input data-var="--m-right-rot" data-unit="deg" type="number" value="0" aria-label="Mobile Right Rotation">
+        <span class="ae-unit">deg</span>
+      </div>
+    </div>
+
+    <div class="ae-row">
+      <div class="ae-label">Right Max Height</div>
+      <div class="ae-fields">
+        <input data-var="--m-right-max-h" data-unit="vh" type="number" value="85" aria-label="Mobile Right Max Height">
+        <span class="ae-unit">vh</span>
+      </div>
+    </div>
   </div>
-</div>
 
   <!-- =========================
        ACTION BUTTONS
@@ -3858,11 +3916,17 @@ const DEFAULTS_M = {
   "--m-bottom-y": "-14px",
 
   /* mobile character */
-  "--m-char-x": "0px",
-  "--m-char-y": "0px",
-  "--m-char-scale": "1",
-  "--m-char-rot": "0deg",
-  "--m-char-max-h": "85vh",
+  "--m-left-x": "0px",
+  "--m-left-y": "0px",
+  "--m-left-scale": "1",
+  "--m-left-rot": "0deg",
+  "--m-left-max-h": "85vh",
+
+  "--m-right-x": "0px",
+  "--m-right-y": "0px",
+  "--m-right-scale": "1",
+  "--m-right-rot": "0deg",
+  "--m-right-max-h": "85vh",
 };
 
   // ---------- DESKTOP ----------
