@@ -4,7 +4,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />  
 <title>VALIE</title>  
 <link rel="icon" type="image/png" href="Enkiduicon.png">  
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap" rel="stylesheet">  <style>  
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap" rel="stylesheet">  
+  <style>  
   html{scroll-behavior:smooth;}  
   
   body{  
@@ -1559,7 +1560,143 @@ details:not([open]) .ae-twisty{ transform: rotate(-90deg); }
   background: rgba(0,0,0,0.88);
   padding-top: 10px;
 }
-  
+
+    /* =========================
+   RARE TRACK FX (mobile + desktop)
+   ========================= */
+.rare-track-fx{
+  position:fixed;
+  inset:0;
+  z-index:2147483644;
+  pointer-events:none;
+  opacity:0;
+  visibility:hidden;
+}
+
+.rare-track-fx.show{
+  opacity:1;
+  visibility:visible;
+}
+
+.rare-track-flash{
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(127,255,212,0.20), rgba(0,0,0,0) 38%),
+    radial-gradient(circle at 50% 50%, rgba(0,201,122,0.25), rgba(0,0,0,0) 62%),
+    linear-gradient(180deg, rgba(0,201,122,0.12), rgba(0,0,0,0.02));
+  opacity:0;
+}
+
+.rare-track-ring{
+  position:absolute;
+  left:50%;
+  top:84px;
+  width:110px;
+  height:110px;
+  border-radius:999px;
+  transform:translate(-50%,-50%) scale(0.25);
+  border:2px solid rgba(127,255,212,0.95);
+  box-shadow:
+    0 0 20px rgba(127,255,212,0.55),
+    0 0 55px rgba(0,201,122,0.35),
+    inset 0 0 18px rgba(127,255,212,0.18);
+  opacity:0;
+}
+
+.rare-track-text{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%) scale(0.92);
+  text-align:center;
+  opacity:0;
+  padding:18px 22px;
+  border-radius:20px;
+  background:rgba(0,0,0,0.36);
+  border:1px solid rgba(127,255,212,0.26);
+  box-shadow:
+    0 0 30px rgba(0,201,122,0.20),
+    0 0 80px rgba(0,0,0,0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.rare-track-kicker{
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:2px;
+  color:rgba(255,255,255,0.92);
+  text-transform:uppercase;
+}
+
+.rare-track-name{
+  margin-top:8px;
+  font-size:clamp(28px, 6vw, 56px);
+  font-weight:900;
+  letter-spacing:3px;
+  color:#7fffd4;
+  text-shadow:
+    0 0 14px rgba(127,255,212,0.55),
+    0 0 34px rgba(0,201,122,0.28);
+}
+
+.rare-track-fx.show .rare-track-flash{
+  animation: rareFlash 900ms ease forwards;
+}
+
+.rare-track-fx.show .rare-track-ring{
+  animation: rareRing 1050ms cubic-bezier(.16,.84,.24,1) forwards;
+}
+
+.rare-track-fx.show .rare-track-text{
+  animation: rareText 1200ms cubic-bezier(.2,.9,.2,1) forwards;
+}
+
+@keyframes rareFlash{
+  0%   { opacity:0; }
+  15%  { opacity:1; }
+  45%  { opacity:.45; }
+  100% { opacity:0; }
+}
+
+@keyframes rareRing{
+  0%   { opacity:0; transform:translate(-50%,-50%) scale(0.25); }
+  18%  { opacity:1; }
+  70%  { opacity:.7; }
+  100% { opacity:0; transform:translate(-50%,-50%) scale(7.5); }
+}
+
+@keyframes rareText{
+  0%   { opacity:0; transform:translate(-50%,-50%) scale(0.88); }
+  20%  { opacity:1; transform:translate(-50%,-50%) scale(1); }
+  72%  { opacity:1; transform:translate(-50%,-50%) scale(1); }
+  100% { opacity:0; transform:translate(-50%,-50%) scale(1.04); }
+}
+
+@media (max-width: 820px){
+  .rare-track-ring{
+    top:72px;
+    width:84px;
+    height:84px;
+  }
+
+  .rare-track-text{
+    width:min(82vw, 320px);
+    padding:14px 16px;
+    border-radius:18px;
+  }
+
+  .rare-track-kicker{
+    font-size:11px;
+    letter-spacing:1.6px;
+  }
+
+  .rare-track-name{
+    font-size:clamp(24px, 8vw, 38px);
+    letter-spacing:2px;
+  }
+}
 </style>  </head>  <body oncontextmenu="return false;">  <!-- ✅ BIG P5 HERO MUSIC PLAYER (MOVED TO TOP OF BODY) -->  <div id="p5MusicHero" class="p5-music-hero" data-cursor="normal" aria-live="polite">  
   <div class="p5-music-frame">  
     <div class="p5-music-left">  
@@ -2339,6 +2476,15 @@ details:not([open]) .ae-twisty{ transform: rotate(-90deg); }
   </div>
 </div>
 
+<div id="rareTrackFx" class="rare-track-fx" aria-hidden="true">
+  <div class="rare-track-flash"></div>
+  <div class="rare-track-ring"></div>
+  <div class="rare-track-text">
+    <div class="rare-track-kicker">✦ RARE TRACK ✦</div>
+    <div class="rare-track-name">PROVANT</div>
+  </div>
+</div>
+  
   <script>  
   const RARE_TRACK_INDEX = 3;   // PROVANT
 const NORMAL_TRACKS = [0, 1, 2];
@@ -2648,6 +2794,23 @@ music.addEventListener("ended", syncHeroIcon);
   const seek       = document.getElementById("p5Seek");  
   const curEl      = document.getElementById("p5Cur");  
   const durEl      = document.getElementById("p5Dur");  
+
+const rareTrackFx = document.getElementById("rareTrackFx");
+let rareFxTimer = null;
+let allowRareFx = false;
+
+function triggerRareTrackFx(){
+  if(!rareTrackFx) return;
+
+  rareTrackFx.classList.remove("show");
+  void rareTrackFx.offsetWidth; // restart animation
+  rareTrackFx.classList.add("show");
+
+  clearTimeout(rareFxTimer);
+  rareFxTimer = setTimeout(() => {
+    rareTrackFx.classList.remove("show");
+  }, 1300);
+}
   
   let currentIndex = 0;  
  function applySmartMarquee(el, text){
@@ -2745,13 +2908,11 @@ function setMuteIcon(){
   }  
   
   function setTrack(i){
-
   currentIndex = (i + TRACKS.length) % TRACKS.length;
   const t = TRACKS[currentIndex];
 
   music.src = t.src;
 
-  // ✅ Apply smart marquee correctly
   applySmartMarquee(titleEl, t.title || t.src);
 
   if(artistEl) artistEl.textContent = t.artist || "";
@@ -2761,6 +2922,10 @@ function setMuteIcon(){
   applySeekFill(0);
   curEl.textContent = "0:00";
   durEl.textContent = "0:00";
+
+  if(allowRareFx && currentIndex === RARE_TRACK_INDEX){
+    triggerRareTrackFx();
+  }
 }
   
 function pickRandomNormal(excludeIndex = -1) {
@@ -2908,24 +3073,26 @@ playBtnH.addEventListener("click", async ()=>{
 });
   
   prevBtn.addEventListener("click", async ()=>{  
-    if(!musicUnlocked){  
-      tapOverlay.classList.add("show");  
-      return;  
-    }  
-    userWantsMusic = true;  
-    setTrack(pickPrevIndex());  
-    await safePlay();  
-  });  
+  if(!musicUnlocked){  
+    tapOverlay.classList.add("show");  
+    return;  
+  }  
+  allowRareFx = true;
+  userWantsMusic = true;  
+  setTrack(pickPrevIndex());  
+  await safePlay();  
+});
   
-  nextBtn.addEventListener("click", async ()=>{  
-    if(!musicUnlocked){  
-      tapOverlay.classList.add("show");  
-      return;  
-    }  
-    userWantsMusic = true;  
-    setTrack(pickNextIndex());  
-    await safePlay();  
-  });  
+ nextBtn.addEventListener("click", async ()=>{  
+  if(!musicUnlocked){  
+    tapOverlay.classList.add("show");  
+    return;  
+  }  
+  allowRareFx = true;
+  userWantsMusic = true;  
+  setTrack(pickNextIndex());  
+  await safePlay();  
+});
   
   shuffleBtn.addEventListener("click", ()=>{  
     shuffleOn = !shuffleOn;  
@@ -2976,18 +3143,16 @@ volSlider.addEventListener("input", ()=>{
   
   // Ended logic (shuffle + loop) ✅ FIXED: always go to next track
 music.addEventListener("ended", async () => {
-
-  // Loop one = replay the same track
   if(loopMode === "one"){
     music.currentTime = 0;
     if(userWantsMusic) await safePlay();
     return;
   }
 
-  // Otherwise always advance (shuffle respected)
+  allowRareFx = true;
   setTrack(pickNextIndex());
   if(userWantsMusic) await safePlay();
-}); 
+});
   
   // ✅ Default UI  
   // ✅ random starting track every refresh (shuffle OFF)  
@@ -2998,6 +3163,9 @@ if (rollRareTrack()) {
 } else {
   setTrack(NORMAL_TRACKS[Math.floor(Math.random() * NORMAL_TRACKS.length)]);
 }
+
+    allowRareFx = true;
+    
   setPlayIcon(false);  
   setMuteIcon();  
   setShuffleUI();  
