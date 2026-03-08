@@ -26,8 +26,8 @@
   
 :root{
   --cursor-size: 40px;
-  --cursor-offset-x: 9px;
-  --cursor-offset-y: 8px;
+  --cursor-offset-x: 0px;
+  --cursor-offset-y: 0px;
 
   /* Enkidu palette */
   --p5-red: #00c97a;
@@ -2345,6 +2345,23 @@ details:not([open]) .ae-twisty{ transform: rotate(-90deg); }
     resize1: "RESIZE_1.gif",  
     resize2: "RESIZE_2.gif",  
   };  
+    const CURSOR_HOTSPOTS = {
+  normal:      { x: 2,  y: 1  },
+  link:        { x: 9,  y: 8  },
+  text:        { x: 20, y: 20 },
+  precision:   { x: 20, y: 20 }, // center of 40px cursor
+  busy:        { x: 20, y: 20 },
+  help:        { x: 10, y: 8  },
+  move:        { x: 20, y: 20 },
+  unavailable: { x: 10, y: 8  },
+  handwriting: { x: 9,  y: 8  },
+  alternate:   { x: 9,  y: 8  },
+  vib:         { x: 10, y: 8  },
+  hResize:     { x: 20, y: 20 },
+  vResize:     { x: 20, y: 20 },
+  resize1:     { x: 20, y: 20 },
+  resize2:     { x: 20, y: 20 }
+};
   
   const gifCursor = document.getElementById("gifCursor");  
   const gifCursorImg = document.getElementById("gifCursorImg");  
@@ -2382,10 +2399,15 @@ details:not([open]) .ae-twisty{ transform: rotate(-90deg); }
   if(!CAN_HOVER) return;
 
   const styles = getComputedStyle(document.documentElement);
-  const ox = parseFloat(styles.getPropertyValue("--cursor-offset-x")) || 0;
-  const oy = parseFloat(styles.getPropertyValue("--cursor-offset-y")) || 0;
+  const size = parseFloat(styles.getPropertyValue("--cursor-size")) || 40;
 
-  gifCursor.style.transform = `translate3d(${mouseX + ox}px, ${mouseY + oy}px, 0)`;
+  const baseX = parseFloat(styles.getPropertyValue("--cursor-offset-x")) || 0;
+  const baseY = parseFloat(styles.getPropertyValue("--cursor-offset-y")) || 0;
+
+  const hotspot = CURSOR_HOTSPOTS[currentCursorKey] || { x: size / 2, y: size / 2 };
+
+  gifCursor.style.transform =
+    `translate3d(${mouseX + baseX - hotspot.x}px, ${mouseY + baseY - hotspot.y}px, 0)`;
 }
   
   document.addEventListener("mousemove", (e)=>{  
