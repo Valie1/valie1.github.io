@@ -2005,20 +2005,23 @@ body.rare-ambient .ambient-particle.sparkle{
 }
 
 /* keep content above particles */
+/* keep normal page sections above ambient particles */
 .hero,
 .portfolio,
 .contact,
-footer,
-.p5-music-hero,
-.intro,
-.gif-cursor,
-.rare-track-fx,
-.p5-layout-panel,
-.p5-editor-toggle,
-.p5-editor-toggle-desktop{
+footer{
   position: relative;
   z-index: 1;
 }
+
+/* keep overlays/ui above particles WITHOUT changing their original positioning */
+.p5-music-hero{ z-index: 99998; }
+.intro{ z-index: 99999; }
+.gif-cursor{ z-index: 2147483647; }
+.rare-track-fx{ z-index: 2147483644; }
+.p5-layout-panel{ z-index: 2147483646; }
+.p5-editor-toggle,
+.p5-editor-toggle-desktop{ z-index: 2147483647; }
     
 </style>  </head>  <body oncontextmenu="return false;">
   <div id="ambientParticles" class="ambient-particles" aria-hidden="true"></div>
@@ -3245,9 +3248,9 @@ function setRareVisualState(isRare){
 function syncRareVisualState(){
   const isRare = currentIndex === RARE_TRACK_INDEX;
   setRareVisualState(isRare);
-  syncAmbientMode();
+  document.body.classList.toggle("rare-ambient", isRare);
+  buildAmbientParticles();
 }
-
 
 function triggerRareTrackFx(){
   if(!rareTrackFx) return;
