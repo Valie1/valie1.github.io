@@ -52,14 +52,29 @@
   video,
   audio,
   [role="button"],
-  [type="range"]{
+  [type="range"],
+  input[type="range"],
+  input[type="range"]::-webkit-slider-thumb,
+  input[type="range"]::-webkit-slider-runnable-track,
+  input[type="range"]::-moz-range-thumb,
+  input[type="range"]::-moz-range-track{
     cursor: none !important;
   }
 
   :fullscreen,
   :fullscreen *,
   :-webkit-full-screen,
-  :-webkit-full-screen *{
+  :-webkit-full-screen *,
+  :fullscreen input[type="range"],
+  :fullscreen input[type="range"]::-webkit-slider-thumb,
+  :fullscreen input[type="range"]::-webkit-slider-runnable-track,
+  :fullscreen input[type="range"]::-moz-range-thumb,
+  :fullscreen input[type="range"]::-moz-range-track,
+  :-webkit-full-screen input[type="range"],
+  :-webkit-full-screen input[type="range"]::-webkit-slider-thumb,
+  :-webkit-full-screen input[type="range"]::-webkit-slider-runnable-track,
+  :-webkit-full-screen input[type="range"]::-moz-range-thumb,
+  :-webkit-full-screen input[type="range"]::-moz-range-track{
     cursor: none !important;
   }
 }
@@ -347,7 +362,7 @@
     .p5-player:fullscreen, .p5-player:fullscreen *{ cursor: none !important; }  
     .p5-player:-webkit-full-screen, .p5-player:-webkit-full-screen *{ cursor: none !important; }  
   }  
-  .p5-player, .p5-video { cursor: crosshair; }  
+.p5-player, .p5-video { cursor: none !important; }  
   
   .p5-player:fullscreen,  
   .p5-player:-webkit-full-screen{  
@@ -539,7 +554,7 @@
     border-radius:999px;  
     background:var(--p5-red);  
     box-shadow:0 0 20px rgba(0,201,122,0.7);  
-    cursor:pointer;  
+    cursor:none !important;  
   }  
   
   .video-label{  
@@ -844,16 +859,16 @@
   outline:none;  
   background: rgba(0,201,122,0.25);  
 }  
-  .p5-vol-slider::-webkit-slider-thumb{  
-    -webkit-appearance:none;  
-    appearance:none;  
-    width:18px;  
-    height:18px;  
-    border-radius:999px;  
-    background:#fff;  
-    box-shadow: 0 0 22px rgba(255,255,255,0.35), 0 0 28px rgba(0,201,122,0.25);  
-    cursor:pointer;  
-  }  
+ .p5-vol-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  appearance:none;
+  width:18px;
+  height:18px;
+  border-radius:999px;
+  background:#fff;
+  box-shadow: 0 0 22px rgba(255,255,255,0.35), 0 0 28px rgba(0,201,122,0.25);
+  cursor:none !important;
+}
   
   .p5-music-mid{  
     display:flex;  
@@ -903,16 +918,16 @@
     background: rgba(0,201,122,0.22);  
     transition: background .12s linear;  
   }  
-  .p5-seek::-webkit-slider-thumb{  
-    -webkit-appearance:none;  
-    appearance:none;  
-    width:18px;  
-    height:18px;  
-    border-radius:999px;  
-    background: var(--p5-red);  
-    box-shadow: 0 0 22px rgba(0,201,122,0.55);  
-    cursor:pointer;  
-  }  
+  .p5-seek::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  appearance:none;
+  width:18px;
+  height:18px;
+  border-radius:999px;
+  background: var(--p5-red);
+  box-shadow: 0 0 22px rgba(0,201,122,0.55);
+  cursor:none !important;
+}
   
   /* ✅ remove the old dock entirely */
 .music-dock{ display:none !important; }
