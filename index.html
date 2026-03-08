@@ -2398,16 +2398,20 @@ details:not([open]) .ae-twisty{ transform: rotate(-90deg); }
   let currentCursorKey = "normal";  
   let forceCursorKey = null;  
   
-  function setCursor(key){  
-    if(!CAN_HOVER) return;  
-    if(!key) key = "normal";  
-    if(key === currentCursorKey) return;  
-    currentCursorKey = key;  
-    const src = CURSOR_GIFS[key] || CURSOR_GIFS.normal;  
-    if(gifCursorImg.getAttribute("src") !== src){  
-      gifCursorImg.setAttribute("src", src);  
-    }  
-  }  
+ function setCursor(key){
+  if(!CAN_HOVER) return;
+  if(!key) key = "normal";
+  if(key === currentCursorKey) return;
+
+  currentCursorKey = key;
+
+  const src = CURSOR_GIFS[key] || CURSOR_GIFS.normal;
+  if(gifCursorImg.getAttribute("src") !== src){
+    gifCursorImg.setAttribute("src", src);
+  }
+
+  updateCursorPos(); // <- this is the missing line
+}
   
   function updateCursorPos(){
   rafOn = false;
