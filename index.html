@@ -362,7 +362,7 @@
     .p5-player:fullscreen, .p5-player:fullscreen *{ cursor: none !important; }  
     .p5-player:-webkit-full-screen, .p5-player:-webkit-full-screen *{ cursor: none !important; }  
   }  
-.p5-player, .p5-video { cursor: none !important; }  
+
   
   .p5-player:fullscreen,  
   .p5-player:-webkit-full-screen{  
@@ -2382,21 +2382,23 @@ details:not([open]) .ae-twisty{ transform: rotate(-90deg); }
   const gifCursorImg = document.getElementById("gifCursorImg");  
   const CAN_HOVER = matchMedia("(hover:hover) and (pointer:fine)").matches;  
 
-  if (CAN_HOVER) {
-  const forceHideCursorStyle = document.createElement("style");
-  forceHideCursorStyle.textContent = `
-    html, body, body *, a, button, input, textarea, select, label, video, audio,
-    [role="button"], [type="range"], input[type="range"],
-    input[type="range"]::-webkit-slider-thumb,
-    input[type="range"]::-webkit-slider-runnable-track,
-    input[type="range"]::-moz-range-thumb,
-    input[type="range"]::-moz-range-track,
-    :fullscreen, :fullscreen *,
-    :-webkit-full-screen, :-webkit-full-screen * {
-      cursor: none !important;
-    }
-  `;
-  document.head.appendChild(forceHideCursorStyle);
+ if (CAN_HOVER) {
+  const killNativeCursor = () => {
+    document.documentElement.style.setProperty("cursor", "none", "important");
+    document.body.style.setProperty("cursor", "none", "important");
+
+    document.querySelectorAll("*").forEach(el => {
+      el.style.setProperty("cursor", "none", "important");
+    });
+  };
+
+  killNativeCursor();
+
+  document.addEventListener("mousemove", killNativeCursor, { passive: true });
+  document.addEventListener("mouseover", killNativeCursor, { passive: true });
+  document.addEventListener("mouseenter", killNativeCursor, { passive: true });
+  document.addEventListener("fullscreenchange", killNativeCursor);
+  document.addEventListener("webkitfullscreenchange", killNativeCursor);
 }
   
   function preloadGifs(){  
