@@ -2022,6 +2022,53 @@ footer{
 .p5-layout-panel{ z-index: 2147483646; }
 .p5-editor-toggle,
 .p5-editor-toggle-desktop{ z-index: 2147483647; }
+
+@media (max-width: 820px){
+
+  .ambient-particles::before,
+  .ambient-particles::after{
+    filter: none !important;
+  }
+
+  body.rare-ambient .ambient-particles::after{
+    opacity: .18 !important;
+    filter: none !important;
+  }
+
+  .ambient-particle,
+  body.rare-ambient .ambient-particle{
+    background: rgba(255, 225, 120, 0.38) !important;
+    box-shadow: none !important;
+    filter: none !important;
+  }
+
+  .ambient-particle::after{
+    display: none !important;
+  }
+
+  body.rare-ambient .ambient-particle.sparkle{
+    animation-name: ambientFloat !important;
+    animation-iteration-count: infinite !important;
+    animation-timing-function: linear !important;
+  }
+
+  .p5-music-hero.rare-active .p5-music-frame,
+  .p5-music-hero.rare-active .p5-cover-wrap,
+  .p5-music-hero.rare-active .p5-playhero,
+  .p5-music-hero.rare-active .p5-top-right .p5-mbtn,
+  .p5-music-hero.rare-active .p5-top-right .p5-vol-btn{
+    box-shadow: none !important;
+  }
+
+  .p5-music-hero.rare-active .p5-cover-wrap{
+    animation: none !important;
+  }
+
+  .p5-music-hero.rare-active .p5-track-title,
+  .p5-music-hero.rare-active .p5-track-kicker{
+    text-shadow: none !important;
+  }
+}
     
 </style>  </head>  <body oncontextmenu="return false;">
   <div id="ambientParticles" class="ambient-particles" aria-hidden="true"></div>
@@ -3158,8 +3205,9 @@ function rand(min, max){
 function ambientCount(){
   const mobile = window.innerWidth <= 820;
   const rare = document.body.classList.contains("rare-ambient");
-  if(rare) return mobile ? 36 : 70;
-  return mobile ? 18 : 34;
+
+  if (mobile) return rare ? 6 : 2;
+  return rare ? 24 : 12;
 }
 
 function makeAmbientParticle(isRare){
@@ -3202,6 +3250,7 @@ function makeAmbientParticle(isRare){
 function buildAmbientParticles(){
   if(!ambientWrap) return;
 
+  const mobile = window.innerWidth <= 820;
   const rare = document.body.classList.contains("rare-ambient");
   const count = ambientCount();
 
@@ -3245,11 +3294,17 @@ function setRareVisualState(isRare){
   heroPlayer.classList.toggle("rare-active", !!isRare);
 }
 
+let lastRareState = null;
+
 function syncRareVisualState(){
   const isRare = currentIndex === RARE_TRACK_INDEX;
   setRareVisualState(isRare);
-  document.body.classList.toggle("rare-ambient", isRare);
-  buildAmbientParticles();
+
+  if (lastRareState !== isRare){
+    document.body.classList.toggle("rare-ambient", isRare);
+    buildAmbientParticles();
+    lastRareState = isRare;
+  }
 }
 
 function triggerRareTrackFx(){
