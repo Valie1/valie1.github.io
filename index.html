@@ -26,8 +26,8 @@
   
 :root{
   --cursor-size: 40px;
-  --cursor-offset-x: 3px;
-  --cursor-offset-y: 3px;
+  --cursor-offset-x: 9px;
+  --cursor-offset-y: 8px;
 
   /* Enkidu palette */
   --p5-red: #00c97a;
@@ -39,10 +39,30 @@
 }
   
   /* Hide system cursor ONLY on non-touch devices */  
-  @media (hover:hover) and (pointer:fine){  
-    html, body { cursor: none !important; }  
-    a, button, input, textarea, select, label, [role="button"] { cursor: none !important; }  
-  }  
+  @media (hover:hover) and (pointer:fine){
+  html,
+  body,
+  body *,
+  a,
+  button,
+  input,
+  textarea,
+  select,
+  label,
+  video,
+  audio,
+  [role="button"],
+  [type="range"]{
+    cursor: none !important;
+  }
+
+  :fullscreen,
+  :fullscreen *,
+  :-webkit-full-screen,
+  :-webkit-full-screen *{
+    cursor: none !important;
+  }
+}
   
   .gif-cursor{  
     position:fixed;  
@@ -2357,13 +2377,16 @@ details:not([open]) .ae-twisty{ transform: rotate(-90deg); }
     }  
   }  
   
-  function updateCursorPos(){  
-    rafOn = false;  
-    if(!CAN_HOVER) return;  
-    const ox = parseInt(getComputedStyle(document.documentElement).getPropertyValue("--cursor-offset-x")) || 0;  
-    const oy = parseInt(getComputedStyle(document.documentElement).getPropertyValue("--cursor-offset-y")) || 0;  
-    gifCursor.style.transform = `translate(${mouseX + ox}px, ${mouseY + oy}px)`;  
-  }  
+  function updateCursorPos(){
+  rafOn = false;
+  if(!CAN_HOVER) return;
+
+  const styles = getComputedStyle(document.documentElement);
+  const ox = parseFloat(styles.getPropertyValue("--cursor-offset-x")) || 0;
+  const oy = parseFloat(styles.getPropertyValue("--cursor-offset-y")) || 0;
+
+  gifCursor.style.transform = `translate3d(${mouseX + ox}px, ${mouseY + oy}px, 0)`;
+}
   
   document.addEventListener("mousemove", (e)=>{  
     if(!CAN_HOVER) return;  
