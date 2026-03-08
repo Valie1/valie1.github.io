@@ -2340,6 +2340,13 @@ details:not([open]) .ae-twisty{ transform: rotate(-90deg); }
 </div>
 
   <script>  
+  const RARE_TRACK_INDEX = 3;   // PROVANT
+const NORMAL_TRACKS = [0, 1, 2];
+const RARE_CHANCE = 0.01;
+
+function rollRareTrack() {
+  return Math.random() < RARE_CHANCE;
+}
   // =========================  
   // GIF CURSOR ENGINE  
   // =========================  
@@ -2756,23 +2763,46 @@ function setMuteIcon(){
   durEl.textContent = "0:00";
 }
   
-  function pickNextIndex(){  
-    if(shuffleOn && TRACKS.length > 1){  
-      let n = currentIndex;  
-      while(n === currentIndex) n = Math.floor(Math.random() * TRACKS.length);  
-      return n;  
-    }  
-    return currentIndex + 1;  
-  }  
-  
-  function pickPrevIndex(){  
-    if(shuffleOn && TRACKS.length > 1){  
-      let n = currentIndex;  
-      while(n === currentIndex) n = Math.floor(Math.random() * TRACKS.length);  
-      return n;  
-    }  
-    return currentIndex - 1;  
-  }  
+  const RARE_TRACK_INDEX = 3;   // PROVANT
+const NORMAL_TRACKS = [0, 1, 2];
+const RARE_CHANCE = 0.01;     // 1%
+
+function rollRareTrack() {
+  return Math.random() < RARE_CHANCE;
+}
+
+function pickRandomNormal(excludeIndex = -1) {
+  const pool = NORMAL_TRACKS.filter(i => i !== excludeIndex);
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+function pickNextIndex() {
+  // 1% chance to pull PROVANT from anywhere
+  if (rollRareTrack()) return RARE_TRACK_INDEX;
+
+  // if current is rare, go back to normal pool
+  if (currentIndex === RARE_TRACK_INDEX) {
+    return pickRandomNormal();
+  }
+
+  // normal next cycle only through first 3 songs
+  const pos = NORMAL_TRACKS.indexOf(currentIndex);
+  return NORMAL_TRACKS[(pos + 1) % NORMAL_TRACKS.length];
+}
+
+function pickPrevIndex() {
+  // 1% chance to pull PROVANT from anywhere
+  if (rollRareTrack()) return RARE_TRACK_INDEX;
+
+  // if current is rare, go back to normal pool
+  if (currentIndex === RARE_TRACK_INDEX) {
+    return pickRandomNormal();
+  }
+
+  // normal previous cycle only through first 3 songs
+  const pos = NORMAL_TRACKS.indexOf(currentIndex);
+  return NORMAL_TRACKS[(pos - 1 + NORMAL_TRACKS.length) % NORMAL_TRACKS.length];
+}
   
   async function unlockAudioFromGesture(){  
     if(musicUnlocked) return true;  
@@ -2825,45 +2855,59 @@ function setMuteIcon(){
   showHero();  
 }  
   
-  // ✅ Hook tap button to unlock + start music  
-  async function enableSoundAndStartMusic(){  
-    const ok = await unlockAudioFromGesture();  
-    if(!ok) return;  
-  
-    userWantsMusic = true;  
-    if(!music.src) setTrack(currentIndex);  
-  
-    music.muted = false;  
-    const played = await safePlay();
-    syncHeroIcon();
-    if(played){
-      tapOverlay.classList.remove("show");  
-    }  
-  }  
-  
-  tapBtn.addEventListener("click", enableSoundAndStartMusic);  
-  tapBtn.addEventListener("touchend", (e)=>{  
-    e.preventDefault();  
-    enableSoundAndStartMusic();  
-  }, {passive:false});  
-  
-  // Buttons  
-  playBtnH.addEventListener("click", async ()=>{  
-    if(!musicUnlocked){  
-      tapOverlay.classList.add("show");  
-      userWantsMusic = false;  
-      setPlayIcon(false);  
-      return;  
-    }  
-    userWantsMusic = true;  
-  
-    if(music.paused){  
-      if(!music.src) setTrack(currentIndex);  
-      await safePlay();  
-    }else{  
-      safePause();  
-    }  
-  });  
+  // ✅ Hook tap button to unlock + start music
+async function enableSoundAndStartMusic(){
+  const ok = await unlockAudioFromGesture();
+  if(!ok) return;
+
+  userWantsMusic = true;
+
+  if(!music.src){
+    if (rollRareTrack()) {
+      setTrack(RARE_TRACK_INDEX);   // PROVANT
+    } else {
+      setTrack(NORMAL_TRACKS[Math.floor(Math.random() * NORMAL_TRACKS.length)]);
+    }
+  }
+
+  music.muted = false;
+  const played = await safePlay();
+  syncHeroIcon();
+  if(played){
+    tapOverlay.classList.remove("show");
+  }
+}
+
+tapBtn.addEventListener("click", enableSoundAndStartMusic);
+tapBtn.addEventListener("touchend", (e)=>{
+  e.preventDefault();
+  enableSoundAndStartMusic();
+}, {passive:false});
+
+// Buttons
+playBtnH.addEventListener("click", async ()=>{
+  if(!musicUnlocked){
+    tapOverlay.classList.add("show");
+    userWantsMusic = false;
+    setPlayIcon(false);
+    return;
+  }
+
+  userWantsMusic = true;
+
+  if(music.paused){
+    if(!music.src){
+      if (rollRareTrack()) {
+        setTrack(RARE_TRACK_INDEX);   // PROVANT
+      } else {
+        setTrack(NORMAL_TRACKS[Math.floor(Math.random() * NORMAL_TRACKS.length)]);
+      }
+    }
+    await safePlay();
+  }else{
+    safePause();
+  }
+});
   
   prevBtn.addEventListener("click", async ()=>{  
     if(!musicUnlocked){  
@@ -2951,10 +2995,10 @@ music.addEventListener("ended", async () => {
   // ✅ random starting track every refresh (shuffle OFF)  
   let roll = Math.random();
 
-if (roll < 0.01) {
-  setTrack(3); // 1% rare song
+if (rollRareTrack()) {
+  setTrack(RARE_TRACK_INDEX);
 } else {
-  setTrack(Math.floor(Math.random() * 3)); // pick from the first 3 normally
+  setTrack(NORMAL_TRACKS[Math.floor(Math.random() * NORMAL_TRACKS.length)]);
 }
   setPlayIcon(false);  
   setMuteIcon();  
