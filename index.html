@@ -37,6 +37,31 @@
   --enkidu-glow: rgba(0,201,122,0.45);
   --enkidu-glow-soft: rgba(127,255,212,0.25);
   --enkidu-dark: rgba(0,70,45,0.55);
+
+  /* =========================
+     CHARACTER EDITOR VARS
+     ========================= */
+
+  /* Desktop left character */
+  --char-left-x: -60px;
+  --char-left-y: 0px;
+  --char-left-scale: 1;
+  --char-left-rot: -4deg;
+  --char-left-max-h: 95vh;
+
+  /* Desktop right character */
+  --char-right-x: -40px;
+  --char-right-y: 0px;
+  --char-right-scale: 1;
+  --char-right-rot: 4deg;
+  --char-right-max-h: 95vh;
+
+  /* Mobile shared character */
+  --m-char-x: 0px;
+  --m-char-y: 0px;
+  --m-char-scale: 1;
+  --m-char-rot: 0deg;
+  --m-char-max-h: 85vh;
 }
   
   /* Hide system cursor ONLY on non-touch devices */  
@@ -299,24 +324,33 @@
     background:var(--p5-red2);  
   }  
   
-  .character{  
-    position:absolute;  
-    bottom:0;  
-    max-height:95vh;  
-    z-index:1;  
-    pointer-events:none;  
-  }  
-  .enkidu-left{
-  left:-60px;
-  transform: rotate(-4deg);
+  .character{
+  position:absolute;
+  bottom:0;
+  z-index:2;
+  pointer-events:none;
+  transform-origin: bottom center;
+}
+
+.enkidu-left{
+  left: var(--char-left-x);
+  bottom: var(--char-left-y);
+  max-height: var(--char-left-max-h);
+  transform:
+    rotate(var(--char-left-rot))
+    scale(var(--char-left-scale));
   filter:
     drop-shadow(0 0 30px rgba(0,201,122,0.6))
     drop-shadow(0 0 70px rgba(0,201,122,0.3));
 }
 
 .enkidu-right{
-  right:-40px;
-  transform: rotate(4deg);
+  right: var(--char-right-x);
+  bottom: var(--char-right-y);
+  max-height: var(--char-right-max-h);
+  transform:
+    rotate(var(--char-right-rot))
+    scale(var(--char-right-scale));
   filter:
     drop-shadow(0 0 30px rgba(0,201,122,0.6))
     drop-shadow(0 0 70px rgba(0,201,122,0.3));
@@ -939,19 +973,20 @@
   .subtitle{font-size:15px;max-width:320px;}
   .button{padding:14px 28px;}
 
-  /* Mobile: hide both by default */
+  /* Mobile: hide both first, JS will show one random one */
   .enkidu-left,
   .enkidu-right{
     display:none;
-    max-height:85vh;
+    left:50% !important;
+    right:auto !important;
+    bottom:0 !important;
+    max-height: var(--m-char-max-h) !important;
+    transform:
+      translateX(-50%)
+      translate(var(--m-char-x), var(--m-char-y))
+      rotate(var(--m-char-rot))
+      scale(var(--m-char-scale)) !important;
   }
-
-  .enkidu-left,
-.enkidu-right{
-  left:50% !important;
-  right:auto !important;
-  transform:translateX(-50%) !important;
-}
 
   .p5-controls{ left:14px; right:14px; flex-wrap:wrap; row-gap:8px; padding:12px 12px; }
   .p5-btn{ padding:10px 12px; min-width:42px; min-height:42px; border-radius:12px; font-size:16px; }
@@ -2686,6 +2721,50 @@ footer{
   </div>
 </div>
 
+    <div class="ae-group">
+    <div class="ae-group-title">Mobile Character</div>
+
+    <div class="ae-row">
+      <div class="ae-label">Character X</div>
+      <div class="ae-fields">
+        <input data-var="--m-char-x" type="number" value="0" aria-label="Mobile Character X">
+        <span class="ae-unit">px</span>
+      </div>
+    </div>
+
+    <div class="ae-row">
+      <div class="ae-label">Character Y</div>
+      <div class="ae-fields">
+        <input data-var="--m-char-y" type="number" value="0" aria-label="Mobile Character Y">
+        <span class="ae-unit">px</span>
+      </div>
+    </div>
+
+    <div class="ae-row">
+      <div class="ae-label">Character Scale</div>
+      <div class="ae-fields">
+        <input data-var="--m-char-scale" data-unit="" type="number" step="0.01" value="1" aria-label="Mobile Character Scale">
+        <span class="ae-unit">x</span>
+      </div>
+    </div>
+
+    <div class="ae-row">
+      <div class="ae-label">Character Rotation</div>
+      <div class="ae-fields">
+        <input data-var="--m-char-rot" data-unit="deg" type="number" value="0" aria-label="Mobile Character Rotation">
+        <span class="ae-unit">deg</span>
+      </div>
+    </div>
+
+    <div class="ae-row">
+      <div class="ae-label">Character Max Height</div>
+      <div class="ae-fields">
+        <input data-var="--m-char-max-h" data-unit="vh" type="number" value="85" aria-label="Mobile Character Max Height">
+        <span class="ae-unit">vh</span>
+      </div>
+    </div>
+  </div>
+
   <!-- =========================
      ✅ AE-STYLE DESKTOP HERO EDITOR
      ========================= -->
@@ -2850,6 +2929,94 @@ footer{
     <button type="button" class="secondary" id="p5ResetDesktopCSS">Reset</button>
   </div>
 </div>
+
+    <div class="ae-group">
+    <div class="ae-group-title">Left Character</div>
+
+    <div class="ae-row">
+      <div class="ae-label">Left X</div>
+      <div class="ae-fields">
+        <input data-var="--char-left-x" type="number" value="-60" aria-label="Left Character X">
+        <span class="ae-unit">px</span>
+      </div>
+    </div>
+
+    <div class="ae-row">
+      <div class="ae-label">Left Y</div>
+      <div class="ae-fields">
+        <input data-var="--char-left-y" type="number" value="0" aria-label="Left Character Y">
+        <span class="ae-unit">px</span>
+      </div>
+    </div>
+
+    <div class="ae-row">
+      <div class="ae-label">Left Scale</div>
+      <div class="ae-fields">
+        <input data-var="--char-left-scale" data-unit="" type="number" step="0.01" value="1" aria-label="Left Character Scale">
+        <span class="ae-unit">x</span>
+      </div>
+    </div>
+
+    <div class="ae-row">
+      <div class="ae-label">Left Rotation</div>
+      <div class="ae-fields">
+        <input data-var="--char-left-rot" data-unit="deg" type="number" value="-4" aria-label="Left Character Rotation">
+        <span class="ae-unit">deg</span>
+      </div>
+    </div>
+
+    <div class="ae-row">
+      <div class="ae-label">Left Max Height</div>
+      <div class="ae-fields">
+        <input data-var="--char-left-max-h" data-unit="vh" type="number" value="95" aria-label="Left Character Max Height">
+        <span class="ae-unit">vh</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="ae-group">
+    <div class="ae-group-title">Right Character</div>
+
+    <div class="ae-row">
+      <div class="ae-label">Right X</div>
+      <div class="ae-fields">
+        <input data-var="--char-right-x" type="number" value="-40" aria-label="Right Character X">
+        <span class="ae-unit">px</span>
+      </div>
+    </div>
+
+    <div class="ae-row">
+      <div class="ae-label">Right Y</div>
+      <div class="ae-fields">
+        <input data-var="--char-right-y" type="number" value="0" aria-label="Right Character Y">
+        <span class="ae-unit">px</span>
+      </div>
+    </div>
+
+    <div class="ae-row">
+      <div class="ae-label">Right Scale</div>
+      <div class="ae-fields">
+        <input data-var="--char-right-scale" data-unit="" type="number" step="0.01" value="1" aria-label="Right Character Scale">
+        <span class="ae-unit">x</span>
+      </div>
+    </div>
+
+    <div class="ae-row">
+      <div class="ae-label">Right Rotation</div>
+      <div class="ae-fields">
+        <input data-var="--char-right-rot" data-unit="deg" type="number" value="4" aria-label="Right Character Rotation">
+        <span class="ae-unit">deg</span>
+      </div>
+    </div>
+
+    <div class="ae-row">
+      <div class="ae-label">Right Max Height</div>
+      <div class="ae-fields">
+        <input data-var="--char-right-max-h" data-unit="vh" type="number" value="95" aria-label="Right Character Max Height">
+        <span class="ae-unit">vh</span>
+      </div>
+    </div>
+  </div>
 
 <div id="rareTrackFx" class="rare-track-fx" aria-hidden="true">
   <div class="rare-track-flash"></div>
@@ -3996,61 +4163,81 @@ window.addEventListener("load", () => {
   const panelM = document.getElementById("p5LayoutPanel");          // your existing mobile panel
   const toggleM = document.getElementById("p5EditorToggle");         // your existing mobile toggle button
 
-  const STORAGE_M = "p5_mobile_layout_v2";
+ const STORAGE_M = "p5_mobile_layout_v3";
 
-  const DEFAULTS_M = {
-    "--m-frame-h": "85px",
-    "--m-cover": "54px",
-    "--m-icon": "8px",
-    "--m-play": "33px",
-    "--m-title": "11px",
-    "--m-artist": "9px",
-    "--m-vol-w": "88px",
-    "--m-seek-w": "132%",
+const DEFAULTS_M = {
+  "--m-frame-h": "85px",
+  "--m-cover": "54px",
+  "--m-icon": "8px",
+  "--m-play": "33px",
+  "--m-title": "11px",
+  "--m-artist": "9px",
+  "--m-vol-w": "88px",
+  "--m-seek-w": "132%",
 
-    "--m-frame-x": "0px",
-    "--m-frame-y": "0px",
-    "--m-cover-x": "0px",
-    "--m-cover-y": "-25px",
-    "--m-meta-x": "0px",
-    "--m-meta-y": "0px",
-    "--m-actions-x": "10px",
-    "--m-actions-y": "-5px",
-    "--m-mid-x": "0px",
-    "--m-mid-y": "10px",
-    "--m-bottom-x": "-65px",
-    "--m-bottom-y": "-14px",
-  };
+  "--m-frame-x": "0px",
+  "--m-frame-y": "0px",
+  "--m-cover-x": "0px",
+  "--m-cover-y": "-25px",
+  "--m-meta-x": "0px",
+  "--m-meta-y": "0px",
+  "--m-actions-x": "10px",
+  "--m-actions-y": "-5px",
+  "--m-mid-x": "0px",
+  "--m-mid-y": "10px",
+  "--m-bottom-x": "-65px",
+  "--m-bottom-y": "-14px",
+
+  /* mobile character */
+  "--m-char-x": "0px",
+  "--m-char-y": "0px",
+  "--m-char-scale": "1",
+  "--m-char-rot": "0deg",
+  "--m-char-max-h": "85vh",
+};
 
   // ---------- DESKTOP ----------
   const panelD = document.getElementById("p5LayoutPanelDesktop");
   const toggleD = document.getElementById("p5EditorToggleDesktop");
 
-  const STORAGE_D = "p5_desktop_layout_v1";
+  const STORAGE_D = "p5_desktop_layout_v2";
 
-  // These defaults match your CURRENT desktop layout (so editor never shows 0)
-  const DEFAULTS_D = {
-    "--d-player-width": "760px",
-    "--d-player-top": "12px",          // note: calc() can't be a number input, so we keep top fixed in CSS
-    "--d-frame-h": "105px",
-    "--d-cover": "122px",
-    "--d-title": "16px",
-    "--d-artist": "12px",
-    "--d-vol-w": "111px",
+const DEFAULTS_D = {
+  "--d-player-width": "760px",
+  "--d-player-top": "12px",
+  "--d-frame-h": "105px",
+  "--d-cover": "122px",
+  "--d-title": "16px",
+  "--d-artist": "12px",
+  "--d-vol-w": "111px",
 
-    "--d-frame-x": "0px",
-    "--d-frame-y": "0px",
-    "--d-cover-x": "0px",
-    "--d-cover-y": "0px",
-    "--d-meta-x": "0px",
-    "--d-meta-y": "0px",
-    "--d-actions-x": "0px",
-    "--d-actions-y": "-20px",
-    "--d-mid-x": "250px",
-    "--d-mid-y": "0px",
-    "--d-bottom-x": "0px",
-    "--d-bottom-y": "-58px",
-  };
+  "--d-frame-x": "0px",
+  "--d-frame-y": "0px",
+  "--d-cover-x": "0px",
+  "--d-cover-y": "0px",
+  "--d-meta-x": "0px",
+  "--d-meta-y": "0px",
+  "--d-actions-x": "0px",
+  "--d-actions-y": "-20px",
+  "--d-mid-x": "250px",
+  "--d-mid-y": "0px",
+  "--d-bottom-x": "0px",
+  "--d-bottom-y": "-58px",
+
+  /* desktop left character */
+  "--char-left-x": "-60px",
+  "--char-left-y": "0px",
+  "--char-left-scale": "1",
+  "--char-left-rot": "-4deg",
+  "--char-left-max-h": "95vh",
+
+  /* desktop right character */
+  "--char-right-x": "-40px",
+  "--char-right-y": "0px",
+  "--char-right-scale": "1",
+  "--char-right-rot": "4deg",
+  "--char-right-max-h": "95vh",
+};
 
   // ---------- helpers ----------
   function setVar(name, value){
@@ -4103,16 +4290,30 @@ window.addEventListener("load", () => {
     }
 
     inputs.forEach(inp=>{
-      const onChange = ()=>{
+           const onChange = ()=>{
         const v = inp.dataset.var;
-        const unit = inp.dataset.unit || "px";
+        const unit = inp.dataset.unit;
         const n = Number(inp.value);
         if(!Number.isFinite(n)) return;
 
-        setVar(v, unit === "%" ? `${n}%` : `${n}px`);
+        let finalValue;
+
+        if(unit === "%"){
+          finalValue = `${n}%`;
+        }else if(unit === "deg"){
+          finalValue = `${n}deg`;
+        }else if(unit === "vh"){
+          finalValue = `${n}vh`;
+        }else if(unit === ""){
+          finalValue = `${n}`;
+        }else{
+          finalValue = `${n}px`;
+        }
+
+        setVar(v, finalValue);
         saveNow(storageKey, defaults);
       };
-
+      
       inp.addEventListener("input", onChange);
       inp.addEventListener("change", onChange);
     });
@@ -4209,11 +4410,8 @@ window.addEventListener("load", () => {
   leftChar.style.display = "none";
   rightChar.style.display = "none";
 
-  if (Math.random() < 0.5) {
-    leftChar.style.display = "block";
-  } else {
-    rightChar.style.display = "block";
-  }
+  const chosen = Math.random() < 0.5 ? leftChar : rightChar;
+  chosen.style.display = "block";
 });
 
     window.addEventListener("load", () => {
