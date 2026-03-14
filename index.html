@@ -1661,23 +1661,22 @@
   word-break:keep-all;
   text-wrap:balance;
   user-select:none;
-  filter:blur(.35px);
+  filter:blur(1.2px);
   text-shadow:
     0 0 18px rgba(127,255,212,0.05),
     0 0 38px rgba(0,201,122,0.04);
   mix-blend-mode:screen;
   opacity:0;
   transform:
-    translate3d(var(--lx, 0px), calc(var(--ly, 0px) + 12px), 0)
+    translate3d(var(--lx, 0px), calc(var(--ly, 0px) + 26px), 0)
     rotate(var(--lr, 0deg))
-    scale(var(--ls, 0.985));
+    scale(.90);
   transition:
-    opacity .95s cubic-bezier(.22,.82,.2,1),
-    transform 1.15s cubic-bezier(.18,.84,.22,1),
-    filter .95s ease;
-  will-change: opacity, transform, filter;
-  backface-visibility: hidden;
-  -webkit-font-smoothing: antialiased;
+    opacity .72s cubic-bezier(.18,.84,.22,1),
+    transform .92s cubic-bezier(.18,.84,.22,1),
+    filter .72s ease;
+  will-change:opacity, transform, filter;
+  backface-visibility:hidden;
 }
 
 .rare-lyric-line.current{
@@ -1686,36 +1685,36 @@
 
 .rare-lyric-line.next{
   font-size:clamp(16px, 2.4vw, 34px);
-  color:rgba(235,255,248,0.075);
+  color:rgba(235,255,248,0.07);
 }
 
-.rare-lyric-line.current.is-visible{
+.rare-lyrics-layer.show .rare-lyric-line.current.is-visible{
   opacity:1;
   filter:blur(0px);
   transform:
     translate3d(var(--lx, 0px), var(--ly, 0px), 0)
     rotate(var(--lr, 0deg))
-    scale(var(--ls, 1));
+    scale(1);
 }
 
-.rare-lyric-line.next.is-visible{
-  opacity:.52;
-  filter:blur(.15px);
+.rare-lyrics-layer.show .rare-lyric-line.next.is-visible{
+  opacity:.28;
+  filter:blur(.8px);
   transform:
-    translate3d(var(--lx, 0px), calc(var(--ly, 0px) + 34px), 0)
+    translate3d(var(--lx, 0px), calc(var(--ly, 0px) + 42px), 0)
     rotate(var(--lr, 0deg))
-    scale(calc(var(--ls, 1) * .985));
+    scale(.86);
 }
 
 .rare-lyric-line.is-exiting{
   opacity:0 !important;
-  filter:blur(1.1px);
+  filter:blur(1.6px);
   transform:
-    translate3d(var(--lx, 0px), calc(var(--ly, 0px) - 18px), 0)
+    translate3d(var(--lx, 0px), calc(var(--ly, 0px) + 70px), 0)
     rotate(var(--lr, 0deg))
-    scale(calc(var(--ls, 1) * 1.02)) !important;
+    scale(.82) !important;
 }
-
+    
 .hero .title,
 .hero .subtitle,
 .hero .button{
@@ -3099,46 +3098,41 @@ function showRareLyricsAt(index){
   if(index < 0 || index >= rareLyricsData.length) return;
   if(index === activeRareLyricIndex) return;
 
-  const previousIndex = activeRareLyricIndex;
   activeRareLyricIndex = index;
 
   const currentLine = rareLyricsData[index];
   const nextLine = rareLyricsData[index + 1];
 
-  if(previousIndex !== -1){
-    rareLyricsCurrent.classList.add("is-exiting");
-    rareLyricsCurrent.classList.remove("is-visible");
-  }
-
-  const promoteText = rareLyricsNext.textContent && rareLyricsNext.textContent.trim().length
-    ? rareLyricsNext.textContent
-    : (currentLine?.text || " ");
-
-  const shouldPromote =
-    previousIndex !== -1 &&
-    rareLyricsData[previousIndex + 1] &&
-    rareLyricsData[previousIndex + 1].text === currentLine?.text;
-
-  if(shouldPromote){
-    rareLyricsCurrent.textContent = promoteText;
-  } else {
-    rareLyricsCurrent.textContent = currentLine?.text || " ";
-  }
-
-  stylizeLyricLine(rareLyricsCurrent, index, "current");
+  rareLyricsCurrent.classList.remove("is-visible");
+  rareLyricsCurrent.classList.add("is-exiting");
 
   rareLyricsNext.classList.remove("is-visible", "is-exiting");
-  rareLyricsNext.textContent = nextLine?.text || " ";
+
+  stylizeLyricLine(rareLyricsCurrent, index, "current");
   stylizeLyricLine(rareLyricsNext, index + 1, "next");
 
+  rareLyricsNext.textContent = currentLine?.text || " ";
+
   requestAnimationFrame(() => {
-    rareLyricsCurrent.classList.remove("is-exiting");
-    rareLyricsCurrent.classList.add("is-visible");
+    requestAnimationFrame(() => {
+      rareLyricsNext.classList.add("is-visible");
+    });
+  });
+
+  setTimeout(() => {
+    rareLyricsCurrent.textContent = currentLine?.text || " ";
+    rareLyricsCurrent.classList.remove("is-exiting", "is-visible");
+
+    stylizeLyricLine(rareLyricsCurrent, index + 1, "current");
+    rareLyricsNext.textContent = nextLine?.text || " ";
+    rareLyricsNext.classList.remove("is-visible");
 
     if(nextLine){
-      rareLyricsNext.classList.add("is-visible");
+      requestAnimationFrame(() => {
+        rareLyricsNext.classList.add("is-visible");
+      });
     }
-  });
+  }, 520);
 }
 
 function tickRareLyrics(){
