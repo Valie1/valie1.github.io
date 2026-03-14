@@ -397,7 +397,18 @@
   
   /* ===== Persona 5 Custom Player ===== */  
   .p5-player{ position:relative; width:100%; background:#000; display:flex; flex-direction:column; min-height:0; }  
-  .p5-video{ width:100%; flex:1; height:100%; object-fit:contain; display:block; background:#000; }  
+  .p5-video{
+  width:100%;
+  flex:1;
+  height:100%;
+  display:block;
+  background:#000;
+  object-fit:cover;
+}
+
+.p5-player.playing .p5-video{
+  object-fit:contain;
+}
   
   @media (hover:hover) and (pointer:fine){  
     .p5-player, .p5-player *{ cursor: none !important; }  
@@ -2262,9 +2273,9 @@ footer{
   <h2 class="section-title">Portfolio</h2>    <div class="video-grid">  
     <!-- CARD 1 -->  
 <div class="video-card">    <div class="p5-player" data-cursor="precision">  
-<video class="p5-video" preload="metadata" playsinline webkit-playsinline>
-  <source src="video1.mp4" type="video/mp4">  
-    </video>  <div class="p5-gestures" aria-hidden="true">  
+<video class="p5-video" preload="metadata" playsinline webkit-playsinline poster="Velocity Porftolio.jpg">
+  <source src="video1.mp4" type="video/mp4">
+</video>  <div class="p5-gestures" aria-hidden="true">  
   <button class="p5-zone p5-left" type="button"></button>  
   <button class="p5-zone p5-mid" type="button"></button>  
   <button class="p5-zone p5-right" type="button"></button>  
@@ -2321,9 +2332,9 @@ footer{
   </div>  </div> <!-- CLOSE .video-card -->  <!-- CARD 2 -->
 
    <div class="video-card">    <div class="p5-player" data-cursor="precision">  
-    <video class="p5-video" preload="metadata" playsinline webkit-playsinline>  
-      <source src="video2.mp4" type="video/mp4">  
-    </video>  <div class="p5-gestures" aria-hidden="true">  
+    <video class="p5-video" preload="metadata" playsinline webkit-playsinline poster="Dead Space Portfolio.jpg">
+  <source src="video2.mp4" type="video/mp4">
+</video>  <div class="p5-gestures" aria-hidden="true">  
   <button class="p5-zone p5-left" type="button"></button>  
   <button class="p5-zone p5-mid" type="button"></button>  
   <button class="p5-zone p5-right" type="button"></button>  
@@ -2380,9 +2391,9 @@ footer{
   </div>  </div> <!-- CLOSE .video-card -->  
     <!-- CARD 3 -->  
    <div class="video-card">    <div class="p5-player" data-cursor="precision">  
-    <video class="p5-video" preload="metadata" playsinline webkit-playsinline>  
-      <source src="video3.mp4" type="video/mp4">  
-    </video>  <div class="p5-gestures" aria-hidden="true">  
+    <video class="p5-video" preload="metadata" playsinline webkit-playsinline poster="Football Porftolio.jpg">
+  <source src="video3.mp4" type="video/mp4">
+</video>  <div class="p5-gestures" aria-hidden="true">  
   <button class="p5-zone p5-left" type="button"></button>  
   <button class="p5-zone p5-mid" type="button"></button>  
   <button class="p5-zone p5-right" type="button"></button>  
@@ -2440,9 +2451,9 @@ footer{
 <div class="video-card">
 
   <div class="p5-player" data-cursor="precision">  
-    <video class="p5-video" preload="metadata" playsinline webkit-playsinline>  
-      <source src="video4.mp4" type="video/mp4">  
-    </video>  <div class="p5-gestures" aria-hidden="true">  
+   <video class="p5-video" preload="metadata" playsinline webkit-playsinline poster="persona portfolio.jpg">
+  <source src="video4.mp4" type="video/mp4">
+</video>  <div class="p5-gestures" aria-hidden="true">  
   <button class="p5-zone p5-left" type="button"></button>  
   <button class="p5-zone p5-mid" type="button"></button>  
   <button class="p5-zone p5-right" type="button"></button>  
@@ -3712,12 +3723,13 @@ window.addEventListener("load", () => {
 }  
   
     function setPlayUI(){  
-      const playing = !video.paused && !video.ended;  
-      bigPlay.style.display = playing ? "none" : "grid";  
-      playBtn.innerHTML = playing  
-        ? '<img src="pause.png" class="p5-icon" alt="Pause">'  
-        : '<img src="start.png" class="p5-icon" alt="Play">';  
-    }  
+  const playing = !video.paused && !video.ended;  
+  bigPlay.style.display = playing ? "none" : "grid";  
+  playBtn.innerHTML = playing  
+    ? '<img src="pause.png" class="p5-icon" alt="Pause">'  
+    : '<img src="start.png" class="p5-icon" alt="Play">';
+  player.classList.toggle("playing", playing);
+}
   
     function clamp01(x){ return Math.min(1, Math.max(0, x)); }  
     function bumpVolume(delta){  
