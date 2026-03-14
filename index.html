@@ -2180,6 +2180,27 @@ footer{
     text-shadow: none !important;
   }
 }
+
+    /* =========================
+   SCROLL REVEAL ANIMATIONS
+   ========================= */
+
+.reveal{
+  opacity: 0;
+  transform: translateY(40px);
+}
+
+.reveal.show{
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+/* stagger for video cards */
+.video-card.reveal:nth-child(1).show{ transition-delay: 0.1s; }
+.video-card.reveal:nth-child(2).show{ transition-delay: 0.2s; }
+.video-card.reveal:nth-child(3).show{ transition-delay: 0.3s; }
+.video-card.reveal:nth-child(4).show{ transition-delay: 0.4s; }
     
 </style>  </head>  <body oncontextmenu="return false;">
   <div id="ambientParticles" class="ambient-particles" aria-hidden="true"></div>
@@ -2270,9 +2291,9 @@ footer{
   <a href="#portfolio" class="button" data-cursor="link">Watch My Work</a>  
   <a href="#contact" class="button" style="margin-top:16px;background:rgba(0,0,0,0.55);border:1px solid rgba(255,255,255,0.16);box-shadow:0 0 24px rgba(0,201,122,0.18);" data-cursor="link">Contact Me</a>  
 </section>  <section id="portfolio" class="portfolio">  
-  <h2 class="section-title">Portfolio</h2>    <div class="video-grid">  
+  <h2 class="section-title reveal">Portfolio</h2>    <div class="video-grid">  
     <!-- CARD 1 -->  
-<div class="video-card">    <div class="p5-player" data-cursor="precision">  
+<div class="video-card reveal">    <div class="p5-player" data-cursor="precision">  
 <video class="p5-video" preload="metadata" playsinline webkit-playsinline poster="Velocity Porftolio.jpg">
   <source src="video1.mp4" type="video/mp4">
 </video>  <div class="p5-gestures" aria-hidden="true">  
@@ -2331,7 +2352,7 @@ footer{
     Velocity Edit<span>
   </div>  </div> <!-- CLOSE .video-card -->  <!-- CARD 2 -->
 
-   <div class="video-card">    <div class="p5-player" data-cursor="precision">  
+   <div class="video-card reveal">    <div class="p5-player" data-cursor="precision">  
     <video class="p5-video" preload="metadata" playsinline webkit-playsinline poster="Dead Space Portfolio.jpg">
   <source src="video2.mp4" type="video/mp4">
 </video>  <div class="p5-gestures" aria-hidden="true">  
@@ -2390,7 +2411,7 @@ footer{
     Music Video Edit <span> 
   </div>  </div> <!-- CLOSE .video-card -->  
     <!-- CARD 3 -->  
-   <div class="video-card">    <div class="p5-player" data-cursor="precision">  
+   <div class="video-card reveal">    <div class="p5-player" data-cursor="precision">  
     <video class="p5-video" preload="metadata" playsinline webkit-playsinline poster="Football Porftolio.jpg">
   <source src="video3.mp4" type="video/mp4">
 </video>  <div class="p5-gestures" aria-hidden="true">  
@@ -2448,7 +2469,7 @@ footer{
   </div> <!-- CLOSE .p5-player -->    <div class="video-label">  
     Football Edit<span>  
   </div>  </div> <!-- CLOSE .video-card -->  <!-- CARD 4 -->  
-<div class="video-card">
+<div class="video-card reveal">
 
   <div class="p5-player" data-cursor="precision">  
    <video class="p5-video" preload="metadata" playsinline webkit-playsinline poster="persona portfolio.jpg">
@@ -2508,7 +2529,7 @@ footer{
   </div> <!-- CLOSE .p5-player -->    <div class="video-label">  
     Long Form Video Edit<span>
   </div>  </div> <!-- CLOSE .video-card -->  </div> <!-- CLOSE .video-grid -->  
-</section> <!-- CLOSE #portfolio -->  <section id="contact" class="contact">  
+</section> <!-- CLOSE #portfolio -->  <section id="contact" class="contact reveal">  
   <div class="contact-wrap">  
     <div class="contact-inner">  
       <div class="contact-kicker">Business / Commissions</div>  
@@ -4202,6 +4223,23 @@ window.addEventListener("load", () => {
 
 window.addEventListener("resize", () => {
   buildAmbientParticles();
+});
+
+    /* =========================
+   SCROLL REVEAL OBSERVER
+   ========================= */
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add("show");
+    }
+  });
+}, {
+  threshold: 0.15
+});
+
+document.querySelectorAll(".reveal").forEach((el) => {
+  revealObserver.observe(el);
 });
     
 </script>  
