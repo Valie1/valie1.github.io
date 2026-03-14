@@ -2248,6 +2248,29 @@ footer{
 
 /* hero load animation */
 .hero-load{
+  opacity: 0;
+  transform: translateY(30px);
+  will-change: opacity, transform;
+}
+
+.hero-load.show{
+  animation: heroReveal 1s ease forwards;
+}
+
+.hero-load-delay-1.show{ animation-delay: 0.15s; }
+.hero-load-delay-2.show{ animation-delay: 0.3s; }
+.hero-load-delay-3.show{ animation-delay: 0.45s; }
+
+@keyframes heroReveal{
+  from{
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to{
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
 /* contact buttons feel smoother */
 .contact-btn,
