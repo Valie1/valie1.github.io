@@ -1612,6 +1612,205 @@
   }
 }
 
+  /* =========================
+   RARE LYRICS CINEMA LAYER
+   only for PROVANT
+   ========================= */
+.rare-lyrics-layer{
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  overflow:hidden;
+  opacity:0;
+  transition:opacity .8s ease;
+}
+
+.rare-lyrics-layer.show{
+  opacity:1;
+}
+
+.rare-lyrics-backdrop{
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(127,255,212,0.05), rgba(0,0,0,0) 34%),
+    linear-gradient(180deg, rgba(0,0,0,0.06), rgba(0,0,0,0.16));
+  opacity:.55;
+}
+
+.rare-lyrics-stage{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:8vh 7vw;
+}
+
+.rare-lyric-line{
+  position:absolute;
+  max-width:min(1100px, 86vw);
+  text-align:center;
+  font-weight:800;
+  text-transform:none;
+  line-height:.96;
+  letter-spacing:.08em;
+  color:rgba(235,255,248,0.14);
+  white-space:normal;
+  word-break:keep-all;
+  text-wrap:balance;
+  user-select:none;
+  filter:blur(.35px);
+  text-shadow:
+    0 0 18px rgba(127,255,212,0.05),
+    0 0 38px rgba(0,201,122,0.04);
+  mix-blend-mode:screen;
+  opacity:0;
+  transform:
+    translate3d(var(--lx, 0px), var(--ly, 0px), 0)
+    rotate(var(--lr, 0deg))
+    scale(var(--ls, 1));
+  transition:
+    opacity .9s cubic-bezier(.2,.8,.2,1),
+    transform 1.15s cubic-bezier(.18,.84,.22,1),
+    filter .8s ease;
+  will-change:opacity, transform, filter;
+}
+
+.rare-lyric-line.current{
+  font-size:clamp(28px, 5.5vw, 88px);
+  opacity:0;
+}
+
+.rare-lyric-line.next{
+  font-size:clamp(16px, 2.4vw, 34px);
+  color:rgba(235,255,248,0.08);
+  opacity:0;
+}
+
+.rare-lyrics-layer.show .rare-lyric-line.current.is-visible{
+  opacity:1;
+  filter:blur(0px);
+}
+
+.rare-lyrics-layer.show .rare-lyric-line.next.is-visible{
+  opacity:.65;
+  filter:blur(.2px);
+}
+
+.rare-lyric-line.is-exiting{
+  opacity:0 !important;
+  filter:blur(1.2px);
+}
+
+.hero .character,
+.hero .title,
+.hero .subtitle,
+.hero .button{
+  position:relative;
+  z-index:2;
+}
+
+/* subtle center weighting so lyrics sit behind hero content better */
+.rare-lyric-line[data-pos="center"]{
+  transform:
+    translate3d(0, 0, 0)
+    rotate(0deg)
+    scale(1);
+}
+
+.rare-lyric-line[data-pos="upper-left"]{
+  transform:
+    translate3d(-10vw, -12vh, 0)
+    rotate(-6deg)
+    scale(1.02);
+}
+
+.rare-lyric-line[data-pos="upper-right"]{
+  transform:
+    translate3d(10vw, -12vh, 0)
+    rotate(6deg)
+    scale(1.02);
+}
+
+.rare-lyric-line[data-pos="lower-left"]{
+  transform:
+    translate3d(-11vw, 11vh, 0)
+    rotate(-4deg)
+    scale(1.00);
+}
+
+.rare-lyric-line[data-pos="lower-right"]{
+  transform:
+    translate3d(11vw, 11vh, 0)
+    rotate(4deg)
+    scale(1.00);
+}
+
+/* desktop polish */
+@media (min-width: 821px) and (hover:hover) and (pointer:fine){
+  .rare-lyrics-layer.show{
+    opacity:.96;
+  }
+
+  .rare-lyric-line.current{
+    letter-spacing:.10em;
+  }
+
+  .rare-lyric-line.next{
+    letter-spacing:.14em;
+  }
+}
+
+/* phones / iOS / low power */
+@media (max-width: 820px){
+  .rare-lyrics-stage{
+    padding:12vh 8vw;
+  }
+
+  .rare-lyric-line{
+    max-width:88vw;
+    mix-blend-mode:normal;
+    text-shadow:none;
+    filter:none;
+    transition:
+      opacity .55s ease,
+      transform .7s ease;
+  }
+
+  .rare-lyric-line.current{
+    font-size:clamp(20px, 7.8vw, 42px);
+    color:rgba(245,255,250,0.11);
+    letter-spacing:.06em;
+  }
+
+  .rare-lyric-line.next{
+    font-size:clamp(12px, 3.3vw, 18px);
+    color:rgba(245,255,250,0.07);
+    letter-spacing:.08em;
+  }
+
+  .rare-lyric-line[data-pos="upper-left"],
+  .rare-lyric-line[data-pos="upper-right"],
+  .rare-lyric-line[data-pos="lower-left"],
+  .rare-lyric-line[data-pos="lower-right"]{
+    transform:
+      translate3d(0, 0, 0)
+      rotate(0deg)
+      scale(1);
+  }
+}
+
+/* accessibility */
+@media (prefers-reduced-motion: reduce){
+  .rare-lyric-line{
+    transition:opacity .2s linear !important;
+    transform:none !important;
+    filter:none !important;
+  }
+}
+
 /* =========================
    MOBILE TUNING
    ========================= */
@@ -2064,7 +2263,14 @@ footer{
  </div>
 </div>
 
-  <section class="hero">  
+  <section class="hero">
+    <div id="rareLyricsLayer" class="rare-lyrics-layer" aria-hidden="true">
+  <div class="rare-lyrics-backdrop"></div>
+  <div class="rare-lyrics-stage">
+    <div id="rareLyricsCurrent" class="rare-lyric-line current"> </div>
+    <div id="rareLyricsNext" class="rare-lyric-line next"> </div>
+  </div>
+</div>
  <img src="Enkidu1.png" class="character enkidu-left" alt="Enkidu left">
  <img src="Enkidu2.png" class="character enkidu-right" alt="Enkidu right">    <h1 class="title hero-load">VALIE</h1>  
   <p class="subtitle hero-load hero-load-delay-1">The Editor That Makes Your Vision Come To Life</p>  
@@ -2692,6 +2898,267 @@ music.addEventListener("ended", syncHeroIcon);
     cover: "cover4.jpg"
   }
 ];
+    /* =========================
+   PROVANT / rare track lyrics
+   synced from your LRC
+   ========================= */
+
+const RARE_LYRICS_LRC = `
+[00:08.65] 幻惑の対価
+[00:09.55] Ya don't get it 絶命かgiftかの脅威
+[00:11.95] 甘んじて受けるか that they tag you with
+[00:14.15] So go face what's coming and don't ask why
+[00:16.58] 度外視のfakeが牽強付会
+[00:18.22] I'm always getting your back, but now you got to grip the trigger
+[00:21.12] 翻す深紅 come on! Show me how you think!
+[00:23.43] 繋げ さもなくば低コントラストの善悪
+[00:25.88] 懺悔を吐けば 骰子次第
+[00:27.93] Just like all the rest? (Get out, get up, get out, get up)
+[00:34.90] (Get out, get up, get out, get up)
+[00:38.22] Go take some cover
+[00:39.83] But ya gotta break out to be the brat
+[00:42.18] 'Cause ya tired of being just a copycat
+[00:44.47] Feel the blues チラつく筋書き乱す飢渇をfeedback
+[00:47.75] Duck and cover
+[00:49.09] But ya gotta bite back, this ain't chitchat
+[00:51.43] 'Cause ya tired of being just a copycat
+[00:53.77] Cuts and bruises 超俗した次元の契約を刻む
+[00:57.06] Fist emblazoned
+[00:58.45] Don't pretend to be someone you're not 'cause you feel
+[01:00.83] 攻め込んだ in check なぎ倒したknight
+[01:03.05] Today's not the day for you to die
+[01:05.44] The drifting phantoms 下す采配
+[01:07.60] Don't pretend to be trapped, you can always appeal
+[01:10.16] 無抵抗に匙を投げるtechはない
+[01:12.37] So cast all your spells up in the sky
+[01:14.61] Judge his master 破滅問う原罪
+[01:18.58] Impersonator!
+[01:19.36] Ya don't get it, get dressed and feast upon it
+[01:21.81] You're not sick of the labels that they tag you with?
+[01:24.13] So go face what's coming and don't ask why
+[01:26.31] You can't sit and fake a headache and cry
+[01:28.17] I'm always getting your back, but now you got to grip the trigger
+[01:31.09] Surf or sink, come on! Show me how you think!
+[01:33.49] Now get some and be yourself and no backin' out
+[01:35.79] Now get some, yeah! And cast the first die!
+[01:37.92] 逆説歪む黎明 (get out, get up, get out, get up)
+[01:44.93] (Get out, get up, get out, get up)
+[01:48.18] Go take some cover
+[01:49.75] But ya gotta break out to be the brat
+[01:52.04] 'Cause ya tired of being just a copycat
+[01:54.30] Feel the blues ギラつく指先散らす未完のfeedback
+[01:57.79] Duck and cover
+[01:59.02] But ya gotta bite back, this ain't chitchat
+[02:01.38] 'Cause ya tired of being just a copycat
+[02:03.75] Cuts and bruises 盲目的悦の真贋
+[02:06.62] Go take some cover
+[02:08.31] But ya gotta break out to be the brat
+[02:10.72] 'Cause ya tired of being just a copycat
+[02:12.99] Feel the blues チラつく筋書き乱す飢渇をfeedback
+[02:16.37] Duck and cover
+[02:17.66] But ya gotta bite back, this ain't chitchat
+[02:20.04] 'Cause ya tired of being just a copycat
+[02:22.31] Cuts and bruises 超俗した次元の契約を刻む
+[02:25.65] Fist emblazoned
+[02:26.91] Don't pretend to be someone you're not 'cause you feel
+[02:29.38] 攻め込んだ in check なぎ倒したknight
+[02:31.66] Today's not the day for you to die
+[02:33.98] The drifting phantoms 下す采配
+[02:36.34] Don't pretend to be trapped, you can always appeal
+[02:38.68] 無抵抗に匙を投げるtechはない
+[02:40.82] So cast all your spells up in the sky
+[02:43.35] Judge his master 破滅問う原罪
+`;
+
+function parseLrc(text){
+  return text
+    .split("\n")
+    .map(line => line.trim())
+    .filter(Boolean)
+    .map(line => {
+      const m = line.match(/\[(\d{2}):(\d{2}\.\d{2})\]\s*(.*)/);
+      if(!m) return null;
+      const min = Number(m[1]);
+      const sec = Number(m[2]);
+      return {
+        time: min * 60 + sec,
+        text: m[3] || ""
+      };
+    })
+    .filter(Boolean)
+    .sort((a, b) => a.time - b.time);
+}
+
+const rareLyricsData = parseLrc(RARE_LYRICS_LRC);
+const rareLyricsLayer = document.getElementById("rareLyricsLayer");
+const rareLyricsCurrent = document.getElementById("rareLyricsCurrent");
+const rareLyricsNext = document.getElementById("rareLyricsNext");
+
+let activeRareLyricIndex = -1;
+let rareLyricsRaf = null;
+
+const lyricPositionsDesktop = [
+  "center",
+  "upper-left",
+  "upper-right",
+  "lower-left",
+  "lower-right",
+  "center"
+];
+
+function isMobileLyricsMode(){
+  return window.innerWidth <= 820;
+}
+
+function randomFloat(min, max){
+  return min + Math.random() * (max - min);
+}
+
+function stylizeLyricLine(el, index, mode){
+  const mobile = isMobileLyricsMode();
+  const pos = mobile ? "center" : lyricPositionsDesktop[index % lyricPositionsDesktop.length];
+
+  el.dataset.pos = pos;
+
+  const driftX = mobile ? 0 : randomFloat(-12, 12);
+  const driftY = mobile ? 0 : randomFloat(-10, 10);
+  const rot = mobile ? 0 : randomFloat(-3.5, 3.5);
+  const scale = mode === "next"
+    ? (mobile ? 1 : randomFloat(0.96, 1.02))
+    : (mobile ? 1 : randomFloat(0.98, 1.04));
+
+  el.style.setProperty("--lx", driftX + "px");
+  el.style.setProperty("--ly", driftY + "px");
+  el.style.setProperty("--lr", rot + "deg");
+  el.style.setProperty("--ls", scale);
+}
+
+function setRareLyricsVisible(show){
+  if(!rareLyricsLayer) return;
+  rareLyricsLayer.classList.toggle("show", !!show);
+
+  if(!show){
+    rareLyricsCurrent.classList.remove("is-visible", "is-exiting");
+    rareLyricsNext.classList.remove("is-visible", "is-exiting");
+    rareLyricsCurrent.textContent = " ";
+    rareLyricsNext.textContent = " ";
+    activeRareLyricIndex = -1;
+  }
+}
+
+function findLyricIndexAtTime(time){
+  let idx = -1;
+  for(let i = 0; i < rareLyricsData.length; i++){
+    if(time >= rareLyricsData[i].time){
+      idx = i;
+    } else {
+      break;
+    }
+  }
+  return idx;
+}
+
+function showRareLyricsAt(index){
+  if(index < 0 || index >= rareLyricsData.length) return;
+  if(index === activeRareLyricIndex) return;
+
+  activeRareLyricIndex = index;
+
+  const currentLine = rareLyricsData[index];
+  const nextLine = rareLyricsData[index + 1];
+
+  rareLyricsCurrent.classList.remove("is-visible", "is-exiting");
+  rareLyricsNext.classList.remove("is-visible", "is-exiting");
+
+  stylizeLyricLine(rareLyricsCurrent, index, "current");
+  stylizeLyricLine(rareLyricsNext, index + 1, "next");
+
+  rareLyricsCurrent.textContent = currentLine?.text || " ";
+  rareLyricsNext.textContent = nextLine?.text || " ";
+
+  requestAnimationFrame(() => {
+    rareLyricsCurrent.classList.add("is-visible");
+    if(nextLine) rareLyricsNext.classList.add("is-visible");
+  });
+}
+
+function tickRareLyrics(){
+  if(!music){
+    rareLyricsRaf = requestAnimationFrame(tickRareLyrics);
+    return;
+  }
+
+  const isRareTrack = currentIndex === RARE_TRACK_INDEX;
+  const musicPlaying = !music.paused && !music.ended;
+
+  if(!isRareTrack || !musicPlaying){
+    setRareLyricsVisible(false);
+    rareLyricsRaf = requestAnimationFrame(tickRareLyrics);
+    return;
+  }
+
+  setRareLyricsVisible(true);
+
+  const t = music.currentTime || 0;
+  const lyricIndex = findLyricIndexAtTime(t);
+
+  if(lyricIndex !== -1){
+    showRareLyricsAt(lyricIndex);
+  } else {
+    rareLyricsCurrent.textContent = " ";
+    rareLyricsNext.textContent = rareLyricsData[0]?.text || " ";
+    rareLyricsCurrent.classList.remove("is-visible");
+    rareLyricsNext.classList.add("is-visible");
+  }
+
+  rareLyricsRaf = requestAnimationFrame(tickRareLyrics);
+}
+
+function startRareLyricsEngine(){
+  if(rareLyricsRaf) cancelAnimationFrame(rareLyricsRaf);
+  rareLyricsRaf = requestAnimationFrame(tickRareLyrics);
+}
+
+function stopRareLyricsEngine(){
+  if(rareLyricsRaf) cancelAnimationFrame(rareLyricsRaf);
+  rareLyricsRaf = null;
+  setRareLyricsVisible(false);
+}
+
+/* keep lyrics state aligned with current rare track state */
+const originalSyncRareVisualState = syncRareVisualState;
+syncRareVisualState = function(){
+  originalSyncRareVisualState();
+  const isRare = currentIndex === RARE_TRACK_INDEX;
+  if(!isRare){
+    setRareLyricsVisible(false);
+  }
+};
+
+/* start once */
+window.addEventListener("load", startRareLyricsEngine);
+window.addEventListener("resize", () => {
+  if(activeRareLyricIndex >= 0){
+    showRareLyricsAt(activeRareLyricIndex);
+  }
+});
+
+/* keep it clean when pausing/changing */
+music.addEventListener("pause", () => {
+  if(currentIndex === RARE_TRACK_INDEX){
+    setRareLyricsVisible(false);
+  }
+});
+
+music.addEventListener("play", () => {
+  if(currentIndex === RARE_TRACK_INDEX){
+    setRareLyricsVisible(true);
+  }
+});
+
+music.addEventListener("ended", () => {
+  setRareLyricsVisible(false);
+});
   
   const heroPlayer = document.getElementById("p5MusicHero");  
     /* =========================
