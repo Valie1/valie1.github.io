@@ -3732,10 +3732,6 @@ window.addEventListener("load", () => {
   return /iPhone/i.test(navigator.userAgent);
 }
 
-function isIPhone() {
-  return /iPhone/i.test(navigator.userAgent);
-}
-
 async function togglePlayerFullscreen(){
   setActive(player);
 
@@ -3747,13 +3743,13 @@ async function togglePlayerFullscreen(){
       return;
     }
 
-    // iPhone only: use native video fullscreen
+    // iPhone only
     if (isIPhone() && typeof video.webkitEnterFullscreen === "function") {
       video.webkitEnterFullscreen();
       return;
     }
 
-    // Desktop / Mac: fullscreen the custom wrapper first
+    // Desktop / Mac: fullscreen wrapper first
     if (player.requestFullscreen) {
       await player.requestFullscreen();
     } else if (player.webkitRequestFullscreen) {
