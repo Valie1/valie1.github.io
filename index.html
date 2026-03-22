@@ -45,92 +45,30 @@
   /* Desktop left character */
   --char-left-x: 200px;
   --char-left-y: -900px;
-  --char-left-scale: 1.0;
+  --char-left-scale: 2.1;
   --char-left-rot: -4deg;
   --char-left-max-h: 95vh;
 
   /* Desktop right character */
   --char-right-x: 350px;
   --char-right-y: -840px;
-  --char-right-scale: 1.0;
+  --char-right-scale: 2.1;
   --char-right-rot: 4deg;
   --char-right-max-h: 95vh;
 
    /* Mobile left character */
   --m-left-x: 0px;
   --m-left-y: 680px;
-  --m-left-scale: 1.0;
+  --m-left-scale: 2.1;
   --m-left-rot: 0deg;
   --m-left-max-h: 85vh;
 
   /* Mobile right character */
   --m-right-x: -100px;
   --m-right-y: 630px;
-  --m-right-scale: 1.0;
+  --m-right-scale: 2.1;
   --m-right-rot: 0deg;
   --m-right-max-h: 85vh;
-}
-
-    /* Characters base style */
-.Rover-left, .Rover-right {
-  position: absolute;
-  z-index: 2;
-  opacity: 0; /* start invisible */
-  pointer-events: none;
-  transform-origin: bottom center;
-}
-
-/* Desktop left character */
-.Rover-left {
-  left: 30%; 
-  bottom: var(--char-left-y);
-  max-height: var(--char-left-max-h);
-  transform: rotate(var(--char-left-rot)) scale(var(--char-left-scale));
-  filter: drop-shadow(0 0 30px rgba(255,215,0,0.6))
-          drop-shadow(0 0 70px rgba(255,223,120,0.3));
-}
-
-/* Desktop right character */
-.Rover-right {
-  left: 70%; 
-  bottom: var(--char-right-y);
-  max-height: var(--char-right-max-h);
-  transform: rotate(var(--char-right-rot)) scale(var(--char-right-scale));
-  filter: drop-shadow(0 0 30px rgba(255,215,0,0.6))
-          drop-shadow(0 0 70px rgba(255,223,120,0.3));
-}
-
-/* Slide-in keyframes */
-@keyframes slideInLeft {
-  0% { bottom: var(--char-left-y); left: -300px; opacity: 0; }
-  100% { bottom: 0; left: 30%; opacity: 1; }
-}
-
-@keyframes slideInRight {
-  0% { bottom: var(--char-right-y); left: 120%; opacity: 0; }
-  100% { bottom: 0; left: 70%; opacity: 1; }
-}
-
-/* Animate when triggered */
-.Rover-left.animate {
-  animation: slideInLeft 1.2s ease-out forwards;
-  animation-delay: 0.2s;
-}
-
-.Rover-right.animate {
-  animation: slideInRight 1.2s ease-out forwards;
-  animation-delay: 0.4s;
-}
-
-/* Mobile adjustments */
-@media (max-width: 768px) {
-  .Rover-left, .Rover-right {
-    left: 50% !important;
-    transform: translateX(-50%) scale(1) !important;
-    bottom: 0 !important;
-    display: block !important;
-    max-height: 50vh !important;
-  }
 }
   /* Hide system cursor ONLY on non-touch devices */  
   @media (hover:hover) and (pointer:fine){
@@ -3710,28 +3648,6 @@ function updateBackground() {
 window.addEventListener("DOMContentLoaded", () => {
   updateBackground();
   setInterval(updateBackground, 60000);
-});
-
-const intro = document.querySelector('.intro');
-const skipBtn = document.querySelector('.intro-skip');
-const leftChar = document.querySelector('.Rover-left');
-const rightChar = document.querySelector('.Rover-right');
-
-function showCharacters() {
-  leftChar.classList.add('animate');
-  rightChar.classList.add('animate');
-}
-
-// Trigger after skip
-skipBtn.addEventListener('click', () => {
-  intro.classList.add('hide');
-  showCharacters();
-});
-
-// Trigger after intro video ends
-document.getElementById('introVideo').addEventListener('ended', () => {
-  intro.classList.add('hide');
-  showCharacters();
 });
 
 </script>  
