@@ -2400,22 +2400,24 @@ function rollRareTrack() {
     resize1: "RESIZE_1.gif",  
     resize2: "RESIZE_2.gif",  
   };  
-    const CURSOR_HOTSPOTS = {
-  normal:      { x: 2,  y: 1  },
-  link:        { x: 9,  y: 8  },
-  text:        { x: 20, y: 20 },
-  precision:   { x: 20, y: 20 }, // center of 40px cursor
-  busy:        { x: 20, y: 20 },
-  help:        { x: 10, y: 8  },
-  move:        { x: 20, y: 20 },
-  unavailable: { x: 10, y: 8  },
-  handwriting: { x: 9,  y: 8  },
-  alternate:   { x: 9,  y: 8  },
-  vib:         { x: 10, y: 8  },
-  hResize:     { x: 20, y: 20 },
-  vResize:     { x: 20, y: 20 },
-  resize1:     { x: 20, y: 20 },
-  resize2:     { x: 20, y: 20 }
+const SHARED_HOTSPOT = { x: 2, y: 1 };
+
+const CURSOR_HOTSPOTS = {
+  normal:      SHARED_HOTSPOT,
+  link:        SHARED_HOTSPOT,
+  text:        SHARED_HOTSPOT,
+  precision:   SHARED_HOTSPOT,
+  busy:        SHARED_HOTSPOT,
+  help:        SHARED_HOTSPOT,
+  move:        SHARED_HOTSPOT,
+  unavailable: SHARED_HOTSPOT,
+  handwriting: SHARED_HOTSPOT,
+  alternate:   SHARED_HOTSPOT,
+  vib:         SHARED_HOTSPOT,
+  hResize:     SHARED_HOTSPOT,
+  vResize:     SHARED_HOTSPOT,
+  resize1:     SHARED_HOTSPOT,
+  resize2:     SHARED_HOTSPOT
 };
   
   const gifCursor = document.getElementById("gifCursor");  
@@ -2600,17 +2602,22 @@ document.addEventListener("mouseup", (e)=>{
   if(!t) return;
   spawnCursorParticles(t.clientX, t.clientY);
 }, { passive: true });
-  
-  function attachBusyCursorToVideos(){  
-    document.querySelectorAll("video").forEach(v=>{  
-      v.addEventListener("waiting", ()=> { if(CAN_HOVER) setCursor("busy"); });  
-      v.addEventListener("stalled", ()=> { if(CAN_HOVER) setCursor("busy"); });  
-      v.addEventListener("playing", ()=> { if(CAN_HOVER) setCursor("precision"); });  
-      v.addEventListener("pause", ()=> { if(CAN_HOVER) setCursor("precision"); });  
-      v.addEventListener("canplay", ()=> { if(CAN_HOVER) setCursor("precision"); });  
-    });  
 
-  }  
+    function refreshCursorFromMouse(){
+  const el = document.elementFromPoint(mouseX, mouseY);
+  setCursor(computeCursorFromTarget(el));
+}
+    
+function attachBusyCursorToVideos(){
+  document.querySelectorAll("video").forEach(v=>{
+    ["waiting","stalled","playing","pause","canplay"].forEach(evt=>{
+      v.addEventListener(evt, ()=>{
+        if (CAN_HOVER) refreshCursorFromMouse();
+      });
+    });
+  });
+}
+    
   attachBusyCursorToVideos();  
   
   // Fullscreen cursor move fix  
