@@ -132,7 +132,16 @@
     user-select:none;  
     pointer-events:none;  
   }  
-  
+
+    <div class="intro">
+  <video id="introVideo" src="intro.mp4"></video>
+  <button class="intro-skip">Skip</button>
+</div>
+
+<!-- Your characters -->
+<img src="Enkidu1.png" class="enkidu-left" />
+<img src="Enkidu2.png" class="enkidu-right" />
+    
   /* ===== INTRO ===== */  
   .intro{  
     position:fixed;  
@@ -388,6 +397,28 @@
   filter:
     drop-shadow(0 0 30px rgba(255,215,0,0.6))
     drop-shadow(0 0 70px rgba(255,223,120,0.3));
+}
+
+    /* Characters slide-in animations */
+@keyframes slideInLeft {
+  0% { bottom: var(--char-left-y); opacity: 0; }
+  100% { bottom: 0px; opacity: 1; }
+}
+
+@keyframes slideInRight {
+  0% { bottom: var(--char-right-y); opacity: 0; }
+  100% { bottom: 0px; opacity: 1; }
+}
+
+/* Trigger class */
+.enkidu-left.animate {
+  animation: slideInLeft 1.2s ease-out forwards;
+  animation-delay: 0.2s; /* optional for staggered effect */
+}
+
+.enkidu-right.animate {
+  animation: slideInRight 1.2s ease-out forwards;
+  animation-delay: 0.4s; /* optional for staggered effect */
 }
   
   /* PORTFOLIO */  
@@ -3619,7 +3650,29 @@ window.addEventListener("DOMContentLoaded", () => {
   updateBackground();
   setInterval(updateBackground, 60000);
 });
-  
+
+const intro = document.querySelector('.intro');
+const skipBtn = document.querySelector('.intro-skip');
+const leftChar = document.querySelector('.enkidu-left');
+const rightChar = document.querySelector('.enkidu-right');
+
+function showCharacters() {
+  leftChar.classList.add('animate');
+  rightChar.classList.add('animate');
+}
+
+// Skip button triggers animation
+skipBtn.addEventListener('click', () => {
+  intro.classList.add('hide'); // hide intro video
+  showCharacters();
+});
+
+// Video ends triggers animation
+document.getElementById('introVideo').addEventListener('ended', () => {
+  intro.classList.add('hide'); // hide intro video
+  showCharacters();
+});
+
 </script>  
 </body>  
 </html>
