@@ -3,7 +3,7 @@
 <meta charset="UTF-8" />  
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />  
 <title>VALIE</title>  
-<link rel="icon" type="image/png" href="Enkiduicon.png">  
+<link rel="icon" type="image/png" href="Rovericon.png">  
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap" rel="stylesheet">  
   <style>  
   html{scroll-behavior:smooth;}  
@@ -30,13 +30,13 @@
   --cursor-offset-x: 0px;
   --cursor-offset-y: 0px;
 
-  /* Enkidu palette */
+  /* Rover palette */
   --p5-red: #FFD700;       /* Golden main accent (instead of green) */
   --p5-red2: #FFF8DC;      /* Soft cream highlight (instead of mint) */
 
-  --enkidu-glow: rgba(255,215,0,0.45);        /* Golden glow instead of green glow */
-  --enkidu-glow-soft: rgba(255,223,120,0.25); /* Soft golden wash */
-  --enkidu-dark: rgba(128,112,70,0.55);       /* Dark muted gold/bronze for shadows */
+  --Rover-glow: rgba(255,215,0,0.45);        /* Golden glow instead of green glow */
+  --Rover-glow-soft: rgba(255,223,120,0.25); /* Soft golden wash */
+  --Rover-dark: rgba(128,112,70,0.55);       /* Dark muted gold/bronze for shadows */
 
   /* =========================
      CHARACTER EDITOR VARS
@@ -139,8 +139,8 @@
 </div>
 
 <!-- Your characters -->
-<img src="Enkidu1.png" class="enkidu-left" />
-<img src="Enkidu2.png" class="enkidu-right" />
+<img src="Rover1.png" class="Rover-left" />
+<img src="Rover2.png" class="Rover-right" />
     
   /* ===== INTRO ===== */  
   .intro{  
@@ -375,7 +375,7 @@
   transform-origin: bottom center;
 }
 
-.enkidu-left{
+.Rover-left{
   left: var(--char-left-x);
   bottom: var(--char-left-y);
   max-height: var(--char-left-max-h);
@@ -387,7 +387,7 @@
     drop-shadow(0 0 70px rgba(255,223,120,0.3));
 }
 
-.enkidu-right{
+.Rover-right{
   right: var(--char-right-x);
   bottom: var(--char-right-y);
   max-height: var(--char-right-max-h);
@@ -411,12 +411,12 @@
 }
 
 /* Trigger class */
-.enkidu-left.animate {
+.Rover-left.animate {
   animation: slideInLeft 1.2s ease-out forwards;
   animation-delay: 0.2s; /* optional for staggered effect */
 }
 
-.enkidu-right.animate {
+.Rover-right.animate {
   animation: slideInRight 1.2s ease-out forwards;
   animation-delay: 0.4s; /* optional for staggered effect */
 }
@@ -1049,8 +1049,8 @@
   .button{padding:14px 28px;}
 
   /* Mobile: hide both first, JS will show one random one */
-    .enkidu-left,
-  .enkidu-right{
+    .Rover-left,
+  .Rover-right{
     display:none;
     left:50% !important;
     right:auto !important;
@@ -1058,7 +1058,7 @@
     transform-origin: bottom center !important;
   }
 
-  .enkidu-left{
+  .Rover-left{
     max-height: var(--m-left-max-h) !important;
     transform:
       translateX(-50%)
@@ -1067,7 +1067,7 @@
       scale(var(--m-left-scale)) !important;
   }
 
-  .enkidu-right{
+  .Rover-right{
     max-height: var(--m-right-max-h) !important;
     transform:
       translateX(-50%)
@@ -1083,8 +1083,8 @@
   .p5-time{ min-width:auto; }
 }
 
-.enkidu-left,
-.enkidu-right{
+.Rover-left,
+.Rover-right{
   z-index:2;
 }
  /* ==========================================================
@@ -2084,7 +2084,7 @@ footer{
   <img id="gifCursorImg" src="NORMAL.gif" alt="">  
 </div>  <!-- INTRO -->  <div id="introOverlay" class="intro">  
   <video id="introVideo" autoplay playsinline muted preload="auto">  
-    <source src="ENKIDU.webm" type="video/webm">  
+    <source src="Rover.webm" type="video/webm">  
   </video>  
   <button id="skipIntro" class="intro-skip" type="button" aria-label="Skip intro" data-cursor="link">Skip</button>  
   <div class="intro-outro" aria-hidden="true"></div>  
@@ -2095,8 +2095,8 @@ footer{
 </div>
 
   <section class="hero">  
- <img src="Enkidu1.png" class="character enkidu-left" alt="Enkidu left">
- <img src="Enkidu2.png" class="character enkidu-right" alt="Enkidu right">    <h1 class="title hero-load">VALIE</h1>  
+ <img src="Rover1.png" class="character Rover-left" alt="Rover left">
+ <img src="Rover2.png" class="character Rover-right" alt="Rover right">    <h1 class="title hero-load">VALIE</h1>  
   <p class="subtitle hero-load hero-load-delay-1">The Editor That Makes Your Vision Come To Life</p>  
   <a href="#portfolio" class="button hero-load hero-load-delay-2" data-cursor="link">Watch My Work</a>  
   <a href="#contact" class="button hero-load hero-load-delay-3" style="margin-top:16px;background:rgba(0,0,0,0.55);border:1px solid rgba(255,255,255,0.16);box-shadow:0 0 24px rgba(255,223,120,0.18);" data-cursor="link">Contact Me</a>  
@@ -3566,8 +3566,8 @@ video.addEventListener("webkitendfullscreen", () => {
 window.addEventListener("load", () => {
   if (window.innerWidth > 768) return;
 
-  const leftChar = document.querySelector(".character.enkidu-left");
-  const rightChar = document.querySelector(".character.enkidu-right");
+  const leftChar = document.querySelector(".character.Rover-left");
+  const rightChar = document.querySelector(".character.Rover-right");
   if (!leftChar || !rightChar) return;
 
   leftChar.style.display = "none";
@@ -3653,8 +3653,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
 const intro = document.querySelector('.intro');
 const skipBtn = document.querySelector('.intro-skip');
-const leftChar = document.querySelector('.enkidu-left');
-const rightChar = document.querySelector('.enkidu-right');
+const leftChar = document.querySelector('.Rover-left');
+const rightChar = document.querySelector('.Rover-right');
 
 function showCharacters() {
   leftChar.classList.add('animate');
