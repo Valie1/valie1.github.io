@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { useEffect, useState } from "react";
 
 const REVEAL_DELAY_MS = 9350;
-const HERO_EXIT_RATIO = 0.4;
+const HERO_EXIT_RATIO = 0.85;
 
 export default function HeroScrollCues() {
   const [mounted, setMounted] = useState(false);
@@ -40,7 +40,7 @@ export default function HeroScrollCues() {
 
     const observer = new IntersectionObserver(
       () => syncHeroVisibility(),
-      { threshold: [0, 0.12, 0.25, HERO_EXIT_RATIO, 0.5, 0.75, 1] },
+      { threshold: [0, 0.12, 0.25, 0.5, 0.75, HERO_EXIT_RATIO, 0.95, 1] },
     );
     observer.observe(hero);
 
