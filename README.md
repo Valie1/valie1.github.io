@@ -1,5 +1,5 @@
-# VALIE Portfolio — Pass 123.42
+# VALIE Portfolio — Pass 123.43
 
-Mobile-menu native-tap reliability hotfix.
+This package is the mobile menu physical-tap reliability pass.
 
-This pass keeps the Pass 123.41 mobile menu layout, but changes destination activation to a more reliable touch-browser path: every WORK / ABOUT / REVIEWS / CONTACT anchor now closes the overlay from a direct anchor listener while preserving the browser's real native `#fragment` navigation. A `hashchange` recovery path and same-hash scroll correction are included so the menu cannot remain stuck over a successfully-selected destination.
+The mobile WORK / ABOUT / REVIEWS / CONTACT rows now navigate from capture-phase pointer/touch activation instead of depending on Android Chrome to synthesize a normal anchor click. The runtime hit-tests the actual row under the finger, closes the menu, updates the section hash, and scrolls to the destination with fixed-header compensation. Normal anchor clicks remain as a fallback for keyboard/mouse input.

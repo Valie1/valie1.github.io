@@ -1,8 +1,0 @@
-PASS 123.41 — MOBILE MENU RELIABILITY
-
-- Mobile menu header stacking is raised only while open so site overlays cannot sit above navigation.
-- Menu uses the live visual viewport dimensions and a fully opaque paint layer.
-- Phone/foldable tap targets are responsive; short portrait and landscape fallbacks are included.
-- Mobile destination clicks now use deterministic hash + post-unlock scrolling instead of relying on native hash timing while the body is locked.
-- Navigation assets cache-busted to 123.41.
-- Package version: 9.13.41.

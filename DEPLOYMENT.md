@@ -1,16 +1,15 @@
-# Deployment notes — Pass 123.42
+# Deployment notes — Pass 123.43
 
-## What changed
-- Keeps the Pass 123.41 mobile menu viewport and stacking fixes.
-- Binds a click listener directly to each WORK / ABOUT / REVIEWS / CONTACT mobile anchor.
-- Stops cancelling normal `#fragment` navigation with `preventDefault()` on mobile menu destinations.
-- Closes the menu from the tapped anchor itself.
-- Adds `hashchange` recovery so a successful hash navigation cannot remain hidden behind an open menu.
-- Adds same-hash/fixed-header scroll correction.
-- Cache-busted navigation runtime assets to 123.42.
-- Package version bumped to 9.13.42.
+## Mobile menu fix
+- Added capture-phase pointerdown/pointerup activation for WORK / ABOUT / REVIEWS / CONTACT.
+- Added touchend fallback for mobile engines that fail to synthesize an anchor click.
+- Added coordinate hit-testing so a transparent/retargeted layer cannot make the visible menu row untappable.
+- Mobile activation now explicitly closes the overlay, writes the destination hash, and scrolls to the section.
+- Preserved native anchors as a keyboard/mouse fallback.
+- Cache-busted navigation runtime assets to 123.43.
+- Package version bumped to 9.13.43.
 
 ## Deploy
-1. Replace the previous project with this pass.
-2. Push to GitHub and let Pages rebuild.
-3. Hard refresh once on mobile so `site-nav-runtime.js?v=123.42` replaces the older cached runtime.
+1. Replace the previous project contents with this pass.
+2. Commit/push and wait for the GitHub Pages workflow to finish.
+3. Hard refresh once on mobile so `site-nav-runtime.js?v=123.43` replaces the older cached runtime.

@@ -87,8 +87,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <a className="skip-link" href="#main-content">SKIP TO CONTENT</a>
         <JsonLd data={structuredData} />
         <StaticLegalPortalRuntime />
-        <script src="/site-nav-runtime.js?v=123.42" defer />
-        <script src="/site-link-preview-lock.js?v=123.42" defer />
+        <script src="/site-nav-runtime.js?v=123.43" defer />
+        <script src="/site-link-preview-lock.js?v=123.43" defer />
         <BrowserViewportRuntime />
         <SiteNav />
         <GlobalFeedback />

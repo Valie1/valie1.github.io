@@ -14444,3 +14444,14 @@ a[data-valie-link-href],
 
 
 :root{--pass12342-mobile-menu-native-tap:1}
+
+
+:root{--pass12343-mobile-menu-physical-tap:1}
+@media(max-width:760px){
+  .minimal-mobile-menu.is-open .minimal-mobile-menu__links a{
+    pointer-events:auto!important;
+    touch-action:manipulation!important;
+    cursor:pointer!important;
+  }
+  .minimal-mobile-menu.is-open .minimal-mobile-menu__links a strong{pointer-events:none!important}
+}

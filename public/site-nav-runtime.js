@@ -9,8 +9,9 @@
   var open = false;
   var isolatedNodes = [];
   var fallbackTimer = 0;
-  var lastActivatedId = "";
-  var lastActivatedAt = 0;
+  var lastActivationAt = 0;
+  var lastActivationId = "";
+  var press = null;
 
   function focusable() {
     return [button].concat(links).filter(Boolean);
@@ -97,43 +98,80 @@
     return true;
   }
 
-  function forceHashAndScroll(id) {
+  function writeHash(id) {
     if (!id) return;
     var hash = "#" + encodeURIComponent(id);
-    if (window.location.hash !== hash) {
-      try { window.history.pushState(null, "", hash); }
-      catch (_) { window.location.hash = hash; }
-    }
+    if (window.location.hash === hash) return;
+    try { window.history.pushState(null, "", hash); }
+    catch (_) { window.location.hash = hash; }
+  }
+
+  function finishNavigation(id) {
+    if (!id) return;
+    setOpen(false, false);
+    writeHash(id);
+    window.clearTimeout(fallbackTimer);
     window.requestAnimationFrame(function () {
       window.requestAnimationFrame(function () { scrollTargetIntoView(id); });
     });
-    window.setTimeout(function () { scrollTargetIntoView(id); }, 90);
+    fallbackTimer = window.setTimeout(function () { scrollTargetIntoView(id); }, 120);
   }
 
   function isPlainPrimaryClick(event) {
     return event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
   }
 
+  function linkAtPoint(x, y) {
+    if (!open || !links.length) return null;
+    var hit = document.elementFromPoint(x, y);
+    if (hit instanceof Element) {
+      var closest = hit.closest("[data-site-mobile-link]");
+      if (closest instanceof HTMLAnchorElement && menu && menu.contains(closest)) return closest;
+    }
+    for (var i = 0; i < links.length; i += 1) {
+      var rect = links[i].getBoundingClientRect();
+      if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) return links[i];
+    }
+    return null;
+  }
+
+  function rememberPress(event) {
+    if (!open || event.button !== 0) return;
+    var link = linkAtPoint(event.clientX, event.clientY);
+    press = link ? { link: link, x: event.clientX, y: event.clientY, pointerId: event.pointerId } : null;
+  }
+
+  function activateFromPointer(event) {
+    if (!open || event.button !== 0 || !press) return false;
+    if (press.pointerId !== event.pointerId) return false;
+    var dx = event.clientX - press.x;
+    var dy = event.clientY - press.y;
+    var startLink = press.link;
+    press = null;
+    if (Math.hypot(dx, dy) > 18) return false;
+    var endLink = linkAtPoint(event.clientX, event.clientY);
+    var link = endLink === startLink ? startLink : null;
+    if (!link) return false;
+    var id = targetId(link);
+    if (!id) return false;
+    event.preventDefault();
+    event.stopPropagation();
+    lastActivationAt = Date.now();
+    lastActivationId = id;
+    finishNavigation(id);
+    return true;
+  }
+
   function directMobileLinkClick(event) {
     var link = event.currentTarget;
-    if (!(link instanceof HTMLAnchorElement)) return;
-
+    if (!(link instanceof HTMLAnchorElement) || !isPlainPrimaryClick(event)) return;
     var id = targetId(link);
-    var plain = isPlainPrimaryClick(event);
-
-    setOpen(false, false);
-
-    if (!plain || !id) return;
-
-    lastActivatedId = id;
-    lastActivatedAt = Date.now();
-
-    window.clearTimeout(fallbackTimer);
-    fallbackTimer = window.setTimeout(function () {
-      scrollTargetIntoView(id);
-    }, 40);
-
-    if (event.defaultPrevented) forceHashAndScroll(id);
+    if (!id) return;
+    event.preventDefault();
+    if (Date.now() - lastActivationAt < 700 && lastActivationId === id) return;
+    lastActivationAt = Date.now();
+    lastActivationId = id;
+    finishNavigation(id);
   }
 
   function closestMobileLink(target) {
@@ -144,13 +182,28 @@
 
   function delegatedMenuClick(event) {
     var link = closestMobileLink(event.target);
-    if (!link) return;
-    if (open) setOpen(false, false);
-    if (!isPlainPrimaryClick(event)) return;
+    if (!link || !isPlainPrimaryClick(event)) return;
     var id = targetId(link);
     if (!id) return;
-    window.clearTimeout(fallbackTimer);
-    fallbackTimer = window.setTimeout(function () { scrollTargetIntoView(id); }, 55);
+    event.preventDefault();
+    if (Date.now() - lastActivationAt < 700 && lastActivationId === id) return;
+    lastActivationAt = Date.now();
+    lastActivationId = id;
+    finishNavigation(id);
+  }
+
+  function activateFromTouchEnd(event) {
+    if (!open || Date.now() - lastActivationAt < 700) return;
+    var touch = event.changedTouches && event.changedTouches[0];
+    if (!touch) return;
+    var link = linkAtPoint(touch.clientX, touch.clientY);
+    if (!link) return;
+    var id = targetId(link);
+    if (!id) return;
+    event.preventDefault();
+    lastActivationAt = Date.now();
+    lastActivationId = id;
+    finishNavigation(id);
   }
 
   function onHashChange() {
@@ -201,6 +254,7 @@
   function onDocumentPointerDown(event) {
     if (!open || !header) return;
     if (header.contains(event.target)) return;
+    if (typeof event.clientX === "number" && typeof event.clientY === "number" && linkAtPoint(event.clientX, event.clientY)) return;
     event.preventDefault();
     event.stopImmediatePropagation();
   }
@@ -231,6 +285,9 @@
     window.addEventListener("resize", function () { if (window.innerWidth > 760 && open) setOpen(false, false); }, { passive: true });
     document.addEventListener("wheel", onWheel, { passive: false, capture: true });
     document.addEventListener("touchmove", onTouchMove, { passive: false, capture: true });
+    document.addEventListener("pointerdown", rememberPress, true);
+    document.addEventListener("pointerup", activateFromPointer, true);
+    document.addEventListener("touchend", activateFromTouchEnd, { passive: false, capture: true });
     document.addEventListener("pointerdown", onDocumentPointerDown, true);
     window.addEventListener("pageshow", function () { if (open) setOpen(false, false); });
     setOpen(false, false);
