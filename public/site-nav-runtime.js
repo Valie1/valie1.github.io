@@ -7,8 +7,10 @@
   var menu = null;
   var links = [];
   var open = false;
-  var touchY = null;
   var isolatedNodes = [];
+  var fallbackTimer = 0;
+  var lastActivatedId = "";
+  var lastActivatedAt = 0;
 
   function focusable() {
     return [button].concat(links).filter(Boolean);
@@ -85,32 +87,53 @@
   }
 
   function scrollTargetIntoView(id) {
-    if (!id) return;
+    if (!id) return false;
     var target = document.getElementById(id);
-    if (!target) return;
+    if (!target) return false;
     var headerHeight = header ? Math.ceil(header.getBoundingClientRect().height) : 0;
     var top = Math.max(0, Math.round(window.scrollY + target.getBoundingClientRect().top - headerHeight));
     try { window.scrollTo({ top: top, left: 0, behavior: "auto" }); }
     catch (_) { window.scrollTo(0, top); }
+    return true;
   }
 
-  function commitHash(id) {
+  function forceHashAndScroll(id) {
     if (!id) return;
-    var nextHash = "#" + encodeURIComponent(id);
-    if (window.location.hash === nextHash) return;
-    try { window.history.pushState(null, "", nextHash); }
-    catch (_) { window.location.hash = nextHash; }
-  }
-
-  function navigateToTarget(id) {
-    if (!id) return;
-    commitHash(id);
+    var hash = "#" + encodeURIComponent(id);
+    if (window.location.hash !== hash) {
+      try { window.history.pushState(null, "", hash); }
+      catch (_) { window.location.hash = hash; }
+    }
     window.requestAnimationFrame(function () {
-      window.requestAnimationFrame(function () {
-        scrollTargetIntoView(id);
-      });
+      window.requestAnimationFrame(function () { scrollTargetIntoView(id); });
     });
-    window.setTimeout(function () { scrollTargetIntoView(id); }, 140);
+    window.setTimeout(function () { scrollTargetIntoView(id); }, 90);
+  }
+
+  function isPlainPrimaryClick(event) {
+    return event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
+  }
+
+  function directMobileLinkClick(event) {
+    var link = event.currentTarget;
+    if (!(link instanceof HTMLAnchorElement)) return;
+
+    var id = targetId(link);
+    var plain = isPlainPrimaryClick(event);
+
+    setOpen(false, false);
+
+    if (!plain || !id) return;
+
+    lastActivatedId = id;
+    lastActivatedAt = Date.now();
+
+    window.clearTimeout(fallbackTimer);
+    fallbackTimer = window.setTimeout(function () {
+      scrollTargetIntoView(id);
+    }, 40);
+
+    if (event.defaultPrevented) forceHashAndScroll(id);
   }
 
   function closestMobileLink(target) {
@@ -119,19 +142,24 @@
     return link instanceof HTMLAnchorElement && menu && menu.contains(link) ? link : null;
   }
 
-  function onMenuClick(event) {
-    if (!open) return;
+  function delegatedMenuClick(event) {
     var link = closestMobileLink(event.target);
     if (!link) return;
-
-    var isPrimary = event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
+    if (open) setOpen(false, false);
+    if (!isPlainPrimaryClick(event)) return;
     var id = targetId(link);
+    if (!id) return;
+    window.clearTimeout(fallbackTimer);
+    fallbackTimer = window.setTimeout(function () { scrollTargetIntoView(id); }, 55);
+  }
 
-    if (isPrimary && id) event.preventDefault();
-    setOpen(false, false);
-
-    if (!isPrimary || !id) return;
-    navigateToTarget(id);
+  function onHashChange() {
+    if (open) setOpen(false, false);
+    var id = decodeHash(window.location.hash);
+    if (!id) return;
+    window.requestAnimationFrame(function () {
+      window.requestAnimationFrame(function () { scrollTargetIntoView(id); });
+    });
   }
 
   function onKey(event) {
@@ -163,15 +191,9 @@
     event.stopPropagation();
   }
 
-  function onTouchStart(event) {
-    if (!open || !event.touches.length) return;
-    touchY = event.touches[0].clientY;
-  }
-
   function onTouchMove(event) {
     if (!open || !menu) return;
     if (menu.contains(event.target)) return;
-    if (touchY !== null && event.touches.length) touchY = event.touches[0].clientY;
     event.preventDefault();
     event.stopPropagation();
   }
@@ -183,6 +205,14 @@
     event.stopImmediatePropagation();
   }
 
+  function bindLinks() {
+    links.forEach(function (link) {
+      if (link.dataset.valieMenuBound === "true") return;
+      link.dataset.valieMenuBound = "true";
+      link.addEventListener("click", directMobileLinkClick, true);
+    });
+  }
+
   function boot() {
     header = document.querySelector("[data-static-site-nav]");
     if (!header) return;
@@ -192,13 +222,14 @@
     links = Array.prototype.slice.call(header.querySelectorAll("[data-site-mobile-link]"));
     if (!button || !menu) return;
 
+    bindLinks();
     button.addEventListener("click", function () { setOpen(!open, false); });
-    menu.addEventListener("click", onMenuClick, false);
+    menu.addEventListener("click", delegatedMenuClick, false);
 
     window.addEventListener("keydown", onKey, true);
+    window.addEventListener("hashchange", onHashChange, false);
     window.addEventListener("resize", function () { if (window.innerWidth > 760 && open) setOpen(false, false); }, { passive: true });
     document.addEventListener("wheel", onWheel, { passive: false, capture: true });
-    document.addEventListener("touchstart", onTouchStart, { passive: true, capture: true });
     document.addEventListener("touchmove", onTouchMove, { passive: false, capture: true });
     document.addEventListener("pointerdown", onDocumentPointerDown, true);
     window.addEventListener("pageshow", function () { if (open) setOpen(false, false); });

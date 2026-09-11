@@ -13,7 +13,7 @@ const checks = [
   ['mobile interaction layer exists', css.includes('.minimal-mobile-menu{') && css.includes('height:var(--valie-visual-height,100dvh)!important')],
   ['Mobile menu uses the static runtime scroll lock', navRuntime.includes('mobile-menu-locked') && navRuntime.includes('document.addEventListener("wheel", onWheel') && navRuntime.includes('document.addEventListener("touchmove", onTouchMove')],
   ['Mobile menu links keep native same-page hash navigation', nav.includes('["#work", "WORK"]') && nav.includes('["#contact", "CONTACT"]') && navRuntime.includes('scrollTargetIntoView(id)')],
-  ['Mobile menu uses the browser-native click path', navRuntime.includes('menu.addEventListener("click", onMenuClick, false)') && !navRuntime.includes('onMenuPointerUp')],
+  ['Mobile menu uses the browser-native click path', navRuntime.includes('link.addEventListener("click", directMobileLinkClick, true)') && navRuntime.includes('menu.addEventListener("click", delegatedMenuClick, false)') && !navRuntime.includes('onMenuPointerUp')],
   ['Mobile menu isolates all background body children', navRuntime.includes('function isolateBackground(next)') && navRuntime.includes('setNodeInert(node, true)') && navRuntime.includes('node.setAttribute("aria-hidden", "true")')],
   ['Mobile menu blocks outside pointer activation', navRuntime.includes('function onDocumentPointerDown(event)') && navRuntime.includes('event.stopImmediatePropagation()')],
   ['Mobile menu bypasses global href-preview interception', nav.includes('data-valie-link-preview-skip') && read('public/site-link-preview-lock.js').includes('function shouldSkip(anchor)')],

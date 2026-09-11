@@ -1,3 +1,5 @@
-# Valie Portfolio — Pass 123.41
+# VALIE Portfolio — Pass 123.42
 
-Pass 123.41 hardens the mobile navigation for real phones and foldables. The open menu now owns the top stacking layer above normal portfolio overlays, fills the live visual viewport with an opaque surface, keeps all four destination rows inside compact/short screens, and uses deterministic post-unlock hash scrolling so WORK / ABOUT / REVIEWS / CONTACT reliably navigate on touch devices. Desktop behavior is unchanged.
+Mobile-menu native-tap reliability hotfix.
+
+This pass keeps the Pass 123.41 mobile menu layout, but changes destination activation to a more reliable touch-browser path: every WORK / ABOUT / REVIEWS / CONTACT anchor now closes the overlay from a direct anchor listener while preserving the browser's real native `#fragment` navigation. A `hashchange` recovery path and same-hash scroll correction are included so the menu cannot remain stuck over a successfully-selected destination.

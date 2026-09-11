@@ -8,18 +8,24 @@ const runtime = read('public/site-nav-runtime.js');
 const css = read('app/globals.css');
 const layout = read('app/layout.tsx');
 
+const directStart = runtime.indexOf('function directMobileLinkClick');
+const directEnd = runtime.indexOf('function closestMobileLink');
+const direct = directStart >= 0 && directEnd > directStart ? runtime.slice(directStart, directEnd) : '';
+
 const checks = [
   ['Mobile menu destinations are native same-document hashes', ['#work','#about','#reviews','#contact'].every((hash) => nav.includes(`["${hash}"`))],
   ['Brand home target is a native same-document hash', nav.includes('href="#top"')],
   ['Mobile links remain excluded from hover-preview interception', nav.includes('data-valie-link-preview-skip')],
-  ['Runtime deterministically owns primary mobile destination clicks', runtime.slice(runtime.indexOf('function onMenuClick'), runtime.indexOf('function onKey')).includes('event.preventDefault()') && runtime.includes('navigateToTarget(id)')],
-  ['Runtime closes the menu from the real click event', runtime.includes('menu.addEventListener("click", onMenuClick, false)') && runtime.includes('setOpen(false, false)')],
-  ['Runtime performs a post-click native-target correction', runtime.includes('scrollTargetIntoView(id)') && runtime.includes('}, 120)')],
-  ['Legacy pointer-up synthetic activation path is removed', !runtime.includes('onMenuPointerUp') && !runtime.includes('suppressClickUntil')],
+  ['Mobile links preserve real href attributes', nav.includes('href={href}')],
+  ['Runtime binds directly to each mobile anchor', runtime.includes('link.addEventListener("click", directMobileLinkClick, true)')],
+  ['Direct mobile click does not prevent native fragment navigation', !direct.includes('event.preventDefault()')],
+  ['Direct mobile click closes the menu immediately', direct.includes('setOpen(false, false)')],
+  ['Runtime corrects fixed-nav positioning after native navigation', direct.includes('scrollTargetIntoView(id)')],
+  ['Hashchange independently recovers from a stuck-open overlay', runtime.includes('window.addEventListener("hashchange", onHashChange, false)')],
   ['Mobile links are forced above menu decorative layers', css.includes('.minimal-mobile-menu__links a{\n    position:relative!important;\n    z-index:3!important;')],
   ['Mobile links explicitly keep pointer interaction', css.includes('.minimal-mobile-menu__links a *{\n    pointer-events:auto!important;')],
   ['Mobile targets reserve space for the fixed header', css.includes('scroll-margin-top:calc(70px + env(safe-area-inset-top))!important')],
-  ['Navigation assets are cache-busted to Pass 123.41', layout.includes('site-nav-runtime.js?v=123.41') && layout.includes('site-link-preview-lock.js?v=123.41')],
+  ['Navigation assets are cache-busted to Pass 123.42', layout.includes('site-nav-runtime.js?v=123.42') && layout.includes('site-link-preview-lock.js?v=123.42')],
 ];
 
 let failures = 0;
