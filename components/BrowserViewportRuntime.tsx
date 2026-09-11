@@ -13,11 +13,39 @@ export default function BrowserViewportRuntime() {
     const root = document.documentElement;
     const visualViewport = window.visualViewport;
     let frame = 0;
+    let stableLayoutWidth = 0;
+    let stableLayoutHeight = 0;
+    let orientationTimer = 0;
+
+    const readLayoutViewport = () => ({
+      width: Math.max(1, Math.round(window.innerWidth || document.documentElement.clientWidth)),
+      height: Math.max(1, Math.round(window.innerHeight || document.documentElement.clientHeight)),
+    });
+
+    const syncStableMobileLayout = (force = false) => {
+      const { width, height } = readLayoutViewport();
+      if (width > 760) {
+        stableLayoutWidth = 0;
+        stableLayoutHeight = 0;
+        root.style.removeProperty("--valie-mobile-layout-width");
+        root.style.removeProperty("--valie-mobile-layout-height");
+        delete root.dataset.valieMobileViewportLocked;
+        return;
+      }
+
+      const widthChanged = !stableLayoutWidth || Math.abs(width - stableLayoutWidth) > 48;
+      if (!force && stableLayoutHeight && !widthChanged) return;
+
+      stableLayoutWidth = width;
+      stableLayoutHeight = height;
+      root.style.setProperty("--valie-mobile-layout-width", `${width}px`);
+      root.style.setProperty("--valie-mobile-layout-height", `${height}px`);
+      root.dataset.valieMobileViewportLocked = "true";
+    };
 
     const sync = () => {
       frame = 0;
-      const layoutWidth = Math.max(1, Math.round(window.innerWidth || document.documentElement.clientWidth));
-      const layoutHeight = Math.max(1, Math.round(window.innerHeight || document.documentElement.clientHeight));
+      const { width: layoutWidth, height: layoutHeight } = readLayoutViewport();
       const width = Math.max(1, Math.round(visualViewport?.width ?? layoutWidth));
       const height = Math.max(1, Math.round(visualViewport?.height ?? layoutHeight));
       const offsetTop = Math.max(0, Math.round(visualViewport?.offsetTop ?? 0));
@@ -28,6 +56,7 @@ export default function BrowserViewportRuntime() {
       root.style.setProperty("--valie-visual-top", `${offsetTop}px`);
       root.style.setProperty("--valie-visual-left", `${offsetLeft}px`);
       root.style.setProperty("--valie-keyboard-inset", `${keyboardInset}px`);
+      syncStableMobileLayout(false);
     };
 
     const requestSync = () => {
@@ -93,10 +122,20 @@ export default function BrowserViewportRuntime() {
 
     root.dataset.valieHydrated = "true";
     window.dispatchEvent(new Event("valie:hydrated"));
+    syncStableMobileLayout(true);
     sync();
     scanForLegacyPreviewStamps(document.body);
+    const onOrientationChange = () => {
+      requestSync();
+      window.clearTimeout(orientationTimer);
+      orientationTimer = window.setTimeout(() => {
+        syncStableMobileLayout(true);
+        requestSync();
+      }, 240);
+    };
+
     window.addEventListener("resize", requestSync, { passive: true });
-    window.addEventListener("orientationchange", requestSync, { passive: true });
+    window.addEventListener("orientationchange", onOrientationChange, { passive: true });
     visualViewport?.addEventListener("resize", requestSync, { passive: true });
     DRAG_EVENTS.forEach((eventName) => document.addEventListener(eventName, preventDrag, true));
     document.addEventListener("selectstart", preventSelectionDrag, true);
@@ -116,9 +155,10 @@ export default function BrowserViewportRuntime() {
 
     return () => {
       if (frame) window.cancelAnimationFrame(frame);
+      if (orientationTimer) window.clearTimeout(orientationTimer);
       stampObserver.disconnect();
       window.removeEventListener("resize", requestSync);
-      window.removeEventListener("orientationchange", requestSync);
+      window.removeEventListener("orientationchange", onOrientationChange);
       visualViewport?.removeEventListener("resize", requestSync);
       DRAG_EVENTS.forEach((eventName) => document.removeEventListener(eventName, preventDrag, true));
       document.removeEventListener("selectstart", preventSelectionDrag, true);
@@ -133,6 +173,9 @@ export default function BrowserViewportRuntime() {
       root.style.removeProperty("--valie-visual-top");
       root.style.removeProperty("--valie-visual-left");
       root.style.removeProperty("--valie-keyboard-inset");
+      root.style.removeProperty("--valie-mobile-layout-width");
+      root.style.removeProperty("--valie-mobile-layout-height");
+      delete root.dataset.valieMobileViewportLocked;
     };
   }, []);
 

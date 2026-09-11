@@ -117,111 +117,105 @@ export default function ClientReviews({ headingId = "reviews-title" }: { heading
 
     const mobileQuery = window.matchMedia("(max-width: 760px)");
     const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (!mobileQuery.matches || reducedMotionQuery.matches) return;
+    if (!mobileQuery.matches) return;
 
-    let autoTimer = 0;
-    let settleTimer = 0;
-    let autoReleaseTimer = 0;
+    let frame = 0;
+    let resumeTimer = 0;
+    let previousTime = 0;
     let userInteracting = false;
-    let autoScrolling = false;
-    let direction = 1;
+    let initialized = false;
+    const autoSpeed = 42;
 
-    const cards = () =>
-      Array.from(viewport.querySelectorAll<HTMLElement>(".review-orbit__set:first-child .review-card"));
+    const sets = () =>
+      Array.from(viewport.querySelectorAll<HTMLElement>(".review-orbit__set"));
 
-    const centeredLeft = (card: HTMLElement) =>
-      Math.max(0, card.offsetLeft - (viewport.clientWidth - card.clientWidth) / 2);
-
-    const nearestIndex = () => {
-      const items = cards();
-      if (!items.length) return 0;
-      let nearest = 0;
-      let distance = Number.POSITIVE_INFINITY;
-      items.forEach((card, index) => {
-        const delta = Math.abs(centeredLeft(card) - viewport.scrollLeft);
-        if (delta < distance) {
-          distance = delta;
-          nearest = index;
-        }
-      });
-      return nearest;
+    const loopWidth = () => {
+      const items = sets();
+      if (items.length < 2) return 0;
+      return items[1].offsetLeft - items[0].offsetLeft;
     };
 
-    const clearAutoTimer = () => {
-      if (autoTimer) window.clearTimeout(autoTimer);
-      autoTimer = 0;
+    const normalizeLoopPosition = () => {
+      const width = loopWidth();
+      if (!width) return;
+      while (viewport.scrollLeft < width * 0.55) viewport.scrollLeft += width;
+      while (viewport.scrollLeft > width * 2.45) viewport.scrollLeft -= width;
     };
 
-    const scheduleAuto = (delay = 4400) => {
-      clearAutoTimer();
-      autoTimer = window.setTimeout(() => {
-        if (document.hidden || userInteracting) {
-          scheduleAuto(1200);
-          return;
-        }
+    const initialize = () => {
+      const width = loopWidth();
+      if (!width) return false;
+      viewport.scrollLeft = width;
+      initialized = true;
+      return true;
+    };
 
-        const items = cards();
-        if (items.length < 2) return;
-
-        const current = nearestIndex();
-        if (current >= items.length - 1) direction = -1;
-        else if (current <= 0) direction = 1;
-
-        const next = Math.max(0, Math.min(items.length - 1, current + direction));
-        autoScrolling = true;
-        viewport.scrollTo({ left: centeredLeft(items[next]), behavior: "smooth" });
-        if (autoReleaseTimer) window.clearTimeout(autoReleaseTimer);
-        autoReleaseTimer = window.setTimeout(() => {
-          autoScrolling = false;
-          autoReleaseTimer = 0;
-        }, 900);
-        scheduleAuto(5200);
-      }, delay);
+    const scheduleResume = () => {
+      if (resumeTimer) window.clearTimeout(resumeTimer);
+      resumeTimer = window.setTimeout(() => {
+        userInteracting = false;
+        normalizeLoopPosition();
+        resumeTimer = 0;
+      }, 1700);
     };
 
     const pauseAuto = () => {
       userInteracting = true;
-      autoScrolling = false;
-      clearAutoTimer();
-      if (autoReleaseTimer) window.clearTimeout(autoReleaseTimer);
-      autoReleaseTimer = 0;
+      if (resumeTimer) window.clearTimeout(resumeTimer);
+      resumeTimer = 0;
     };
 
     const resumeAuto = () => {
-      userInteracting = false;
-      scheduleAuto(4200);
+      scheduleResume();
     };
 
-    const onScroll = () => {
-      if (autoScrolling) return;
-      if (settleTimer) window.clearTimeout(settleTimer);
-      settleTimer = window.setTimeout(() => {
-        settleTimer = 0;
-        if (!userInteracting) scheduleAuto(4200);
-      }, 220);
+    const onWheel = () => {
+      pauseAuto();
+      scheduleResume();
     };
 
-    const onVisibilityChange = () => {
-      if (document.hidden) clearAutoTimer();
-      else scheduleAuto(2600);
+    const animate = (time: number) => {
+      if (!initialized) initialize();
+
+      if (!previousTime) previousTime = time;
+      const elapsed = Math.min(48, time - previousTime);
+      previousTime = time;
+
+      if (
+        initialized &&
+        !document.hidden &&
+        !userInteracting &&
+        !reducedMotionQuery.matches
+      ) {
+        viewport.scrollLeft += (autoSpeed * elapsed) / 1000;
+        normalizeLoopPosition();
+      }
+
+      frame = window.requestAnimationFrame(animate);
     };
+
+    const initFrame = window.requestAnimationFrame(() => {
+      initialize();
+      frame = window.requestAnimationFrame(animate);
+    });
 
     viewport.addEventListener("pointerdown", pauseAuto, { passive: true });
     window.addEventListener("pointerup", resumeAuto, { passive: true });
     window.addEventListener("pointercancel", resumeAuto, { passive: true });
-    viewport.addEventListener("scroll", onScroll, { passive: true });
-    document.addEventListener("visibilitychange", onVisibilityChange);
-    scheduleAuto(3200);
+    viewport.addEventListener("touchstart", pauseAuto, { passive: true });
+    viewport.addEventListener("touchend", resumeAuto, { passive: true });
+    viewport.addEventListener("wheel", onWheel, { passive: true });
 
     return () => {
-      clearAutoTimer();
-      if (settleTimer) window.clearTimeout(settleTimer);
-      if (autoReleaseTimer) window.clearTimeout(autoReleaseTimer);
+      window.cancelAnimationFrame(initFrame);
+      if (frame) window.cancelAnimationFrame(frame);
+      if (resumeTimer) window.clearTimeout(resumeTimer);
       viewport.removeEventListener("pointerdown", pauseAuto);
       window.removeEventListener("pointerup", resumeAuto);
       window.removeEventListener("pointercancel", resumeAuto);
-      viewport.removeEventListener("scroll", onScroll);
-      document.removeEventListener("visibilitychange", onVisibilityChange);
+      viewport.removeEventListener("touchstart", pauseAuto);
+      viewport.removeEventListener("touchend", resumeAuto);
+      viewport.removeEventListener("wheel", onWheel);
     };
   }, [active]);
 

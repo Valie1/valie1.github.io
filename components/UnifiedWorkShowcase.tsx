@@ -247,7 +247,6 @@ export default function UnifiedWorkShowcase({ longForm, shortForm, websites }: P
                       priority={index === 0}
                     />
                     <span className="one-web-card__shade" aria-hidden="true" />
-                    <span className="one-web-card__badge">WEBSITE</span>
                     <span className="one-web-card__open" aria-hidden="true">
                       <span className="one-web-card__click-ring" />
                       <MousePointer2 className="one-web-card__cursor" size={21} strokeWidth={1.8} />

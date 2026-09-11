@@ -5,7 +5,7 @@ Production URL: `https://valie1.github.io/`
 1. Open the existing `valie1.github.io` repository in GitHub Desktop.
 2. Choose Repository → Show in Explorer.
 3. Keep the hidden `.git` folder and remove the old website files from the repository working tree.
-4. Copy every file and folder from Pass 123.08 into the repository root, including the hidden `.github` folder.
+4. Copy every file and folder from Pass 123.15 into the repository root, including the hidden `.github` folder.
 5. In GitHub Desktop, review the changes, commit them to the current default branch, and Push origin.
 6. On GitHub.com, open Settings → Pages and set Build and deployment → Source to GitHub Actions.
 7. Open the Actions tab and wait for `Deploy VALIE Portfolio to GitHub Pages` to finish successfully.
@@ -18,3 +18,22 @@ No deployment changes. Website card hover affordances are visual-only and remain
 
 ### Pass 123.08
 No deployment changes. This pass only removes the small active-tab underline marker from the three work-category tabs.
+
+
+### Pass 123.09
+No deployment architecture changes. This pass hardens mobile browser-chrome/viewport scrolling while retaining the same GitHub Pages static-export workflow.
+
+
+### Pass 123.12
+No deployment architecture changes. Cookie Settings legal links now use the existing preloaded legal portal as a stacked overlay, so the settings modal remains mounted underneath throughout the fade/blur transition and is revealed in-place when Back to Portfolio is used.
+
+
+### Pass 123.14
+No deployment architecture changes. The website-card cursor and click ripple are now optically/geometrically centered inside the existing circular affordance.
+
+## Pass 123.14
+No deployment architecture changes. Website card hover/click cues are now composed on the card center axis; the former lower-right WEBSITE cue anchor is removed.
+
+
+## Pass 123.15 — Remove Website Badge
+The red WEBSITE cue/badge has been removed from website cards entirely. The centered pointer circle and click animation remain unchanged.

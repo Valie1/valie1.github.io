@@ -8,6 +8,8 @@ const checks = [
   ["purpose copy sits below identity", css.includes("border-left:0!important") && css.includes("border-top:1px solid rgba(255,255,255,.065)!important")],
   ["mobile cards retain desktop accent surface", css.includes("rgba(var(--software-accent),.075)")],
   ["extra narrow phones get dedicated compaction", css.includes("@media (max-width:390px)") && css.includes("grid-template-columns:50px minmax(0,1fr)!important")],
+  ["software deck cancels the legacy mobile width:100 overflow", css.includes(".creative-toolkit--pass54 .software-redesign__grid") && css.includes("width:auto!important") && css.includes("align-self:stretch!important")],
+  ["software cards stay inside the deck track", css.includes("max-width:100%!important") && css.includes("min-width:0!important")],
 ];
 const failed = checks.filter(([, ok]) => !ok);
 for (const [name, ok] of checks) console.log(`${ok ? "PASS" : "FAIL"}  ${name}`);

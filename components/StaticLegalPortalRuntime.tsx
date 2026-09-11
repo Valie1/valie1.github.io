@@ -27,9 +27,12 @@ const runtime = String.raw`
   var warmed = false;
   var hydrationReady = document.documentElement.dataset.valieHydrated === 'true';
   var warmFallbackTimer = 0;
-  var returnToCookieSettings = false;
+  var keepCookieSettingsOpen = false;
   var cookieSettingsOpener = null;
   var cookieSettingsScrollTop = 0;
+  var suspendedCookieLayer = null;
+  var suspendedCookieWasInert = false;
+  var suspendedCookieAriaHidden = null;
 
   LEGAL_PATHS.forEach(function(path){
     var frame = document.querySelector('iframe.cnh-policy-frame[data-legal-path="' + path + '"]');
@@ -126,6 +129,28 @@ const runtime = String.raw`
     return false;
   }
 
+  function suspendCookieSettingsLayer(){
+    if(!keepCookieSettingsOpen) return;
+    var layer = document.querySelector('.cookie-consent-layer.is-settings-open');
+    if(!(layer instanceof HTMLElement)) return;
+    suspendedCookieLayer = layer;
+    suspendedCookieWasInert = !!layer.inert;
+    suspendedCookieAriaHidden = layer.getAttribute('aria-hidden');
+    layer.inert = true;
+    layer.setAttribute('aria-hidden','true');
+  }
+
+  function restoreCookieSettingsLayer(){
+    var layer = suspendedCookieLayer;
+    if(!(layer instanceof HTMLElement)) return;
+    layer.inert = suspendedCookieWasInert;
+    if(suspendedCookieAriaHidden === null) layer.removeAttribute('aria-hidden');
+    else layer.setAttribute('aria-hidden', suspendedCookieAriaHidden);
+    suspendedCookieLayer = null;
+    suspendedCookieWasInert = false;
+    suspendedCookieAriaHidden = null;
+  }
+
   function resetFrame(frame){
     if(!frame) return;
     frame.classList.remove('is-active','is-entering','is-leaving');
@@ -151,6 +176,7 @@ const runtime = String.raw`
     activePath = path;
 
     var frame = prepareActiveFrame(path);
+    suspendCookieSettingsLayer();
     portal.setAttribute('aria-hidden','false');
 
     
@@ -164,6 +190,7 @@ const runtime = String.raw`
         body.classList.add('cnh-policy-active');
         if(frame) frame.classList.remove('is-entering');
         forceFrameTop(frame);
+        try{ if(frame && frame.focus) frame.focus({preventScroll:true}); }catch(_){}
         window.setTimeout(function(){ if(open && activePath === path) forceFrameTop(frame); }, 32);
       });
     });
@@ -188,7 +215,7 @@ const runtime = String.raw`
     pendingOpenPath = path;
     savedY = typeof capturedY === 'number' ? capturedY : (window.scrollY || window.pageYOffset || 0);
     savedOpener = opener || (document.activeElement instanceof HTMLElement ? document.activeElement : null);
-    returnToCookieSettings = !!(returnContext && returnContext.cookieSettings);
+    keepCookieSettingsOpen = !!(returnContext && returnContext.cookieSettingsOpen);
     cookieSettingsOpener = returnContext && returnContext.cookieSettingsOpener instanceof HTMLElement ? returnContext.cookieSettingsOpener : null;
     cookieSettingsScrollTop = returnContext && typeof returnContext.cookieSettingsScrollTop === 'number' ? returnContext.cookieSettingsScrollTop : 0;
 
@@ -220,21 +247,18 @@ const runtime = String.raw`
       activePath = '';
       if(portal) portal.setAttribute('aria-hidden','true');
       try{ window.scrollTo({top:savedY,left:0,behavior:'auto'}); }catch(_){ window.scrollTo(0,savedY); }
-      if(returnToCookieSettings){
-        var reopenOpener = cookieSettingsOpener;
-        returnToCookieSettings = false;
-        cookieSettingsOpener = null;
-        var reopenScrollTop = cookieSettingsScrollTop;
-        cookieSettingsScrollTop = 0;
-        try{
-          window.__valieCookieSettingsPending = true;
-          window.__valieCookieSettingsOpener = reopenOpener && reopenOpener.isConnected ? reopenOpener : null;
-          window.__valieCookieSettingsRestoreScrollTop = reopenScrollTop;
-          window.dispatchEvent(new Event('valie:open-cookie-settings'));
-        }catch(_){}
+      restoreCookieSettingsLayer();
+      if(keepCookieSettingsOpen){
+        var settingsDialog = document.querySelector('.cookie-consent.is-settings');
+        if(settingsDialog && typeof cookieSettingsScrollTop === 'number') settingsDialog.scrollTop = cookieSettingsScrollTop;
+        var settingsFocusTarget = cookieSettingsOpener && cookieSettingsOpener.isConnected ? cookieSettingsOpener : savedOpener;
+        try{ if(settingsFocusTarget && settingsFocusTarget.isConnected && settingsFocusTarget.focus) settingsFocusTarget.focus({preventScroll:true}); }catch(_){}
       }else{
         try{ if(savedOpener && savedOpener.isConnected && savedOpener.focus) savedOpener.focus({preventScroll:true}); }catch(_){}
       }
+      keepCookieSettingsOpen = false;
+      cookieSettingsOpener = null;
+      cookieSettingsScrollTop = 0;
       savedOpener = null;
     }, delay);
   }
@@ -320,8 +344,8 @@ const runtime = String.raw`
     var path = legalPath(detail.path || '');
     if(!path) return;
     var capturedY = typeof detail.capturedY === 'number' ? detail.capturedY : (window.scrollY || window.pageYOffset || 0);
-    show(path, null, capturedY, {
-      cookieSettings: detail.returnToCookieSettings === true,
+    show(path, detail.cookieSettingsOpener || null, capturedY, {
+      cookieSettingsOpen: detail.keepCookieSettingsOpen === true,
       cookieSettingsOpener: detail.cookieSettingsOpener || null,
       cookieSettingsScrollTop: typeof detail.cookieSettingsScrollTop === 'number' ? detail.cookieSettingsScrollTop : 0
     });

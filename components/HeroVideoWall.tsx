@@ -186,7 +186,7 @@ export default function HeroVideoWall({ projects }: Props) {
 
     const updateScroll = () => {
       if (!heroVisible) return;
-      if (reducedMotion.matches) {
+      if (mobileHero || reducedMotion.matches) {
         cancelAnimationFrame(scrollRaf);
         resetHeroMotion();
         return;
@@ -262,8 +262,10 @@ export default function HeroVideoWall({ projects }: Props) {
     })();
 
     updateScroll();
-    window.addEventListener("scroll", updateScroll, { passive: true });
-    window.addEventListener("resize", updateScroll, { passive: true });
+    if (!mobileHero) {
+      window.addEventListener("scroll", updateScroll, { passive: true });
+      window.addEventListener("resize", updateScroll, { passive: true });
+    }
     root.addEventListener("pointermove", onPointerMove, { passive: true });
     root.addEventListener("pointerleave", resetPointer);
     document.addEventListener("visibilitychange", onVisibilityChange);
@@ -273,8 +275,10 @@ export default function HeroVideoWall({ projects }: Props) {
       videoObserver.disconnect();
       cancelAnimationFrame(pointerRaf);
       cancelAnimationFrame(scrollRaf);
-      window.removeEventListener("scroll", updateScroll);
-      window.removeEventListener("resize", updateScroll);
+      if (!mobileHero) {
+        window.removeEventListener("scroll", updateScroll);
+        window.removeEventListener("resize", updateScroll);
+      }
       root.removeEventListener("pointermove", onPointerMove);
       root.removeEventListener("pointerleave", resetPointer);
       document.removeEventListener("visibilitychange", onVisibilityChange);

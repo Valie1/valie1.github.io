@@ -24,7 +24,7 @@ pass(runtime.includes("warmFrames();") && runtime.includes("frame.setAttribute('
 pass(runtime.includes("document.addEventListener('click', handleClick, true)"), "Golden legal click capture is missing.");
 pass(runtime.includes("event.preventDefault()") && runtime.includes("event.stopImmediatePropagation()") && runtime.includes("show(path, anchor, clickY)"), "Legal links must be accepted deterministically on the first click.");
 pass(runtime.includes("portal.classList.add('is-preparing')") && runtime.includes("body.classList.add('cnh-policy-active')"), "Golden fade/blur entry sequence is missing.");
-pass(runtime.includes("window.__valieCookieSettingsPending = true") && runtime.includes("valie:open-cookie-settings"), "Cookie Settings bridge must remain integrated with the legal runtime.");
+pass(runtime.includes("keepCookieSettingsOpen") && runtime.includes("settingsDialog.scrollTop = cookieSettingsScrollTop"), "Cookie Settings stacked legal return must preserve the still-open modal and its internal position.");
 pass(shell.includes("window.parent.postMessage({type:NAVIGATE_MESSAGE") && shell.includes("window.parent.postMessage({type:CLOSE_MESSAGE}"), "Embedded legal switching and Back to Portfolio bridge are missing.");
 pass(shell.includes('href="/"') && shell.includes("portfolio-back-button"), "Direct legal routes must retain a native Back to Portfolio anchor.");
 for (const href of ["/privacy", "/cookies", "/policies"]) pass(footer.includes(`href="${href}"`) || shell.includes(`"${href}"`), `Missing legal route ${href}.`);
@@ -37,4 +37,4 @@ if (errors.length) {
   errors.forEach((error) => console.error(`- ${error}`));
   process.exit(1);
 }
-console.log("Legal flow audit passed: restored 122.61 preloaded portal, one-click handoff, fade/blur switching, Back to Portfolio, and modal/footer integration.");
+console.log("Legal flow audit passed: preloaded portal, stacked Cookie Settings handoff, fade/blur switching, Back to Portfolio, and footer integration.");

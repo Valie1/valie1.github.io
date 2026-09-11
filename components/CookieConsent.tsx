@@ -140,22 +140,19 @@ export default function CookieConsent({ isHome = false }: { isHome?: boolean }) 
     if (settingsClosingRef.current) return;
 
     const capturedY = window.scrollY || window.pageYOffset || 0;
-    const cookieSettingsOpener = settingsOpenerRef.current;
+    const cookieSettingsOpener = event.currentTarget;
     const cookieSettingsScrollTop = dialogRef.current?.scrollTop ?? 0;
-    closeSettings(() => {
-      window.requestAnimationFrame(() => {
-        window.dispatchEvent(new CustomEvent("valie:open-legal-portal", {
-          detail: {
-            path,
-            capturedY,
-            returnToCookieSettings: true,
-            cookieSettingsOpener,
-            cookieSettingsScrollTop,
-          },
-        }));
-      });
-    });
-  }, [closeSettings]);
+
+    window.dispatchEvent(new CustomEvent("valie:open-legal-portal", {
+      detail: {
+        path,
+        capturedY,
+        keepCookieSettingsOpen: true,
+        cookieSettingsOpener,
+        cookieSettingsScrollTop,
+      },
+    }));
+  }, []);
 
   const saveChoice = useCallback((next: Exclude<MediaConsent, null>) => {
     writeMediaConsent(next);

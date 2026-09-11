@@ -1,8 +1,0 @@
-Pass 123.07 verification:
-• Website cursor click audit: 8/8
-• CSS source guard: passed
-• Desktop visual polish: 16/16
-• Publish lock: 52/52
-• Browser/device QA: passed
-• Mobile visual polish: passed
-• Full TypeScript/build not run locally because this source bundle does not include node_modules; GitHub Actions/local launcher remains authoritative.

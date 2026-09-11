@@ -1,0 +1,7 @@
+PASS 123.15 — REMOVE WEBSITE BADGE
+
+- Removes the red WEBSITE block/badge from every website card completely.
+- Deletes the badge markup and all one-web-card__badge CSS, including desktop hover, mobile forced visibility, centered cue overrides, and reduced-motion rules.
+- Keeps the centered grey pointer circle, mouse-pointer icon, and centered click ripple/scale animation unchanged.
+- Keeps the WEBSITES work tab and all website cards/links unchanged.
+- Retains Pass 123.14 and all earlier site behavior apart from removing the WEBSITE badge.
