@@ -1,5 +1,0 @@
-Pass 123.38 verification summary
-- Mobile hero SCROLL cue circle uses cnhWhiteScrollPulse.
-- Mobile hero SCROLL cue arrow uses cnhArrowBounce.
-- Reduced-motion mobile override also keeps the same desktop animations per explicit user request.
-- Package version bumped to 9.13.38.

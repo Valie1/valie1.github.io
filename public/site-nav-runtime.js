@@ -88,8 +88,29 @@
     if (!id) return;
     var target = document.getElementById(id);
     if (!target) return;
-    try { target.scrollIntoView({ block: "start", behavior: "auto" }); }
-    catch (_) { target.scrollIntoView(true); }
+    var headerHeight = header ? Math.ceil(header.getBoundingClientRect().height) : 0;
+    var top = Math.max(0, Math.round(window.scrollY + target.getBoundingClientRect().top - headerHeight));
+    try { window.scrollTo({ top: top, left: 0, behavior: "auto" }); }
+    catch (_) { window.scrollTo(0, top); }
+  }
+
+  function commitHash(id) {
+    if (!id) return;
+    var nextHash = "#" + encodeURIComponent(id);
+    if (window.location.hash === nextHash) return;
+    try { window.history.pushState(null, "", nextHash); }
+    catch (_) { window.location.hash = nextHash; }
+  }
+
+  function navigateToTarget(id) {
+    if (!id) return;
+    commitHash(id);
+    window.requestAnimationFrame(function () {
+      window.requestAnimationFrame(function () {
+        scrollTargetIntoView(id);
+      });
+    });
+    window.setTimeout(function () { scrollTargetIntoView(id); }, 140);
   }
 
   function closestMobileLink(target) {
@@ -106,17 +127,11 @@
     var isPrimary = event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
     var id = targetId(link);
 
+    if (isPrimary && id) event.preventDefault();
     setOpen(false, false);
 
     if (!isPrimary || !id) return;
-
-    window.setTimeout(function () {
-      scrollTargetIntoView(id);
-    }, 0);
-
-    window.setTimeout(function () {
-      scrollTargetIntoView(id);
-    }, 120);
+    navigateToTarget(id);
   }
 
   function onKey(event) {

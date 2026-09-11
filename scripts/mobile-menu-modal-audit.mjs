@@ -15,15 +15,15 @@ const checks = [
   ['Background accessibility tree is hidden while menu is open', runtime.includes('node.setAttribute("aria-hidden", "true")')],
   ['Original inert and aria-hidden state is restored on close', runtime.includes('setNodeInert(record.node, record.inert)') && runtime.includes('record.ariaHidden === null')],
   ['Mobile destinations use native click activation', runtime.includes('menu.addEventListener("click", onMenuClick, false)') && !runtime.includes('onMenuPointerUp')],
-  ['Native anchor default is preserved for destination clicks', !runtime.slice(runtime.indexOf('function onMenuClick'), runtime.indexOf('function onKey')).includes('event.preventDefault()')],
-  ['Menu link activation closes without swallowing the anchor click', runtime.includes('setOpen(false, false)') && runtime.includes('scrollTargetIntoView(id)')],
+  ['Primary mobile destination clicks use deterministic navigation', runtime.slice(runtime.indexOf('function onMenuClick'), runtime.indexOf('function onKey')).includes('event.preventDefault()') && runtime.includes('navigateToTarget(id)')],
+  ['Menu link activation closes before deterministic target navigation', runtime.includes('setOpen(false, false)') && runtime.includes('navigateToTarget(id)')],
   ['Same-page navigation closes menu before post-click section correction', runtime.includes('setOpen(false, false)') && runtime.includes('scrollTargetIntoView(id)')],
-  ['Section positioning has a second correction pass', runtime.includes('}, 120)') && runtime.includes('scrollTargetIntoView(id)')],
+  ['Section positioning has a second correction pass', runtime.includes('}, 140)') && runtime.includes('scrollTargetIntoView(id)')],
   ['Outside pointer input is blocked while modal menu is open', runtime.includes('onDocumentPointerDown') && runtime.includes('event.stopImmediatePropagation()')],
   ['CSS blocks pointer interaction with body siblings while menu is open', css.includes('html.mobile-menu-locked body > :not(.minimal-site-nav):not(script):not(style):not(link)') && css.includes('pointer-events:none!important')],
   ['Navigation remains interactive above the lock', css.includes('html.mobile-menu-locked .minimal-site-nav *') && css.includes('pointer-events:auto')],
   ['Menu overscroll cannot chain into the underlying page', css.includes('.minimal-mobile-menu.is-open{') && css.includes('overscroll-behavior:none!important')],
-  ['Deployed runtime is cache-busted for this pass', layout.includes('site-nav-runtime.js?v=123.39') && layout.includes('site-link-preview-lock.js?v=123.39')],
+  ['Deployed runtime is cache-busted for this pass', layout.includes('site-nav-runtime.js?v=123.41') && layout.includes('site-link-preview-lock.js?v=123.41')],
 ];
 
 let failures = 0;

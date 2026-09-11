@@ -1,3 +1,3 @@
-# Valie Portfolio — Pass 123.40
+# Valie Portfolio — Pass 123.41
 
-Pass 123.40 softens the mobile hero SCROLL arrow movement. The arrow still animates continuously and stays tied to the hero-only fade lifecycle, but its up/down travel is reduced so it feels closer to a subtle cue instead of an aggressive bounce. Desktop behavior is left untouched.
+Pass 123.41 hardens the mobile navigation for real phones and foldables. The open menu now owns the top stacking layer above normal portfolio overlays, fills the live visual viewport with an opaque surface, keeps all four destination rows inside compact/short screens, and uses deterministic post-unlock hash scrolling so WORK / ABOUT / REVIEWS / CONTACT reliably navigate on touch devices. Desktop behavior is unchanged.
