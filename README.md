@@ -1,10 +1,10 @@
-# VALIE Portfolio — Pass 123.23
+# VALIE Portfolio — Pass 123.24
 
-GitHub Pages release for `https://valie1.github.io/`. Pass 123.23 converts the two hero SCROLL controls into a stable mobile viewport overlay: both controls are locked to the captured mobile layout height so browser chrome cannot drag them around, their arrow/circle motion is disabled on phones, and the whole overlay fades out when the hero leaves and fades back in when the hero returns. Pass 123.22 clean wordmark resolve, Pass 123.21 cross-device font parity, Pass 123.20 mobile navigation/carousel continuity, and Pass 123.19 live mobile hero-video parity are retained.
+GitHub Pages release for `https://valie1.github.io/`. Pass 123.24 fixes the GitHub Actions mobile viewport-stability audit introduced by Pass 123.23 without changing the intended scroll-cue overlay behavior. Initial cue visibility now derives from the stable hero geometry itself instead of reading the live `visualViewport`, so browser chrome cannot re-enter the fade calculation. The two SCROLL controls remain fixed overlays that fade out when the hero leaves and fade back in when it returns. All Pass 123.23 behavior and prior site fixes are retained.
 
 Copy the contents of this folder into the local GitHub Desktop checkout for the `valie1.github.io` repository, keep the repository's hidden `.git` folder, commit the replacement, and push. In GitHub repository Settings → Pages, set Source to GitHub Actions.
 
-Use `START-PASS-123.23-STABLE-SCROLL-CUE-OVERLAY.bat` for a fresh local development preview at `http://localhost:3000`.
+Use `START-PASS-123.24-VIEWPORT-AUDIT-HOTFIX.bat` for a fresh local development preview at `http://localhost:3000`.
 
 ## Pass 123.06
 
@@ -82,3 +82,8 @@ The header and footer VALIE transformations keep their outline-draw → solid-re
 ## Pass 123.23 — Stable Mobile Hero Scroll-Cue Overlay
 
 The two hero SCROLL controls are now a true portal overlay with mobile geometry locked to the stable layout height captured by the viewport runtime. They no longer ride browser-chrome height changes or translate/bounce on touch devices. The overlay stays fully visible while the main hero is present, fades out as the hero leaves the viewport, and fades back in when the hero is revisited. Both left and right controls share the same locked bottom axis. Pass 123.22 clean wordmark resolve and all prior mobile/desktop behavior remain intact.
+
+
+## Pass 123.24 — Mobile Viewport Audit Hotfix
+
+The GitHub Actions failure at **Audit mobile viewport stability** is fixed. `HeroScrollCues` no longer reads `window.visualViewport` when calculating its initial hero visibility. It derives that geometry from the already-stable hero height, while the IntersectionObserver still handles fade-out/fade-in as the hero leaves and re-enters the viewport. This keeps the Pass 123.23 overlay behavior intact and satisfies the deployment guard that intentionally rejects live visual-viewport dependencies in hero geometry. Runtime query strings are cache-busted to `v=123.24`.

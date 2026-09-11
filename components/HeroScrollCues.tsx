@@ -24,7 +24,7 @@ export default function HeroScrollCues() {
 
     const syncInitialVisibility = () => {
       const rect = hero.getBoundingClientRect();
-      const viewportHeight = Math.max(1, window.visualViewport?.height ?? window.innerHeight);
+      const viewportHeight = Math.max(rect.height, 1);
       const visiblePx = Math.max(0, Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0));
       const visibleRatio = visiblePx / Math.max(1, Math.min(rect.height, viewportHeight));
       setInsideHero(visibleRatio > HERO_EXIT_RATIO);

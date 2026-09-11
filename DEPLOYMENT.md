@@ -5,7 +5,7 @@ Production URL: `https://valie1.github.io/`
 1. Open the existing `valie1.github.io` repository in GitHub Desktop.
 2. Choose Repository → Show in Explorer.
 3. Keep the hidden `.git` folder and remove the old website files from the repository working tree.
-4. Copy every file and folder from Pass 123.23 into the repository root, including the hidden `.github` folder.
+4. Copy every file and folder from Pass 123.24 into the repository root, including the hidden `.github` folder.
 5. In GitHub Desktop, review the changes, commit them to the current default branch, and Push origin.
 6. On GitHub.com, open Settings → Pages and set Build and deployment → Source to GitHub Actions.
 7. Open the Actions tab and wait for `Deploy VALIE Portfolio to GitHub Pages` to finish successfully.
@@ -68,3 +68,7 @@ No deployment architecture changes. Header/footer wordmark markup and CSS are co
 
 ## Pass 123.23 — Stable Mobile Hero Scroll-Cue Overlay
 No deployment architecture changes. The hero scroll controls remain client-rendered, but their mobile portal overlay is now locked to `--valie-mobile-layout-height` and visibility is driven by hero intersection instead of per-scroll position updates. Runtime query strings are cache-busted to `v=123.23`.
+
+
+## Pass 123.24 — Mobile Viewport Audit Hotfix
+No deployment architecture changes. This pass removes the remaining `visualViewport` read from `HeroScrollCues` initial visibility geometry so the GitHub Actions `mobile:viewport-stability:audit` passes again. Runtime query strings are cache-busted to `v=123.24`.
