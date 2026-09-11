@@ -5734,7 +5734,10 @@ body.review-modal-locked{
   opacity:0!important;
   transition:opacity .16s linear!important;
 }
-.hero-scroll-cues--viewport.is-armed{
+.hero-scroll-cues--viewport.is-armed:not(.is-visible){
+  opacity:0!important;
+}
+.hero-scroll-cues--viewport.is-armed.is-visible{
   opacity:var(--hero-scroll-opacity, 1)!important;
 }
 .hero-scroll-cues--viewport .hero-scroll-cue{
