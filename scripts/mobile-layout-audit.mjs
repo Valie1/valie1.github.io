@@ -7,7 +7,7 @@ const checks = [
   ["mobile layout layer exists", tail.includes("--valie-mobile-gutter") && tail.includes("@media (max-width:760px)")],
   ["phone-only breakpoint protects desktop", tail.includes("@media (max-width:760px)")],
   ["safe-area mobile gutters exist", tail.includes("--valie-mobile-gutter") && tail.includes("safe-area-inset-left") && tail.includes("safe-area-inset-right")],
-  ["hero is dynamic-viewport bounded", tail.includes("min-height:max(100dvh,620px)")],
+  ["hero is stable-viewport bounded", tail.includes("min-height:max(var(--valie-stable-page-height),620px)")],
   ["about/software collapse to phone flow", tail.includes(".creative-toolkit--split-redesign") && tail.includes("grid-template-columns:1fr!important")],
   ["work tabs remain three-up on phones", tail.includes(".unified-work-tabs") && tail.includes("repeat(3,minmax(0,1fr))")],
   ["long form is single-column", tail.includes(".reference-media-grid--long{grid-template-columns:1fr!important")],

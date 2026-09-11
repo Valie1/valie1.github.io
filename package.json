@@ -1,6 +1,6 @@
 {
   "name": "premium-creative-portfolio",
-  "version": "9.12.99",
+  "version": "9.13.8",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -9,7 +9,7 @@
     "typecheck": "tsc --noEmit",
     "content:check": "node scripts/validate-content.mjs",
     "seo:audit": "node scripts/seo-audit.mjs",
-    "launch:check": "npm run css:syntax-guard && npm run audit:structural && npm run desktop:polish:audit && npm run responsive:polish:audit && npm run final:release:audit && npm run publish:lock:audit && npm run performance:audit && npm run review:hydration:audit && npm run browser:qa && npm run routes:audit && npm run mobile:overflow:audit && npm run mobile:layout:audit && npm run mobile:interactions:audit && npm run mobile:visual:audit && npm run mobile:device:qa && npm run mobile-cta:audit && npm run seo:audit && npm run github-pages:audit && npm run cleanup:audit && npm run buttons:audit && npm run hero-cta:audit && npm run cookies:audit && npm run legal:return:audit && npm run overlay:no-jump:audit && npm run legal:no-jump:audit && npm run skeletons:audit && npm run accessibility:audit && npm run security:check && npm run metadata:static:audit && npm run typecheck && npm run build:pages",
+    "launch:check": "npm run css:syntax-guard && npm run audit:structural && npm run desktop:polish:audit && npm run responsive:polish:audit && npm run final:release:audit && npm run publish:lock:audit && npm run performance:audit && npm run review:hydration:audit && npm run browser:qa && npm run routes:audit && npm run mobile:overflow:audit && npm run mobile:layout:audit && npm run mobile:interactions:audit && npm run mobile:visual:audit && npm run mobile:device:qa && npm run mobile-cta:audit && npm run seo:audit && npm run github-pages:audit && npm run cleanup:audit && npm run buttons:audit && npm run hero-cta:audit && npm run cookies:audit && npm run legal:return:audit && npm run legal:settings-roundtrip:audit && npm run overlay:no-jump:audit && npm run legal:no-jump:audit && npm run skeletons:audit && npm run accessibility:audit && npm run security:check && npm run metadata:static:audit && npm run mobile:wordmark:audit && npm run mobile:viewport-stability:audit && npm run mobile:software:audit && npm run mobile:review-swipe:audit && npm run mobile:hero-composition:audit && npm run mobile:hero-video-zone:audit && npm run website-cursor:audit && npm run work-tabs:audit && npm run typecheck && npm run build:pages",
     "security:check": "node scripts/dependency-guard.mjs",
     "images:audit": "node scripts/image-budget.mjs",
     "media:audit": "node scripts/media-budget.mjs",
@@ -52,7 +52,16 @@
     "build:pages": "next build && node scripts/prepare-github-pages.mjs",
     "preview:pages": "node scripts/serve-static-export.mjs",
     "github-pages:audit": "node scripts/github-pages-audit.mjs",
-    "metadata:static:audit": "node scripts/static-metadata-export-audit.mjs"
+    "metadata:static:audit": "node scripts/static-metadata-export-audit.mjs",
+    "mobile:wordmark:audit": "node scripts/mobile-wordmark-resolve-audit.mjs",
+    "mobile:viewport-stability:audit": "node scripts/mobile-viewport-stability-audit.mjs",
+    "mobile:software:audit": "node scripts/mobile-software-polish-audit.mjs",
+    "legal:settings-roundtrip:audit": "node scripts/legal-settings-roundtrip-audit.mjs",
+    "mobile:review-swipe:audit": "node scripts/mobile-review-swipe-audit.mjs",
+    "mobile:hero-composition:audit": "node scripts/mobile-hero-composition-audit.mjs",
+    "mobile:hero-video-zone:audit": "node scripts/mobile-hero-video-zone-audit.mjs",
+    "website-cursor:audit": "node scripts/website-cursor-click-audit.mjs",
+    "work-tabs:audit": "node scripts/work-tab-underline-audit.mjs"
   },
   "dependencies": {
     "lucide-react": "0.468.0",

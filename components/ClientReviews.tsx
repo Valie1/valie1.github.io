@@ -48,6 +48,7 @@ export default function ClientReviews({ headingId = "reviews-title" }: { heading
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
   const openerRef = useRef<HTMLElement | null>(null);
+  const reviewViewportRef = useRef<HTMLDivElement | null>(null);
 
   const openReview = useCallback((review: Review) => {
     openerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -111,6 +112,120 @@ export default function ClientReviews({ headingId = "reviews-title" }: { heading
   }, [active, modalPhase]);
 
   useEffect(() => {
+    const viewport = reviewViewportRef.current;
+    if (!viewport || active) return;
+
+    const mobileQuery = window.matchMedia("(max-width: 760px)");
+    const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (!mobileQuery.matches || reducedMotionQuery.matches) return;
+
+    let autoTimer = 0;
+    let settleTimer = 0;
+    let autoReleaseTimer = 0;
+    let userInteracting = false;
+    let autoScrolling = false;
+    let direction = 1;
+
+    const cards = () =>
+      Array.from(viewport.querySelectorAll<HTMLElement>(".review-orbit__set:first-child .review-card"));
+
+    const centeredLeft = (card: HTMLElement) =>
+      Math.max(0, card.offsetLeft - (viewport.clientWidth - card.clientWidth) / 2);
+
+    const nearestIndex = () => {
+      const items = cards();
+      if (!items.length) return 0;
+      let nearest = 0;
+      let distance = Number.POSITIVE_INFINITY;
+      items.forEach((card, index) => {
+        const delta = Math.abs(centeredLeft(card) - viewport.scrollLeft);
+        if (delta < distance) {
+          distance = delta;
+          nearest = index;
+        }
+      });
+      return nearest;
+    };
+
+    const clearAutoTimer = () => {
+      if (autoTimer) window.clearTimeout(autoTimer);
+      autoTimer = 0;
+    };
+
+    const scheduleAuto = (delay = 4400) => {
+      clearAutoTimer();
+      autoTimer = window.setTimeout(() => {
+        if (document.hidden || userInteracting) {
+          scheduleAuto(1200);
+          return;
+        }
+
+        const items = cards();
+        if (items.length < 2) return;
+
+        const current = nearestIndex();
+        if (current >= items.length - 1) direction = -1;
+        else if (current <= 0) direction = 1;
+
+        const next = Math.max(0, Math.min(items.length - 1, current + direction));
+        autoScrolling = true;
+        viewport.scrollTo({ left: centeredLeft(items[next]), behavior: "smooth" });
+        if (autoReleaseTimer) window.clearTimeout(autoReleaseTimer);
+        autoReleaseTimer = window.setTimeout(() => {
+          autoScrolling = false;
+          autoReleaseTimer = 0;
+        }, 900);
+        scheduleAuto(5200);
+      }, delay);
+    };
+
+    const pauseAuto = () => {
+      userInteracting = true;
+      autoScrolling = false;
+      clearAutoTimer();
+      if (autoReleaseTimer) window.clearTimeout(autoReleaseTimer);
+      autoReleaseTimer = 0;
+    };
+
+    const resumeAuto = () => {
+      userInteracting = false;
+      scheduleAuto(4200);
+    };
+
+    const onScroll = () => {
+      if (autoScrolling) return;
+      if (settleTimer) window.clearTimeout(settleTimer);
+      settleTimer = window.setTimeout(() => {
+        settleTimer = 0;
+        if (!userInteracting) scheduleAuto(4200);
+      }, 220);
+    };
+
+    const onVisibilityChange = () => {
+      if (document.hidden) clearAutoTimer();
+      else scheduleAuto(2600);
+    };
+
+    viewport.addEventListener("pointerdown", pauseAuto, { passive: true });
+    window.addEventListener("pointerup", resumeAuto, { passive: true });
+    window.addEventListener("pointercancel", resumeAuto, { passive: true });
+    viewport.addEventListener("scroll", onScroll, { passive: true });
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    scheduleAuto(3200);
+
+    return () => {
+      clearAutoTimer();
+      if (settleTimer) window.clearTimeout(settleTimer);
+      if (autoReleaseTimer) window.clearTimeout(autoReleaseTimer);
+      viewport.removeEventListener("pointerdown", pauseAuto);
+      window.removeEventListener("pointerup", resumeAuto);
+      window.removeEventListener("pointercancel", resumeAuto);
+      viewport.removeEventListener("scroll", onScroll);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+    };
+  }, [active]);
+
+  useEffect(() => {
     if (!active) return;
 
     const unlockScroll = lockDocumentScroll("review-modal-locked");
@@ -146,7 +261,7 @@ export default function ClientReviews({ headingId = "reviews-title" }: { heading
             <h2 id={headingId}>Words from people<br /><em>I&apos;ve edited for.</em></h2>
           </div>
           <p>
-            Real feedback from real projects. The cards keep moving; click any one to open the original review screenshot.
+            Real feedback from real projects. The cards keep moving; on mobile, swipe left or right, or tap any one to open the original review screenshot.
           </p>
         </div>
 
@@ -158,10 +273,10 @@ export default function ClientReviews({ headingId = "reviews-title" }: { heading
 
 
           className="review-orbit is-performance-paused"
-          aria-label="Looping client reviews"
+          aria-label="Client reviews"
         >
           <span className="review-orbit__signal" aria-hidden="true" />
-          <div className="review-orbit__viewport">
+          <div ref={reviewViewportRef} className="review-orbit__viewport">
             <div className="review-orbit__track">
               {[0, 1, 2, 3].map((setIndex) => (
                 <div className="review-orbit__set" aria-hidden={setIndex !== 0} key={setIndex}>

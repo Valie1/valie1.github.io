@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-const PREVIEW_STAMP_PATTERN = /^PASS\s+122(?:\.\d+)+\s*[·•\-–—|]\s*PORT\s+\d+$/i;
+const PREVIEW_STAMP_PATTERN = /^PASS\s+\d+(?:\.\d+)+\s*[·•\-–—|]\s*PORT\s+\d+$/i;
 const LEGACY_STAMP_SELECTOR = ".rk49-build-stamp,[data-build-stamp],[data-pass-stamp],[data-preview-stamp],#build-stamp,.dev-build-stamp,.pass-build-stamp";
 const DRAG_EVENTS = ["dragstart", "drag", "dragenter", "dragover", "drop"] as const;
 const POINTER_FOCUS_SELECTOR = 'a[href],a[data-valie-link-preview-lock],button,[role="button"],[role="tab"],summary,[tabindex],input[type="range"],input[type="checkbox"],input[type="radio"]';
@@ -98,7 +98,6 @@ export default function BrowserViewportRuntime() {
     window.addEventListener("resize", requestSync, { passive: true });
     window.addEventListener("orientationchange", requestSync, { passive: true });
     visualViewport?.addEventListener("resize", requestSync, { passive: true });
-    visualViewport?.addEventListener("scroll", requestSync, { passive: true });
     DRAG_EVENTS.forEach((eventName) => document.addEventListener(eventName, preventDrag, true));
     document.addEventListener("selectstart", preventSelectionDrag, true);
     document.addEventListener("contextmenu", preventImageContextMenu, true);
@@ -121,7 +120,6 @@ export default function BrowserViewportRuntime() {
       window.removeEventListener("resize", requestSync);
       window.removeEventListener("orientationchange", requestSync);
       visualViewport?.removeEventListener("resize", requestSync);
-      visualViewport?.removeEventListener("scroll", requestSync);
       DRAG_EVENTS.forEach((eventName) => document.removeEventListener(eventName, preventDrag, true));
       document.removeEventListener("selectstart", preventSelectionDrag, true);
       document.removeEventListener("contextmenu", preventImageContextMenu, true);

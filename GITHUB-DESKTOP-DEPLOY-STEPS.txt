@@ -1,13 +1,13 @@
-VALIE PASS 122.98 - GITHUB PAGES DEPLOYMENT
+VALIE PASS 123.06 - GITHUB PAGES DEPLOYMENT
 
 1. Open GitHub Desktop and select the Valie1/valie1.github.io repository.
 2. Repository > Show in Explorer.
-3. Keep the hidden .git folder. Replace the website files with the CONTENTS of this Pass 122.98 folder.
+3. Keep the hidden .git folder. Replace the website files with the CONTENTS of this Pass 123.06 folder.
 4. In GitHub Desktop, review the changes.
-5. Commit with a message such as: Fix GitHub Pages deployment workflow
+5. Commit with a message such as: Polish mobile hero layout
 6. Push origin.
 7. Open GitHub > repository > Actions. The workflow should run automatically.
 8. The BUILD job must complete before DEPLOY begins.
 9. GitHub > Settings > Pages > Build and deployment > Source must be GitHub Actions.
 
-PASS 122.98 changes the workflow so the actual static Next.js build is the deployment gate. The compatibility verifier now runs AFTER the build and verifies the generated out/ directory instead of blocking the build with source-code heuristics.
+Pass 123.06 keeps all previous fixes and polishes the mobile hero description and CTA pair so they match the compact desktop composition.

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
-import { ArrowUpRight } from "lucide-react";
+import { MousePointer2 } from "lucide-react";
 import OnePageVideoShowcase from "@/components/OnePageVideoShowcase";
 import PortfolioImage from "@/components/PortfolioImage";
 import { getProjectWebsiteUrl } from "@/lib/content";
@@ -249,7 +249,8 @@ export default function UnifiedWorkShowcase({ longForm, shortForm, websites }: P
                     <span className="one-web-card__shade" aria-hidden="true" />
                     <span className="one-web-card__badge">WEBSITE</span>
                     <span className="one-web-card__open" aria-hidden="true">
-                      <ArrowUpRight size={20} />
+                      <span className="one-web-card__click-ring" />
+                      <MousePointer2 className="one-web-card__cursor" size={21} strokeWidth={1.8} />
                     </span>
                     <span className="one-web-card__copy">
                       <strong>{project.title}</strong>

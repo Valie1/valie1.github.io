@@ -28,7 +28,7 @@ export default function HeroScrollCues() {
         }
 
         const rect = hero.getBoundingClientRect();
-        const viewportHeight = Math.max(window.visualViewport?.height ?? window.innerHeight, 1);
+        const viewportHeight = Math.max(rect.height, 1);
         const travelled = Math.max(0, -rect.top);
 
 
@@ -49,14 +49,12 @@ export default function HeroScrollCues() {
     updateHeroFade();
     window.addEventListener("scroll", updateHeroFade, { passive: true });
     window.addEventListener("resize", updateHeroFade, { passive: true });
-    window.visualViewport?.addEventListener("resize", updateHeroFade, { passive: true });
 
     return () => {
       window.clearTimeout(timer);
       if (raf) window.cancelAnimationFrame(raf);
       window.removeEventListener("scroll", updateHeroFade);
       window.removeEventListener("resize", updateHeroFade);
-      window.visualViewport?.removeEventListener("resize", updateHeroFade);
     };
   }, []);
 

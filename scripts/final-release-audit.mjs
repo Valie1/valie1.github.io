@@ -14,7 +14,7 @@ const names = fs.readdirSync(root);
 
 const checks = [
   ["publish interaction lock exists", viewportRuntime.includes("document.addEventListener(eventName, preventDrag, true)") && css.includes("-webkit-user-drag:none")],
-  ["publish package version is current", pkg.version === "9.12.99"],
+  ["publish package version is current", pkg.version === "9.13.6"],
   ["stable localhost dev command remains", pkg.scripts?.["dev:portfolio"] === "next dev -p 3000"],
   ["GitHub Pages static export is enabled", /output:\s*"export"/.test(read("next.config.mjs")) && /trailingSlash:\s*true/.test(read("next.config.mjs"))],
   ["final release audit is wired into launch check", pkg.scripts?.["launch:check"]?.includes("npm run final:release:audit")],
@@ -32,7 +32,7 @@ const checks = [
   ["no transition: all added", !/transition\s*:\s*all\b/i.test(css)],
   ["generated TypeScript cache is absent", !exists("tsconfig.tsbuildinfo")],
   ["only one current launcher exists", names.filter((n)=>/^START-PASS-.*\.bat$/i.test(n)).length === 1],
-  ["only one verification file exists", names.filter((n)=>/^PASS122(?:\..*)?-VERIFICATION\.txt$/i.test(n)).length === 1],
+  ["only one verification file exists", names.filter((n)=>/^PASS(?:122|123)(?:\..*)?-VERIFICATION\.txt$/i.test(n)).length === 1],
 ];
 
 let failed=0;

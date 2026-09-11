@@ -2,6 +2,7 @@
 
 import { ArrowLeft, Check, PlayCircle, ShieldCheck, ShieldOff, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { MouseEvent as ReactMouseEvent } from "react";
 import { createPortal } from "react-dom";
 import { showSuccess } from "@/lib/feedback";
 import { isolateDialog, restoreFocus, trapTabKey } from "@/lib/accessibility";
@@ -72,13 +73,23 @@ export default function CookieConsent({ isHome = false }: { isHome?: boolean }) 
     const runtimeWindow = window as Window & {
       __valieCookieSettingsPending?: boolean;
       __valieCookieSettingsOpener?: HTMLElement | null;
+      __valieCookieSettingsRestoreScrollTop?: number;
     };
 
     const onOpenSettings = () => {
       const opener = runtimeWindow.__valieCookieSettingsOpener ?? null;
+      const restoreScrollTop = runtimeWindow.__valieCookieSettingsRestoreScrollTop;
       runtimeWindow.__valieCookieSettingsPending = false;
       runtimeWindow.__valieCookieSettingsOpener = null;
+      runtimeWindow.__valieCookieSettingsRestoreScrollTop = undefined;
       openSettings(opener);
+      if (typeof restoreScrollTop === "number") {
+        window.requestAnimationFrame(() => {
+          window.requestAnimationFrame(() => {
+            if (dialogRef.current) dialogRef.current.scrollTop = restoreScrollTop;
+          });
+        });
+      }
     };
 
     window.addEventListener(MEDIA_CONSENT_CHANGE_EVENT, onConsentChange as EventListener);
@@ -123,6 +134,28 @@ export default function CookieConsent({ isHome = false }: { isHome?: boolean }) 
   useEffect(() => () => {
     if (closeTimerRef.current !== null) window.clearTimeout(closeTimerRef.current);
   }, []);
+
+  const openLegalFromSettings = useCallback((path: "/privacy" | "/cookies" | "/policies", event: ReactMouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    if (settingsClosingRef.current) return;
+
+    const capturedY = window.scrollY || window.pageYOffset || 0;
+    const cookieSettingsOpener = settingsOpenerRef.current;
+    const cookieSettingsScrollTop = dialogRef.current?.scrollTop ?? 0;
+    closeSettings(() => {
+      window.requestAnimationFrame(() => {
+        window.dispatchEvent(new CustomEvent("valie:open-legal-portal", {
+          detail: {
+            path,
+            capturedY,
+            returnToCookieSettings: true,
+            cookieSettingsOpener,
+            cookieSettingsScrollTop,
+          },
+        }));
+      });
+    });
+  }, [closeSettings]);
 
   const saveChoice = useCallback((next: Exclude<MediaConsent, null>) => {
     writeMediaConsent(next);
@@ -235,9 +268,9 @@ export default function CookieConsent({ isHome = false }: { isHome?: boolean }) 
             <div className="cookie-settings-panel__legal">
               <span>READ MORE</span>
               <div>
-                <a href="/cookies" onClick={() => closeSettings()}>COOKIE POLICY</a>
-                <a href="/privacy" onClick={() => closeSettings()}>PRIVACY POLICY</a>
-                <a href="/policies" onClick={() => closeSettings()}>SITE POLICIES</a>
+                <a href="/cookies" data-valie-legal-deferred onClick={(event) => openLegalFromSettings("/cookies", event)}>COOKIE POLICY</a>
+                <a href="/privacy" data-valie-legal-deferred onClick={(event) => openLegalFromSettings("/privacy", event)}>PRIVACY POLICY</a>
+                <a href="/policies" data-valie-legal-deferred onClick={(event) => openLegalFromSettings("/policies", event)}>SITE POLICIES</a>
               </div>
             </div>
 

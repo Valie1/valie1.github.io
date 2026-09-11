@@ -58,6 +58,7 @@ function LaneSequence({
             <Skeleton className="hero-media-card__skeleton" />
             <video
               data-hero-src={item.loop}
+              data-hero-kind={kind}
               poster={item.poster}
               muted
               loop
@@ -94,7 +95,9 @@ export default function HeroVideoWall({ projects }: Props) {
     const network = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
     const saveData = Boolean(network?.saveData);
     const slowNetwork = Boolean(network?.effectiveType && /(^|-)2g$/i.test(network.effectiveType));
-    const constrainedDevice = hardwareConcurrency <= 4 || deviceMemory <= 4 || window.innerWidth <= 700;
+    const mobileHero = window.matchMedia("(max-width: 700px)").matches;
+    const mobilePlayZoneInset = Math.round((root.getBoundingClientRect().height || window.innerHeight) * 0.24);
+    const constrainedDevice = hardwareConcurrency <= 4 || deviceMemory <= 4 || mobileHero;
     const maxPlaying = saveData || slowNetwork ? 0 : constrainedDevice ? 2 : 4;
 
     const ensureSource = (video: HTMLVideoElement) => {
@@ -109,33 +112,46 @@ export default function HeroVideoWall({ projects }: Props) {
       if (!video.paused) video.pause();
     };
 
+    const resetToPoster = (video: HTMLVideoElement) => {
+      pauseVideo(video);
+      if (!video.getAttribute("src")) return;
+      video.removeAttribute("src");
+      try {
+        video.load();
+      } catch {}
+    };
+
     const unloadAll = () => {
-      videos.forEach((video) => {
-        pauseVideo(video);
-        if (video.getAttribute("src")) {
-          video.removeAttribute("src");
-          try {
-            video.load();
-          } catch {}
-        }
-      });
+      videos.forEach(resetToPoster);
       visibleRatios.clear();
     };
 
     const syncPlayback = () => {
-      if (!heroVisible || document.hidden || reducedMotion.matches) {
-        videos.forEach(pauseVideo);
+      if (!heroVisible || document.hidden || reducedMotion.matches || maxPlaying === 0) {
+        videos.forEach(mobileHero ? resetToPoster : pauseVideo);
         return;
       }
 
       const ranked = Array.from(visibleRatios.entries())
-        .filter(([, ratio]) => ratio > 0.08)
+        .filter(([, ratio]) => ratio > (mobileHero ? 0.12 : 0.08))
         .sort((a, b) => b[1] - a[1]);
-      const allowed = new Set(ranked.slice(0, maxPlaying).map(([video]) => video));
+
+      let allowed: Set<HTMLVideoElement>;
+      if (mobileHero) {
+        const laneLeaders = new Map<string, HTMLVideoElement>();
+        ranked.forEach(([video]) => {
+          const kind = video.dataset.heroKind || "hero";
+          if (!laneLeaders.has(kind)) laneLeaders.set(kind, video);
+        });
+        allowed = new Set(Array.from(laneLeaders.values()).slice(0, maxPlaying));
+      } else {
+        allowed = new Set(ranked.slice(0, maxPlaying).map(([video]) => video));
+      }
 
       videos.forEach((video) => {
         if (!allowed.has(video)) {
-          pauseVideo(video);
+          if (mobileHero) resetToPoster(video);
+          else pauseVideo(video);
           return;
         }
         ensureSource(video);
@@ -152,7 +168,9 @@ export default function HeroVideoWall({ projects }: Props) {
         });
         syncPlayback();
       },
-      { threshold: [0, 0.08, 0.25, 0.5, 0.8], rootMargin: "70px 0px" },
+      mobileHero
+        ? { threshold: [0, 0.12, 0.25, 0.5, 0.8], rootMargin: `-${mobilePlayZoneInset}px 0px -${mobilePlayZoneInset}px 0px` }
+        : { threshold: [0, 0.08, 0.25, 0.5, 0.8], rootMargin: "70px 0px" },
     );
     videos.forEach((video) => videoObserver.observe(video));
 

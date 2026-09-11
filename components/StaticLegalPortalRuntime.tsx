@@ -7,6 +7,7 @@ const runtime = String.raw`
   var LEGAL_SET = { '/privacy':true, '/cookies':true, '/policies':true };
   var CLOSE_MESSAGE = 'valie:legal-portal-close';
   var NAVIGATE_MESSAGE = 'valie:legal-portal-navigate';
+  var OPEN_MESSAGE = 'valie:open-legal-portal';
   var PORTAL_MS = 560;
   var SWITCH_MS = 500;
 
@@ -26,6 +27,9 @@ const runtime = String.raw`
   var warmed = false;
   var hydrationReady = document.documentElement.dataset.valieHydrated === 'true';
   var warmFallbackTimer = 0;
+  var returnToCookieSettings = false;
+  var cookieSettingsOpener = null;
+  var cookieSettingsScrollTop = 0;
 
   LEGAL_PATHS.forEach(function(path){
     var frame = document.querySelector('iframe.cnh-policy-frame[data-legal-path="' + path + '"]');
@@ -38,7 +42,7 @@ const runtime = String.raw`
     frame.addEventListener('load', function(){
       var actualPath = '';
       try{ actualPath = new URL(frame.getAttribute('src') || '', window.location.href).pathname; }catch(_){}
-      loaded[path] = actualPath === path;
+      loaded[path] = normalizePath(actualPath) === path;
       if(!loaded[path]) return; 
       forceFrameTop(frame);
       if(pendingOpenPath === path) activate(path);
@@ -165,7 +169,7 @@ const runtime = String.raw`
     });
   }
 
-  function show(path, opener, capturedY){
+  function show(path, opener, capturedY, returnContext){
     if(hydrationReady) warmFrames();
     if(!portal || !frames[path]){
       window.location.assign(path);
@@ -184,6 +188,9 @@ const runtime = String.raw`
     pendingOpenPath = path;
     savedY = typeof capturedY === 'number' ? capturedY : (window.scrollY || window.pageYOffset || 0);
     savedOpener = opener || (document.activeElement instanceof HTMLElement ? document.activeElement : null);
+    returnToCookieSettings = !!(returnContext && returnContext.cookieSettings);
+    cookieSettingsOpener = returnContext && returnContext.cookieSettingsOpener instanceof HTMLElement ? returnContext.cookieSettingsOpener : null;
+    cookieSettingsScrollTop = returnContext && typeof returnContext.cookieSettingsScrollTop === 'number' ? returnContext.cookieSettingsScrollTop : 0;
 
     try{
       portal.inert = false;
@@ -212,7 +219,23 @@ const runtime = String.raw`
       LEGAL_PATHS.forEach(function(path){ resetFrame(frames[path]); });
       activePath = '';
       if(portal) portal.setAttribute('aria-hidden','true');
-      try{ if(savedOpener && savedOpener.focus) savedOpener.focus({preventScroll:true}); }catch(_){}
+      try{ window.scrollTo({top:savedY,left:0,behavior:'auto'}); }catch(_){ window.scrollTo(0,savedY); }
+      if(returnToCookieSettings){
+        var reopenOpener = cookieSettingsOpener;
+        returnToCookieSettings = false;
+        cookieSettingsOpener = null;
+        var reopenScrollTop = cookieSettingsScrollTop;
+        cookieSettingsScrollTop = 0;
+        try{
+          window.__valieCookieSettingsPending = true;
+          window.__valieCookieSettingsOpener = reopenOpener && reopenOpener.isConnected ? reopenOpener : null;
+          window.__valieCookieSettingsRestoreScrollTop = reopenScrollTop;
+          window.dispatchEvent(new Event('valie:open-cookie-settings'));
+        }catch(_){}
+      }else{
+        try{ if(savedOpener && savedOpener.isConnected && savedOpener.focus) savedOpener.focus({preventScroll:true}); }catch(_){}
+      }
+      savedOpener = null;
     }, delay);
   }
 
@@ -279,7 +302,7 @@ const runtime = String.raw`
     }
 
     var anchor = target.closest('a[href],a[data-valie-link-href]');
-    if(!anchor || anchor.target === '_blank') return;
+    if(!anchor || anchor.target === '_blank' || anchor.hasAttribute('data-valie-legal-deferred')) return;
     var path = legalPath(anchor.getAttribute('href') || anchor.getAttribute('data-valie-link-href') || '');
     if(!path) return;
 
@@ -288,6 +311,20 @@ const runtime = String.raw`
     event.preventDefault();
     event.stopImmediatePropagation();
     show(path, anchor, clickY);
+  }
+
+
+  function handleOpenRequest(event){
+    var detail = event && event.detail ? event.detail : null;
+    if(!detail) return;
+    var path = legalPath(detail.path || '');
+    if(!path) return;
+    var capturedY = typeof detail.capturedY === 'number' ? detail.capturedY : (window.scrollY || window.pageYOffset || 0);
+    show(path, null, capturedY, {
+      cookieSettings: detail.returnToCookieSettings === true,
+      cookieSettingsOpener: detail.cookieSettingsOpener || null,
+      cookieSettingsScrollTop: typeof detail.cookieSettingsScrollTop === 'number' ? detail.cookieSettingsScrollTop : 0
+    });
   }
 
   function handleMessage(event){
@@ -300,6 +337,7 @@ const runtime = String.raw`
   }
 
   document.addEventListener('click', handleClick, true);
+  window.addEventListener(OPEN_MESSAGE, handleOpenRequest);
   window.addEventListener('message', handleMessage);
   window.addEventListener('keydown', function(event){
     if(event.key !== 'Escape' || !open) return;

@@ -109,7 +109,7 @@
   function onClick(event) {
     if (event.defaultPrevented || event.button !== 0) return;
     var anchor = closestAnchor(event.target, "a[" + HREF_ATTR + "]");
-    if (!anchor) return;
+    if (!anchor || anchor.hasAttribute("data-valie-legal-deferred")) return;
     event.preventDefault();
     navigate(anchor, event);
   }

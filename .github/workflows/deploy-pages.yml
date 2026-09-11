@@ -43,6 +43,24 @@ jobs:
       - name: Audit static metadata routes
         run: npm run metadata:static:audit
 
+      - name: Audit mobile viewport stability
+        run: npm run mobile:viewport-stability:audit
+
+      - name: Audit mobile software polish
+        run: npm run mobile:software:audit
+
+      - name: Audit mobile review auto + swipe
+        run: npm run mobile:review-swipe:audit
+
+      - name: Audit Cookie Settings legal round trip
+        run: npm run legal:settings-roundtrip:audit
+
+      - name: Audit mobile hero composition
+        run: npm run mobile:hero-composition:audit
+
+      - name: Audit mobile hero video play zone
+        run: npm run mobile:hero-video-zone:audit
+
       - name: Type check
         run: npm run typecheck
 
