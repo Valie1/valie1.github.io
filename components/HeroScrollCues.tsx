@@ -2,71 +2,60 @@
 
 import { ChevronDown } from "lucide-react";
 import { createPortal } from "react-dom";
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useState } from "react";
 
 const REVEAL_DELAY_MS = 9350;
+const HERO_EXIT_RATIO = 0.065;
 
 export default function HeroScrollCues() {
   const [mounted, setMounted] = useState(false);
   const [armed, setArmed] = useState(false);
-  const [heroOpacity, setHeroOpacity] = useState(1);
+  const [insideHero, setInsideHero] = useState(true);
 
   useEffect(() => {
     setMounted(true);
-
     const timer = window.setTimeout(() => setArmed(true), REVEAL_DELAY_MS);
-    let raf = 0;
+    const hero = document.getElementById("top");
 
-    const updateHeroFade = () => {
-      if (raf) return;
-      raf = window.requestAnimationFrame(() => {
-        raf = 0;
-        const hero = document.getElementById("top");
-        if (!hero) {
-          setHeroOpacity(0);
-          return;
-        }
+    if (!hero) {
+      setInsideHero(false);
+      return () => window.clearTimeout(timer);
+    }
 
-        const rect = hero.getBoundingClientRect();
-        const viewportHeight = Math.max(rect.height, 1);
-        const travelled = Math.max(0, -rect.top);
-
-
-
-
-
-
-        const fadeStart = viewportHeight * 0.06;
-        const fadeEnd = viewportHeight * 0.30;
-        const progress = Math.min(1, Math.max(0, (travelled - fadeStart) / Math.max(1, fadeEnd - fadeStart)));
-
-
-        const eased = progress * progress * (3 - 2 * progress);
-        setHeroOpacity(1 - eased);
-      });
+    const syncInitialVisibility = () => {
+      const rect = hero.getBoundingClientRect();
+      const viewportHeight = Math.max(1, window.visualViewport?.height ?? window.innerHeight);
+      const visiblePx = Math.max(0, Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0));
+      const visibleRatio = visiblePx / Math.max(1, Math.min(rect.height, viewportHeight));
+      setInsideHero(visibleRatio > HERO_EXIT_RATIO);
     };
 
-    updateHeroFade();
-    window.addEventListener("scroll", updateHeroFade, { passive: true });
-    window.addEventListener("resize", updateHeroFade, { passive: true });
+    syncInitialVisibility();
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry) return;
+        setInsideHero(entry.isIntersecting && entry.intersectionRatio > HERO_EXIT_RATIO);
+      },
+      { threshold: [0, HERO_EXIT_RATIO, 0.12, 0.25, 0.5, 1] },
+    );
+
+    observer.observe(hero);
 
     return () => {
       window.clearTimeout(timer);
-      if (raf) window.cancelAnimationFrame(raf);
-      window.removeEventListener("scroll", updateHeroFade);
-      window.removeEventListener("resize", updateHeroFade);
+      observer.disconnect();
     };
   }, []);
 
   if (!mounted) return null;
 
-  const visible = armed && heroOpacity > 0.015;
-  const interactive = armed && heroOpacity > 0.18;
+  const visible = armed && insideHero;
 
   const overlay = (
     <div
-      className={`hero-scroll-cues hero-scroll-cues--viewport${armed ? " is-armed" : ""}${interactive ? " is-interactive" : ""}`}
-      style={{ "--hero-scroll-opacity": heroOpacity } as CSSProperties}
+      className={`hero-scroll-cues hero-scroll-cues--viewport${armed ? " is-armed" : ""}${visible ? " is-visible is-interactive" : ""}`}
+      data-valie-overlay="hero-scroll-cues"
       aria-label="Scroll to the next section"
       aria-hidden={!visible}
     >
@@ -74,7 +63,7 @@ export default function HeroScrollCues() {
         className="hero-scroll-cue hero-scroll-cue--left"
         href="#about"
         aria-label="Scroll down to About"
-        tabIndex={interactive ? 0 : -1}
+        tabIndex={visible ? 0 : -1}
       >
         <span className="hero-scroll-cue__circle" aria-hidden="true">
           <ChevronDown size={22} strokeWidth={1.45} />

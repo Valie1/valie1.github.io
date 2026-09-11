@@ -1,10 +1,10 @@
-# VALIE Portfolio — Pass 123.19
+# VALIE Portfolio — Pass 123.23
 
-GitHub Pages release for `https://valie1.github.io/`. Pass 123.19 restores full live-video hero parity on mobile while keeping the mobile performance hardening that does not remove content.
+GitHub Pages release for `https://valie1.github.io/`. Pass 123.23 converts the two hero SCROLL controls into a stable mobile viewport overlay: both controls are locked to the captured mobile layout height so browser chrome cannot drag them around, their arrow/circle motion is disabled on phones, and the whole overlay fades out when the hero leaves and fades back in when the hero returns. Pass 123.22 clean wordmark resolve, Pass 123.21 cross-device font parity, Pass 123.20 mobile navigation/carousel continuity, and Pass 123.19 live mobile hero-video parity are retained.
 
 Copy the contents of this folder into the local GitHub Desktop checkout for the `valie1.github.io` repository, keep the repository's hidden `.git` folder, commit the replacement, and push. In GitHub repository Settings → Pages, set Source to GitHub Actions.
 
-Use `START-PASS-123.19-MOBILE-HERO-LIVE-PARITY.bat` for a fresh local development preview at `http://localhost:3000`.
+Use `START-PASS-123.23-STABLE-SCROLL-CUE-OVERLAY.bat` for a fresh local development preview at `http://localhost:3000`.
 
 ## Pass 123.06
 
@@ -62,5 +62,23 @@ The mobile VALIE wordmarks now use the same transformation treatment as desktop:
 The phone hero keeps the same moving long-form/short-form lane composition, but mobile no longer decodes MP4s inside the continuously moving wall. It uses the existing poster frames instead, avoids per-card IntersectionObserver playback churn, reduces each duplicated lane sequence from six rendered cards to four on phones, moves the tracks with `translate3d`, removes the mobile reveal/shadow/mask work, simplifies the glass overlay, and disables the tiny infinite arrow bounce. The result keeps the hero visually alive through the moving lanes while dramatically reducing main-thread, decoder, paint, and compositor pressure. Desktop live hero-video playback is unchanged.
 
 
+
+## Pass 123.21 — Cross-Device Font Parity
+Desktop, tablet, and mobile now resolve the same typography roles from web-delivered families instead of relying on whatever Arial/Georgia/system font happens to exist on the device. Sans, editorial serif, VALIE/display, and monospace roles are centralized in CSS variables, and a final mobile guard prevents later responsive rules from switching font families. Responsive font sizing remains intact; only family parity is locked.
+
+## Pass 123.20 — Mobile Nav + Never-Stop Review Carousel
+
+- WORK / ABOUT / REVIEWS / CONTACT on the full-screen mobile menu now bypass the global hover-link preview interceptor and use direct touch-end/click activation with explicit section scrolling.
+- The client-review carousel no longer pauses or waits after a finger swipe: manual movement continuously resyncs the autoplay position and the automatic drift keeps running immediately.
+- Pass 123.19 live mobile hero-video parity and all prior behavior are retained.
+
 ## Pass 123.19 — Mobile Hero Live-Video Parity
 Mobile now keeps the same six long-form and six short-form hero items as desktop and restores live MP4 playback instead of poster-only motion. Each hero item has a phone-optimized H.264 loop with the same content, 24 fps timing, and poster fallback; desktop continues to use the original 720p/406x720 loops. Mobile playback is bounded per lane, prewarmed near the viewport, and unloaded after a short cooldown when it leaves the active zone so the browser is not decoding every moving card at once. The moving lane animation remains GPU-transformed, while expensive moving lane masks and per-frame video filters stay replaced by static overlays. No hero cards are hidden on mobile.
+
+
+## Pass 123.22 — Clean VALIE Wordmark Resolve
+The header and footer VALIE transformations keep their outline-draw → solid-resolve behavior, but the outline layer no longer leaves faint extra glyphs to the right of the word. Draw and fill now use the same flowing glyph layout, so web-font metrics stay aligned on mobile and desktop, and the outline clears completely once the solid mark resolves.
+
+## Pass 123.23 — Stable Mobile Hero Scroll-Cue Overlay
+
+The two hero SCROLL controls are now a true portal overlay with mobile geometry locked to the stable layout height captured by the viewport runtime. They no longer ride browser-chrome height changes or translate/bounce on touch devices. The overlay stays fully visible while the main hero is present, fades out as the hero leaves the viewport, and fades back in when the hero is revisited. Both left and right controls share the same locked bottom axis. Pass 123.22 clean wordmark resolve and all prior mobile/desktop behavior remain intact.

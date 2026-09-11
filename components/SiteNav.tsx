@@ -8,13 +8,7 @@ const links = [
   ["/#contact", "CONTACT"],
 ] as const;
 
-const letters = [
-  { char: "V", x: 0 },
-  { char: "A", x: 20.7 },
-  { char: "L", x: 41.3 },
-  { char: "I", x: 57.3 },
-  { char: "E", x: 67 },
-] as const;
+const letters = ["V", "A", "L", "I", "E"] as const;
 
 export default function SiteNav() {
   return (
@@ -31,14 +25,16 @@ export default function SiteNav() {
                 </feMerge>
               </filter>
             </defs>
-            <g className="animated-valie-wordmark__draw" aria-hidden="true" filter="url(#valie-nav-glow)">
+            <text className="animated-valie-wordmark__draw" x="0" y="25.7" aria-hidden="true" filter="url(#valie-nav-glow)">
               {letters.map((letter, index) => (
-                <text key={`${letter.char}-${index}`} className="animated-valie-wordmark__letter" x={letter.x} y="25.7" style={{ "--valie-draw-index": index } as CSSProperties}>
-                  {letter.char}
-                </text>
+                <tspan key={`${letter}-${index}`} className="animated-valie-wordmark__letter" style={{ "--valie-draw-index": index } as CSSProperties}>
+                  {letter}
+                </tspan>
               ))}
-            </g>
-            <text className="animated-valie-wordmark__fill" x="0" y="25.7" aria-hidden="true">VALIE</text>
+            </text>
+            <text className="animated-valie-wordmark__fill" x="0" y="25.7" aria-hidden="true">
+              {letters.map((letter, index) => <tspan key={`fill-${letter}-${index}`}>{letter}</tspan>)}
+            </text>
           </svg>
         </a>
 
@@ -58,7 +54,15 @@ export default function SiteNav() {
         <div className="minimal-mobile-menu__inner">
           <div className="minimal-mobile-menu__links">
             {links.map(([href, label], index) => (
-              <a href={href} key={href} tabIndex={-1} data-site-mobile-link style={{ "--menu-index": index } as CSSProperties}>
+              <a
+                href={href}
+                key={href}
+                tabIndex={-1}
+                data-site-mobile-link
+                data-site-target={href.split("#")[1]}
+                data-valie-link-preview-skip
+                style={{ "--menu-index": index } as CSSProperties}
+              >
                 <strong>{label}</strong>
               </a>
             ))}

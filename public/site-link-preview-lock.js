@@ -5,8 +5,12 @@
   var MARK_ATTR = "data-valie-link-preview-lock";
   var booted = false;
 
+  function shouldSkip(anchor) {
+    return anchor instanceof HTMLAnchorElement && anchor.hasAttribute("data-valie-link-preview-skip");
+  }
+
   function arm(anchor) {
-    if (!(anchor instanceof HTMLAnchorElement)) return;
+    if (!(anchor instanceof HTMLAnchorElement) || shouldSkip(anchor)) return;
     if (anchor.hasAttribute(MARK_ATTR)) return;
     var href = anchor.getAttribute("href");
     if (href === null) return;
@@ -17,7 +21,7 @@
   }
 
   function disarm(anchor) {
-    if (!(anchor instanceof HTMLAnchorElement)) return;
+    if (!(anchor instanceof HTMLAnchorElement) || shouldSkip(anchor)) return;
     if (!anchor.hasAttribute(MARK_ATTR)) return;
     var href = anchor.getAttribute(HREF_ATTR);
     if (href !== null) anchor.setAttribute("href", href);
@@ -109,7 +113,7 @@
   function onClick(event) {
     if (event.defaultPrevented || event.button !== 0) return;
     var anchor = closestAnchor(event.target, "a[" + HREF_ATTR + "]");
-    if (!anchor || anchor.hasAttribute("data-valie-legal-deferred")) return;
+    if (!anchor || shouldSkip(anchor) || anchor.hasAttribute("data-valie-legal-deferred")) return;
     event.preventDefault();
     navigate(anchor, event);
   }

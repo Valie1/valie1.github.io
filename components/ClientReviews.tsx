@@ -120,12 +120,11 @@ export default function ClientReviews({ headingId = "reviews-title" }: { heading
     if (!mobileQuery.matches) return;
 
     let frame = 0;
-    let resumeTimer = 0;
     let previousTime = 0;
-    let userInteracting = false;
     let initialized = false;
     let autoPosition = 0;
     const autoSpeed = 42;
+    const manualSyncThreshold = 2;
 
     const sets = () =>
       Array.from(viewport.querySelectorAll<HTMLElement>(".review-orbit__set"));
@@ -157,33 +156,20 @@ export default function ClientReviews({ headingId = "reviews-title" }: { heading
       return true;
     };
 
-    const scheduleResume = () => {
-      if (resumeTimer) window.clearTimeout(resumeTimer);
-      resumeTimer = window.setTimeout(() => {
-        userInteracting = false;
-        normalizeLoopPosition();
-        resumeTimer = 0;
-      }, 1700);
-    };
-
-    const pauseAuto = () => {
-      userInteracting = true;
-      if (resumeTimer) window.clearTimeout(resumeTimer);
-      resumeTimer = 0;
-    };
-
-    const resumeAuto = () => {
-      scheduleResume();
-    };
-
-    const onWheel = () => {
-      pauseAuto();
-      autoPosition = viewport.scrollLeft;
-      scheduleResume();
-    };
-
     const syncManualPosition = () => {
-      if (userInteracting) autoPosition = viewport.scrollLeft;
+      const actual = viewport.scrollLeft;
+      if (Math.abs(actual - autoPosition) > manualSyncThreshold) {
+        autoPosition = actual;
+      }
+    };
+
+    const syncInteractionStart = () => {
+      autoPosition = viewport.scrollLeft;
+    };
+
+    const syncInteractionEnd = () => {
+      autoPosition = viewport.scrollLeft;
+      normalizeLoopPosition();
     };
 
     const animate = (time: number) => {
@@ -193,12 +179,7 @@ export default function ClientReviews({ headingId = "reviews-title" }: { heading
       const elapsed = Math.min(48, time - previousTime);
       previousTime = time;
 
-      if (
-        initialized &&
-        !document.hidden &&
-        !userInteracting &&
-        !reducedMotionQuery.matches
-      ) {
+      if (initialized && !document.hidden && !reducedMotionQuery.matches) {
         autoPosition += (autoSpeed * elapsed) / 1000;
         viewport.scrollLeft = autoPosition;
         normalizeLoopPosition();
@@ -212,24 +193,25 @@ export default function ClientReviews({ headingId = "reviews-title" }: { heading
       frame = window.requestAnimationFrame(animate);
     });
 
-    viewport.addEventListener("pointerdown", pauseAuto, { passive: true });
-    window.addEventListener("pointerup", resumeAuto, { passive: true });
-    window.addEventListener("pointercancel", resumeAuto, { passive: true });
-    viewport.addEventListener("touchstart", pauseAuto, { passive: true });
-    viewport.addEventListener("touchend", resumeAuto, { passive: true });
-    viewport.addEventListener("wheel", onWheel, { passive: true });
+    viewport.addEventListener("pointerdown", syncInteractionStart, { passive: true });
+    window.addEventListener("pointerup", syncInteractionEnd, { passive: true });
+    window.addEventListener("pointercancel", syncInteractionEnd, { passive: true });
+    viewport.addEventListener("touchstart", syncInteractionStart, { passive: true });
+    viewport.addEventListener("touchend", syncInteractionEnd, { passive: true });
+    viewport.addEventListener("touchcancel", syncInteractionEnd, { passive: true });
+    viewport.addEventListener("wheel", syncManualPosition, { passive: true });
     viewport.addEventListener("scroll", syncManualPosition, { passive: true });
 
     return () => {
       window.cancelAnimationFrame(initFrame);
       if (frame) window.cancelAnimationFrame(frame);
-      if (resumeTimer) window.clearTimeout(resumeTimer);
-      viewport.removeEventListener("pointerdown", pauseAuto);
-      window.removeEventListener("pointerup", resumeAuto);
-      window.removeEventListener("pointercancel", resumeAuto);
-      viewport.removeEventListener("touchstart", pauseAuto);
-      viewport.removeEventListener("touchend", resumeAuto);
-      viewport.removeEventListener("wheel", onWheel);
+      viewport.removeEventListener("pointerdown", syncInteractionStart);
+      window.removeEventListener("pointerup", syncInteractionEnd);
+      window.removeEventListener("pointercancel", syncInteractionEnd);
+      viewport.removeEventListener("touchstart", syncInteractionStart);
+      viewport.removeEventListener("touchend", syncInteractionEnd);
+      viewport.removeEventListener("touchcancel", syncInteractionEnd);
+      viewport.removeEventListener("wheel", syncManualPosition);
       viewport.removeEventListener("scroll", syncManualPosition);
     };
   }, [active]);

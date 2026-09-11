@@ -12,13 +12,7 @@ type Props = {
   loopPauseMs?: number;
 };
 
-const letters = [
-  { char: "V", x: 0 },
-  { char: "A", x: 20.7 },
-  { char: "L", x: 41.3 },
-  { char: "I", x: 57.3 },
-  { char: "E", x: 67.0 },
-] as const;
+const letters = ["V", "A", "L", "I", "E"] as const;
 
 
 
@@ -96,22 +90,20 @@ export default function AnimatedValieWordmark({
         </filter>
       </defs>
 
-      <g className="animated-valie-wordmark__draw" aria-hidden="true" filter={`url(#valieGlow-${uid})`}>
+      <text className="animated-valie-wordmark__draw" x="0" y="25.7" aria-hidden="true" filter={`url(#valieGlow-${uid})`}>
         {letters.map((letter, index) => (
-          <text
-            key={`${letter.char}-${index}`}
+          <tspan
+            key={`${letter}-${index}`}
             className="animated-valie-wordmark__letter"
-            x={letter.x}
-            y="25.7"
             style={{ "--valie-draw-index": index } as CSSProperties}
           >
-            {letter.char}
-          </text>
+            {letter}
+          </tspan>
         ))}
-      </g>
+      </text>
 
       <text className="animated-valie-wordmark__fill" x="0" y="25.7" aria-hidden="true">
-        VALIE
+        {letters.map((letter, index) => <tspan key={`fill-${letter}-${index}`}>{letter}</tspan>)}
       </text>
     </svg>
   );

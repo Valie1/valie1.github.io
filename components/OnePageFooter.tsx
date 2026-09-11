@@ -20,14 +20,16 @@ export default function OnePageFooter() {
               aria-hidden="true"
               preserveAspectRatio="xMinYMid meet"
             >
-              <g className="footer-valie-static__draw">
-                <text className="footer-valie-static__letter" x="0" y="25.7">V</text>
-                <text className="footer-valie-static__letter" x="20.7" y="25.7">A</text>
-                <text className="footer-valie-static__letter" x="41.3" y="25.7">L</text>
-                <text className="footer-valie-static__letter" x="57.3" y="25.7">I</text>
-                <text className="footer-valie-static__letter" x="67" y="25.7">E</text>
-              </g>
-              <text className="footer-valie-static__fill" x="0" y="25.7">VALIE</text>
+              <text className="footer-valie-static__draw" x="0" y="25.7">
+                <tspan className="footer-valie-static__letter">V</tspan>
+                <tspan className="footer-valie-static__letter">A</tspan>
+                <tspan className="footer-valie-static__letter">L</tspan>
+                <tspan className="footer-valie-static__letter">I</tspan>
+                <tspan className="footer-valie-static__letter">E</tspan>
+              </text>
+              <text className="footer-valie-static__fill" x="0" y="25.7">
+                <tspan>V</tspan><tspan>A</tspan><tspan>L</tspan><tspan>I</tspan><tspan>E</tspan>
+              </text>
               <g className="footer-valie-static__secret-map" aria-hidden="true">
                 <rect className="footer-valie-static__secret-hit" x="0" y="0" width="20.7" height="32" data-valie-secret-letter="V" />
                 <rect className="footer-valie-static__secret-hit" x="20.7" y="0" width="20.6" height="32" data-valie-secret-letter="A" />

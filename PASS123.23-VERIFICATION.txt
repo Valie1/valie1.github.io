@@ -1,0 +1,10 @@
+Pass 123.23 — Stable Mobile Hero Scroll-Cue Overlay
+
+- Left and right SCROLL controls remain a React portal mounted under document.body.
+- Mobile overlay height is locked to --valie-mobile-layout-height so browser chrome does not pull the controls around.
+- Both controls share the same stable bottom axis and safe-area insets.
+- Mobile arrow/cue transforms and bounce animation are disabled.
+- Hero presence is tracked with IntersectionObserver instead of per-scroll opacity state.
+- Overlay fades out only as the hero leaves and fades back in when the hero returns.
+- Runtime query cache bust is v=123.23.
+- Pass 123.22 wordmark cleanup and earlier behavior are preserved.

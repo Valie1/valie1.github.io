@@ -8,8 +8,12 @@
   var links = [];
   var open = false;
   var touchY = null;
-  var touchActivation = null;
+  var touchStart = null;
   var suppressClickUntil = 0;
+
+  function now() {
+    return window.performance && performance.now ? performance.now() : Date.now();
+  }
 
   function focusable() {
     return [button].concat(links).filter(Boolean);
@@ -33,7 +37,7 @@
 
   function storedHref(link) {
     if (!link) return "";
-    return link.getAttribute("data-valie-link-href") || link.getAttribute("href") || "";
+    return link.getAttribute("href") || link.getAttribute("data-valie-link-href") || "";
   }
 
   function decodeHash(hash) {
@@ -42,28 +46,36 @@
     catch (_) { return hash.replace(/^#/, ""); }
   }
 
-  function scrollToTarget(url) {
-    var hash = url.hash || "";
-    if (!hash) {
+  function targetId(link, url) {
+    return (link && link.getAttribute("data-site-target")) || decodeHash(url.hash || "");
+  }
+
+  function scrollToTarget(id, url) {
+    if (!id) {
       window.scrollTo({ top: 0, left: 0, behavior: "auto" });
       return;
     }
-    var id = decodeHash(hash);
-    var target = id ? document.getElementById(id) : null;
+
+    var target = document.getElementById(id);
     if (!target) {
       window.location.assign(url.href);
       return;
     }
 
-    if (url.hash !== window.location.hash) {
-      window.history.pushState(null, "", url.pathname + url.search + url.hash);
+    var nextUrl = url.pathname + url.search + "#" + encodeURIComponent(id);
+    if (window.location.hash !== "#" + encodeURIComponent(id)) {
+      window.history.pushState(null, "", nextUrl);
       try { window.dispatchEvent(new HashChangeEvent("hashchange")); }
       catch (_) { window.dispatchEvent(new Event("hashchange")); }
     }
 
     var reduceMotion = false;
     try { reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (_) {}
-    target.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+
+    var headerHeight = header ? Math.max(0, header.getBoundingClientRect().height) : 0;
+    var targetTop = window.scrollY + target.getBoundingClientRect().top;
+    var top = Math.max(0, targetTop - headerHeight - 8);
+    window.scrollTo({ top: top, left: 0, behavior: reduceMotion ? "auto" : "smooth" });
   }
 
   function navigateMobileLink(link) {
@@ -74,15 +86,18 @@
     try { url = new URL(raw, window.location.href); }
     catch (_) { return; }
 
+    var id = targetId(link, url);
     setOpen(false, false);
 
     window.requestAnimationFrame(function () {
       window.requestAnimationFrame(function () {
-        if (url.origin === window.location.origin && url.pathname === window.location.pathname && url.search === window.location.search) {
-          scrollToTarget(url);
-        } else {
-          window.location.assign(url.href);
-        }
+        window.setTimeout(function () {
+          if (url.origin === window.location.origin && url.pathname === window.location.pathname && url.search === window.location.search) {
+            scrollToTarget(id, url);
+          } else {
+            window.location.assign(url.href);
+          }
+        }, 0);
       });
     });
   }
@@ -133,36 +148,25 @@
     event.preventDefault();
   }
 
-  function armTouchActivation(event, link) {
-    if (!open || !event.isPrimary || (event.pointerType !== "touch" && event.pointerType !== "pen")) return;
-    touchActivation = {
-      pointerId: event.pointerId,
-      link: link,
-      x: event.clientX,
-      y: event.clientY,
-      moved: false
-    };
+  function rememberLinkTouch(event, link) {
+    if (!open || !event.touches || !event.touches.length) return;
+    var touch = event.touches[0];
+    touchStart = { link: link, x: touch.clientX, y: touch.clientY };
   }
 
-  function trackTouchActivation(event) {
-    if (!touchActivation || touchActivation.pointerId !== event.pointerId) return;
-    if (Math.abs(event.clientX - touchActivation.x) > 12 || Math.abs(event.clientY - touchActivation.y) > 12) {
-      touchActivation.moved = true;
-    }
+  function finishLinkTouch(event, link) {
+    if (!open || !touchStart || touchStart.link !== link) return;
+    var start = touchStart;
+    touchStart = null;
+    var touch = event.changedTouches && event.changedTouches[0];
+    if (!touch) return;
+    if (Math.abs(touch.clientX - start.x) > 22 || Math.abs(touch.clientY - start.y) > 22) return;
+    suppressClickUntil = now() + 800;
+    activateMobileLink(event, link);
   }
 
-  function finishTouchActivation(event) {
-    if (!touchActivation || touchActivation.pointerId !== event.pointerId) return;
-    var activation = touchActivation;
-    touchActivation = null;
-    if (activation.moved) return;
-    suppressClickUntil = (window.performance && performance.now ? performance.now() : Date.now()) + 700;
-    activateMobileLink(event, activation.link);
-  }
-
-  function cancelTouchActivation(event) {
-    if (!touchActivation) return;
-    if (!event || touchActivation.pointerId === event.pointerId) touchActivation = null;
+  function cancelLinkTouch() {
+    touchStart = null;
   }
 
   function boot() {
@@ -177,13 +181,11 @@
     button.addEventListener("click", function () { setOpen(!open, false); });
 
     links.forEach(function (link) {
-      link.addEventListener("pointerdown", function (event) { armTouchActivation(event, link); });
-      link.addEventListener("pointermove", trackTouchActivation);
-      link.addEventListener("pointerup", finishTouchActivation);
-      link.addEventListener("pointercancel", cancelTouchActivation);
+      link.addEventListener("touchstart", function (event) { rememberLinkTouch(event, link); }, { passive: true });
+      link.addEventListener("touchend", function (event) { finishLinkTouch(event, link); }, { passive: false });
+      link.addEventListener("touchcancel", cancelLinkTouch, { passive: true });
       link.addEventListener("click", function (event) {
-        var now = window.performance && performance.now ? performance.now() : Date.now();
-        if (now < suppressClickUntil) {
+        if (now() < suppressClickUntil) {
           event.preventDefault();
           return;
         }

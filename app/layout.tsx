@@ -79,12 +79,16 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 
   return (
     <html lang="en">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      </head>
       <body>
         <a className="skip-link" href="#main-content">SKIP TO CONTENT</a>
         <JsonLd data={structuredData} />
         <StaticLegalPortalRuntime />
-        <script src="/site-nav-runtime.js?v=123.19" defer />
-        <script src="/site-link-preview-lock.js?v=123.19" defer />
+        <script src="/site-nav-runtime.js?v=123.23" defer />
+        <script src="/site-link-preview-lock.js?v=123.23" defer />
         <BrowserViewportRuntime />
         <SiteNav />
         <GlobalFeedback />

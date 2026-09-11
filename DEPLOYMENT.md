@@ -5,7 +5,7 @@ Production URL: `https://valie1.github.io/`
 1. Open the existing `valie1.github.io` repository in GitHub Desktop.
 2. Choose Repository → Show in Explorer.
 3. Keep the hidden `.git` folder and remove the old website files from the repository working tree.
-4. Copy every file and folder from Pass 123.19 into the repository root, including the hidden `.github` folder.
+4. Copy every file and folder from Pass 123.23 into the repository root, including the hidden `.github` folder.
 5. In GitHub Desktop, review the changes, commit them to the current default branch, and Push origin.
 6. On GitHub.com, open Settings → Pages and set Build and deployment → Source to GitHub Actions.
 7. Open the Actions tab and wait for `Deploy VALIE Portfolio to GitHub Pages` to finish successfully.
@@ -52,4 +52,19 @@ No deployment architecture changes. Mobile now runs the hero wall in poster-moti
 
 
 ## Pass 123.19 — Mobile Hero Live-Video Parity
-No deployment architecture changes. Mobile hero cards now use live phone-optimized MP4 loops from `public/media/hero-mobile/` while desktop keeps the original hero-loop assets. All six items per lane remain rendered. Runtime query strings are cache-busted to `v=123.19`.
+No deployment architecture changes. Mobile hero cards use live phone-optimized MP4 loops from `public/media/hero-mobile/` while desktop keeps the original hero-loop assets. All six items per lane remain rendered. Runtime query strings for that pass were cache-busted to `v=123.19`.
+
+
+## Pass 123.20 — Mobile Nav + Never-Stop Review Carousel
+Mobile menu links now own touch navigation directly and are excluded from the hover-link preview interceptor. The mobile review rail keeps autoplay active through and immediately after manual swipes. Runtime query strings are cache-busted to `v=123.20`.
+
+
+## Pass 123.21 — Cross-Device Font Parity
+No deployment architecture changes. Typography is now cross-device deterministic through Google Fonts CSS plus font-origin preconnects. Runtime navigation/link-preview query strings are cache-busted to `v=123.21`.
+
+
+## Pass 123.22 — Clean VALIE Wordmark Resolve
+No deployment architecture changes. Header/footer wordmark markup and CSS are corrected for metric-safe outline/fill alignment; runtime query strings are cache-busted to `v=123.23`.
+
+## Pass 123.23 — Stable Mobile Hero Scroll-Cue Overlay
+No deployment architecture changes. The hero scroll controls remain client-rendered, but their mobile portal overlay is now locked to `--valie-mobile-layout-height` and visibility is driven by hero intersection instead of per-scroll position updates. Runtime query strings are cache-busted to `v=123.23`.
