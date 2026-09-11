@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 
 const REVEAL_DELAY_MS = 9350;
 const HERO_EXIT_RATIO = 0.85;
+const HERO_EXIT_SCROLL_PX = 32;
 
 export default function HeroScrollCues() {
   const [mounted, setMounted] = useState(false);
@@ -29,7 +30,12 @@ export default function HeroScrollCues() {
       const viewportHeight = Math.max(rect.height, 1);
       const visiblePx = Math.max(0, Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0));
       const visibleRatio = visiblePx / Math.max(1, Math.min(rect.height, viewportHeight));
-      const nextInsideHero = rect.bottom > 0 && rect.top < viewportHeight && visibleRatio > HERO_EXIT_RATIO;
+      const scrollY = window.scrollY || document.documentElement.scrollTop || 0;
+      const nextInsideHero =
+        rect.bottom > 0 &&
+        rect.top < viewportHeight &&
+        visibleRatio > HERO_EXIT_RATIO &&
+        scrollY <= HERO_EXIT_SCROLL_PX;
 
       if (lastInsideHero === nextInsideHero) return;
       lastInsideHero = nextInsideHero;
