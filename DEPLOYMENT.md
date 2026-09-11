@@ -5,7 +5,7 @@ Production URL: `https://valie1.github.io/`
 1. Open the existing `valie1.github.io` repository in GitHub Desktop.
 2. Choose Repository → Show in Explorer.
 3. Keep the hidden `.git` folder and remove the old website files from the repository working tree.
-4. Copy every file and folder from Pass 123.32 into the repository root, including the hidden `.github` folder.
+4. Copy every file and folder from Pass 123.33 into the repository root, including the hidden `.github` folder.
 5. In GitHub Desktop, review the changes, commit them to the current default branch, and Push origin.
 6. On GitHub.com, open Settings → Pages and set Build and deployment → Source to GitHub Actions.
 7. Open the Actions tab and wait for `Deploy VALIE Portfolio to GitHub Pages` to finish successfully.
@@ -100,3 +100,6 @@ No deployment architecture changes. On mobile, the CLIENT REVIEWS right-edge pse
 
 ## Pass 123.32 — Full-Bleed Mobile Reviews
 No deployment architecture changes. The mobile CLIENT REVIEWS rail now breaks out of the padded section to the real viewport width and both edge-cover pseudo-elements are removed. This fixes the uncovered black strip at the right edge. Runtime URLs are cache-busted to `v=123.32`.
+
+## Pass 123.33 — Compact Mobile Review Edge Shadows
+No deployment architecture changes. The Pass 123.32 full-bleed mobile review rail is retained. Mobile CLIENT REVIEWS now adds only narrow 14px (12px on <=430px) mirrored edge shadow/blur overlays, with the broad viewport mask still disabled. Runtime URLs are cache-busted to `v=123.33`. Push normally through the existing GitHub Actions Pages workflow.

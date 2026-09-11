@@ -1,0 +1,10 @@
+VALIE PORTFOLIO — PASS 123.33 VERIFICATION
+
+- Mobile CLIENT REVIEWS remains true full-bleed / viewport-wide.
+- Small symmetrical review edge shadows are present on BOTH sides.
+- Edge width: 14px on normal phones; 12px on <=430px phones.
+- Each edge uses a mirrored dark-to-transparent fade, light 1.5px backdrop blur, and soft matching shadow.
+- Broad mask-image remains disabled so the old wide black block cannot return.
+- Review swipe/autoplay behavior is unchanged.
+- Desktop review styling is unchanged.
+- Navigation runtime URLs are cache-busted to v=123.33.

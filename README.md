@@ -1,9 +1,9 @@
-# VALIE Portfolio — Pass 123.32
+# VALIE Portfolio — Pass 123.33
 
-GitHub Pages release for `https://valie1.github.io/`. Pass 123.32 fixes the actual cause of the mobile CLIENT REVIEWS black strip on the right. A generic mobile `max-width:100%` containment rule was still forcing the review rail to the padded content width. Because the rail was shifted left for a full-bleed look, the right side stopped short of the phone viewport and exposed a dark strip.
+GitHub Pages release for `https://valie1.github.io/`. Pass 123.33 keeps the Pass 123.32 CLIENT REVIEWS rail truly full-bleed on mobile, then adds back only a **small, symmetrical edge shadow/blur** on the left and right so clipped review cards fade naturally at the viewport edge without recreating the old wide black block.
 
-Pass 123.32 makes the mobile review rail truly viewport-wide (`100dvw` with a `100vw` fallback), centers that breakout against the viewport, removes the inherited max-width clamp from the review viewport, disables BOTH review edge pseudo-elements, and keeps mask images disabled. Review swipe/autoplay remains unchanged; desktop review styling is untouched. Pass 123.30 scroll behavior and Pass 123.29 navigation fixes remain intact. Runtime navigation assets are cache-busted to `v=123.32`.
+The mobile edge treatment is intentionally narrow: 14px on normal phones and 12px on <=430px phones. Both sides use mirrored dark-to-transparent gradients, a light 1.5px backdrop blur, and matching soft inward shadows. The review viewport mask stays disabled, the rail stays `100dvw`, and swipe/autoplay behavior is unchanged. Desktop review styling remains untouched. Pass 123.30 hero SCROLL behavior and Pass 123.29 mobile navigation fixes are retained. Runtime navigation assets are cache-busted to `v=123.33`.
 
 ## Local preview
 
-Use `START-PASS-123.32-FULL-BLEED-MOBILE-REVIEWS.bat` for a fresh local production-style preview.
+Use `START-PASS-123.33-MOBILE-REVIEW-EDGE-SHADOWS.bat` for a fresh local production-style preview.
