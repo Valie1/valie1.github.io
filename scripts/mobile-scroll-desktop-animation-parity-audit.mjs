@@ -1,10 +1,10 @@
 import fs from "node:fs";
 const css=fs.readFileSync(new URL("../app/globals.css", import.meta.url),"utf8");
 const checks=[
- ["desktop white pulse keyframes exist", css.includes("@keyframes cnhWhiteScrollPulse")],
- ["desktop arrow bounce keyframes exist", css.includes("@keyframes cnhArrowBounce")],
- ["mobile visible circle reuses desktop pulse", /@media\(max-width:760px\)[\s\S]*?\.hero-scroll-cues--viewport\.is-armed\.is-visible \.hero-scroll-cue__circle\{[\s\S]*?animation:cnhWhiteScrollPulse 2s ease-in-out infinite!important/.test(css)],
- ["mobile visible arrow reuses desktop bounce", /@media\(max-width:760px\)[\s\S]*?\.hero-scroll-cues--viewport\.is-armed\.is-visible \.hero-scroll-cue__circle svg\{[\s\S]*?animation:cnhArrowBounce 2s ease-in-out infinite!important/.test(css)],
+ ["desktop arrow float keyframes exist", css.includes("@keyframes pass94ScrollArrowFloat")],
+ ["no stale mismatched keyframes linger", !css.includes("cnhWhiteScrollPulse") && !css.includes("cnhArrowBounce")],
+ ["desktop arrow svg animates with float (unscoped, applies at all widths)", /(?<!@media[^{]*)\.hero-scroll-cues--viewport \.hero-scroll-cue__circle svg\{[\s\S]*?animation:pass94ScrollArrowFloat 1\.9s ease-in-out infinite!important/.test(css)],
+ ["mobile visible arrow reuses the SAME desktop float animation", /@media\(max-width:760px\)[\s\S]*?\.hero-scroll-cues--viewport\.is-armed\.is-visible \.hero-scroll-cue__circle svg\{[\s\S]*?animation:pass94ScrollArrowFloat 1\.9s ease-in-out infinite!important/.test(css)],
  ["mobile size remains compact", css.includes("width:46px!important") && css.includes("width:44px!important")],
  ["mobile reveal lifecycle remains armed+visible", css.includes(".hero-scroll-cues--viewport.is-armed.is-visible")],
 ];
