@@ -19,7 +19,7 @@ const checks = [
   ['Mobile links are forced above menu decorative layers', css.includes('.minimal-mobile-menu__links a{\n    position:relative!important;\n    z-index:3!important;')],
   ['Mobile links explicitly keep pointer interaction', css.includes('.minimal-mobile-menu__links a *{\n    pointer-events:auto!important;')],
   ['Mobile targets reserve space for the fixed header', css.includes('scroll-margin-top:calc(70px + env(safe-area-inset-top))!important')],
-  ['Navigation assets are cache-busted to Pass 123.33', layout.includes('site-nav-runtime.js?v=123.33') && layout.includes('site-link-preview-lock.js?v=123.33')],
+  ['Navigation assets are cache-busted to Pass 123.33', layout.includes('site-nav-runtime.js?v=123.34') && layout.includes('site-link-preview-lock.js?v=123.34')],
 ];
 
 let failures = 0;

@@ -5,7 +5,25 @@ import { createPortal } from "react-dom";
 import { useEffect, useState } from "react";
 
 const REVEAL_DELAY_MS = 9350;
-const HERO_EXIT_RATIO = 0.065;
+const HERO_MIN_VISIBLE_RATIO = 0.08;
+
+function isHeroInCueZone(hero: HTMLElement) {
+  const rect = hero.getBoundingClientRect();
+  const viewportHeight = Math.max(window.innerHeight || document.documentElement.clientHeight || 0, 1);
+  const viewportWidth = Math.max(window.innerWidth || document.documentElement.clientWidth || 0, 1);
+  const isMobile = viewportWidth <= 760;
+
+  const visibleTop = Math.max(rect.top, 0);
+  const visibleBottom = Math.min(rect.bottom, viewportHeight);
+  const visibleHeight = Math.max(0, visibleBottom - visibleTop);
+  const denominator = Math.max(1, Math.min(rect.height || viewportHeight, viewportHeight));
+  const visibleRatio = visibleHeight / denominator;
+
+  const topGate = viewportHeight * (isMobile ? 0.42 : 0.48);
+  const bottomGate = viewportHeight * (isMobile ? 0.82 : 0.7);
+
+  return visibleRatio > HERO_MIN_VISIBLE_RATIO && rect.top <= topGate && rect.bottom >= bottomGate;
+}
 
 export default function HeroScrollCues() {
   const [mounted, setMounted] = useState(false);
@@ -22,29 +40,41 @@ export default function HeroScrollCues() {
       return () => window.clearTimeout(timer);
     }
 
-    const syncInitialVisibility = () => {
-      const rect = hero.getBoundingClientRect();
-      const viewportHeight = Math.max(rect.height, 1);
-      const visiblePx = Math.max(0, Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0));
-      const visibleRatio = visiblePx / Math.max(1, Math.min(rect.height, viewportHeight));
-      setInsideHero(visibleRatio > HERO_EXIT_RATIO);
+    let frame = 0;
+
+    const syncInsideHero = () => {
+      frame = 0;
+      setInsideHero(isHeroInCueZone(hero));
     };
 
-    syncInitialVisibility();
+    const requestSync = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(syncInsideHero);
+    };
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry) return;
-        setInsideHero(entry.isIntersecting && entry.intersectionRatio > HERO_EXIT_RATIO);
-      },
-      { threshold: [0, HERO_EXIT_RATIO, 0.12, 0.25, 0.5, 1] },
-    );
+    syncInsideHero();
 
+    const observer = new IntersectionObserver(requestSync, {
+      threshold: [0, 0.04, 0.1, 0.2, 0.35, 0.5, 0.75, 1],
+      rootMargin: "0px",
+    });
     observer.observe(hero);
+
+    window.addEventListener("scroll", requestSync, { passive: true });
+    window.addEventListener("resize", requestSync, { passive: true });
+    window.addEventListener("orientationchange", requestSync, { passive: true });
+    window.visualViewport?.addEventListener("resize", requestSync, { passive: true });
+    document.addEventListener("visibilitychange", requestSync);
 
     return () => {
       window.clearTimeout(timer);
+      if (frame) window.cancelAnimationFrame(frame);
       observer.disconnect();
+      window.removeEventListener("scroll", requestSync);
+      window.removeEventListener("resize", requestSync);
+      window.removeEventListener("orientationchange", requestSync);
+      window.visualViewport?.removeEventListener("resize", requestSync);
+      document.removeEventListener("visibilitychange", requestSync);
     };
   }, []);
 

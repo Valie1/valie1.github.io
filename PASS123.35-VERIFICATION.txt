@@ -1,0 +1,5 @@
+Pass 123.35 verification summary
+- Hardened HeroScrollCues visibility logic to re-evaluate on scroll/resize/orientation/visualViewport changes.
+- Mobile SCROLL controls now fade out after leaving the hero and fade back in when returning to the hero.
+- Desktop-style cnhWhiteScrollPulse + cnhArrowBounce animation retained on mobile.
+- Package version bumped to 9.13.35.

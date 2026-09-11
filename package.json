@@ -1,6 +1,6 @@
 {
   "name": "premium-creative-portfolio",
-  "version": "9.13.33",
+  "version": "9.13.35",
   "private": true,
   "scripts": {
     "dev": "next dev",

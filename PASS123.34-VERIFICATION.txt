@@ -1,4 +1,4 @@
-VALIE PORTFOLIO — PASS 123.33 VERIFICATION
+VALIE PORTFOLIO — PASS 123.34 VERIFICATION
 
 - Mobile CLIENT REVIEWS remains true full-bleed / viewport-wide.
 - Small symmetrical review edge shadows are present on BOTH sides.
@@ -7,4 +7,4 @@ VALIE PORTFOLIO — PASS 123.33 VERIFICATION
 - Broad mask-image remains disabled so the old wide black block cannot return.
 - Review swipe/autoplay behavior is unchanged.
 - Desktop review styling is unchanged.
-- Navigation runtime URLs are cache-busted to v=123.33.
+- Navigation runtime URLs are cache-busted to v=123.34.
