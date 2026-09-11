@@ -1,0 +1,6 @@
+Pass 123.40 verification summary
+- Mobile arrow now uses pass12340MobileScrollArrowFloatSoft.
+- Movement softened to -1px at the top and 2px at the bottom.
+- Duration remains 1.9s with ease-in-out infinite looping.
+- Desktop arrow animation unchanged.
+- Package version bumped to 9.13.40.

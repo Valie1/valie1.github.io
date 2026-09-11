@@ -14286,3 +14286,24 @@ a[data-valie-link-href],
     animation-play-state:running!important;
   }
 }
+
+
+/* Pass 123.40 — soften only the mobile hero SCROLL arrow travel.
+   Keep the same feel and timing, but reduce the vertical distance so it is less aggressive on phones. */
+@keyframes pass12340MobileScrollArrowFloatSoft{
+  0%,100%{transform:translateY(-1px);opacity:.82}
+  50%{transform:translateY(2px);opacity:1}
+}
+@media(max-width:760px){
+  .hero-scroll-cues--viewport.is-armed.is-visible .hero-scroll-cue__circle svg{
+    animation:pass12340MobileScrollArrowFloatSoft 1.9s ease-in-out infinite!important;
+    animation-play-state:running!important;
+    will-change:transform,opacity;
+  }
+}
+@media(max-width:760px) and (prefers-reduced-motion:reduce){
+  .hero-scroll-cues--viewport.is-armed.is-visible .hero-scroll-cue__circle svg{
+    animation:pass12340MobileScrollArrowFloatSoft 1.9s ease-in-out infinite!important;
+    animation-play-state:running!important;
+  }
+}

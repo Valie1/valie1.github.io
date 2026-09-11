@@ -1,3 +1,3 @@
-# Valie Portfolio — Pass 123.39
+# Valie Portfolio — Pass 123.40
 
-Pass 123.39 fixes the actual reason the mobile SCROLL arrows were not moving vertically. A mobile `transform:none!important` declaration was overriding the transform values produced by the desktop keyframe animation, so the animation could be assigned but the SVG could not physically move. That blocking declaration is removed. Mobile now reuses the exact desktop `pass94ScrollArrowFloat` 1.9s animation, explicitly runs it while the cue is visible, and keeps the existing hero fade-out / fade-back-in lifecycle from Pass 123.36.
+Pass 123.40 softens the mobile hero SCROLL arrow movement. The arrow still animates continuously and stays tied to the hero-only fade lifecycle, but its up/down travel is reduced so it feels closer to a subtle cue instead of an aggressive bounce. Desktop behavior is left untouched.

@@ -1,13 +1,13 @@
-# Deployment notes — Pass 123.39
+# Deployment notes — Pass 123.40
 
-## Actual bug fixed
-The mobile arrow already had an animation name, but `transform:none!important` on the SVG had higher cascade priority than animation-generated transforms. As a result, opacity could animate while the arrow itself stayed in one vertical position.
+## What changed
+- Reduced the vertical travel of the mobile hero SCROLL arrow.
+- Kept the same continuous animation timing and general feel.
+- Left desktop SCROLL behavior unchanged.
+- Retained the existing hero-only fade out / fade back in lifecycle.
+- Package version bumped to 9.13.40.
 
-## Fix
-- Removed the blocking `transform:none!important` from the mobile SCROLL arrow SVG.
-- Reused the exact desktop `pass94ScrollArrowFloat` 1.9s keyframes.
-- Explicitly sets `animation-play-state: running` while the hero cue is visible.
-- Keeps the requested animation active on mobile even under reduced-motion, per the user's explicit request.
-- Retains Pass 123.36 hero enter/leave fade lifecycle and all later review/menu fixes.
-
-Package version: 9.13.39.
+## Deploy
+1. Replace the previous project with this pass.
+2. Push to GitHub and let Pages rebuild.
+3. Hard refresh on mobile if the browser is still showing a cached stylesheet.
