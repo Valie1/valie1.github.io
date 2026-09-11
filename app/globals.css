@@ -14556,8 +14556,6 @@ a[data-valie-link-href],
   }
 }
 
-/* Pass 123.34 — mobile hero SCROLL animation parity.
-   Keep the mobile geometry smaller, but reuse the exact desktop pulse + arrow bounce. */
 @media(max-width:760px){
   .hero-scroll-cues--viewport.is-armed.is-visible .hero-scroll-cue__circle{
     animation:cnhWhiteScrollPulse 2s ease-in-out infinite!important;
@@ -14566,8 +14564,6 @@ a[data-valie-link-href],
     animation:cnhArrowBounce 2s ease-in-out infinite!important;
   }
 }
-/* The user explicitly requested the SCROLL control animation on mobile, so keep this
-   tiny navigational cue animated even when the device asks to reduce other motion. */
 @media(max-width:760px) and (prefers-reduced-motion:reduce){
   .hero-scroll-cues--viewport.is-armed.is-visible .hero-scroll-cue__circle{
     animation:cnhWhiteScrollPulse 2s ease-in-out infinite!important;

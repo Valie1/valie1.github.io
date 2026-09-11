@@ -1,15 +1,14 @@
-# Deployment notes — Pass 123.35
+# Deployment notes — Pass 123.36
 
-This pass keeps the mobile hero SCROLL controls visually matched to desktop and hardens their visibility lifecycle.
+## Fix
+Pass 123.35 failed the GitHub Pages build during `mobile:viewport-stability:audit`. The new cue lifecycle used live viewport geometry (`window.innerHeight` / `visualViewport`) and RAF, which violated the project's existing stability guard.
 
-## What changed
-- The mobile hero SCROLL controls now re-evaluate hero visibility on scroll, resize, orientation changes, and visual viewport changes.
-- The controls fade out after the user scrolls past the hero section.
-- The controls fade back in when the user scrolls back into the hero section.
-- The desktop pulse/bounce animation parity from Pass 123.34 remains intact.
-- Package version bumped to 9.13.35.
+Pass 123.36 keeps the desired behavior but restores the expected architecture:
+- stable hero-derived visibility geometry;
+- IntersectionObserver remains the primary lifecycle source;
+- passive scroll/resize/orientation fallbacks for mobile browser chrome edge cases;
+- no `visualViewport` dependency in HeroScrollCues;
+- no requestAnimationFrame scroll-opacity state;
+- desktop pulse/bounce animations and compact mobile sizing retained.
 
-## Deploy
-1. Replace the previous project with this pass.
-2. Run the normal production build/deploy flow.
-3. Hard refresh on mobile after deploy if an older cached chunk is still shown.
+Package version: 9.13.36.
