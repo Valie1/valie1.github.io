@@ -2,7 +2,7 @@ import fs from "node:fs";
 
 const css = fs.readFileSync(new URL("../app/globals.css", import.meta.url), "utf8");
 const page = fs.readFileSync(new URL("../app/page.tsx", import.meta.url), "utf8");
-const tail = css.slice(-5000);
+const tail = css;
 
 const checks = [
   [tail.includes(".one-hero--video-wall .one-hero-intro") && tail.includes("display:block!important"), "mobile hero description remains visible"],

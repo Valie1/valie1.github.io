@@ -12,6 +12,8 @@ const navRuntime = read('public/site-nav-runtime.js');
 const checks = [
   ['mobile interaction layer exists', css.includes('.minimal-mobile-menu{') && css.includes('height:var(--valie-visual-height,100dvh)!important')],
   ['Mobile menu uses the static runtime scroll lock', navRuntime.includes('mobile-menu-locked') && navRuntime.includes('document.addEventListener("wheel", onWheel') && navRuntime.includes('document.addEventListener("touchmove", onTouchMove')],
+  ['Mobile menu links have explicit same-page hash navigation', navRuntime.includes('function navigateMobileLink(link)') && navRuntime.includes('target.scrollIntoView') && navRuntime.includes('window.history.pushState')],
+  ['Mobile menu has touch pointer-up activation fallback', navRuntime.includes('link.addEventListener("pointerup", finishTouchActivation)') && navRuntime.includes('suppressClickUntil')],
   ['Cookie Settings uses the shared touch-safe document lock', consent.includes('lockDocumentScroll("cookie-settings-locked")')],
   ['Cookie Settings backdrop uses pointer events for touch', consent.includes('onPointerDown={(event) =>')],
   ['Visual viewport top is exposed to CSS', viewport.includes('--valie-visual-top')],

@@ -13755,10 +13755,10 @@ a[data-valie-link-href],
   .minimal-brand-draw .animated-valie-wordmark__letter{
     animation:
       valieGlyphDraw .72s cubic-bezier(.20,.82,.26,1) forwards,
-      valieMobileGlyphClear .30s ease-out forwards!important;
+      valieGlyphSettle .24s ease-out forwards!important;
     animation-delay:
       calc(var(--valie-draw-index) * .38s),
-      calc(2.12s + (var(--valie-draw-index) * .015s))!important;
+      calc(1.92s + (var(--valie-draw-index) * .015s))!important;
   }
 
   .minimal-brand-draw .animated-valie-wordmark__fill{
@@ -13766,36 +13766,16 @@ a[data-valie-link-href],
   }
 
   .footer-valie-static__letter{
-    animation:
-      footerValieMobileDraw .72s cubic-bezier(.20,.82,.26,1) forwards,
-      footerValieMobileClear .30s ease-out forwards!important;
+    animation:footerValieGlyphLoop 5.8s cubic-bezier(.20,.82,.26,1) infinite!important;
   }
-  .footer-valie-static__letter:nth-child(1){animation-delay:0s,2.12s!important}
-  .footer-valie-static__letter:nth-child(2){animation-delay:.32s,2.135s!important}
-  .footer-valie-static__letter:nth-child(3){animation-delay:.64s,2.15s!important}
-  .footer-valie-static__letter:nth-child(4){animation-delay:.96s,2.165s!important}
-  .footer-valie-static__letter:nth-child(5){animation-delay:1.28s,2.18s!important}
+  .footer-valie-static__letter:nth-child(1){animation-delay:0s!important}
+  .footer-valie-static__letter:nth-child(2){animation-delay:.32s!important}
+  .footer-valie-static__letter:nth-child(3){animation-delay:.64s!important}
+  .footer-valie-static__letter:nth-child(4){animation-delay:.96s!important}
+  .footer-valie-static__letter:nth-child(5){animation-delay:1.28s!important}
   .footer-valie-static__fill{
-    animation:footerValieMobileResolve .34s cubic-bezier(.22,1,.36,1) 2.08s forwards!important;
+    animation:footerValieFillLoop 5.8s cubic-bezier(.22,1,.36,1) infinite!important;
   }
-}
-
-@keyframes valieMobileGlyphClear{
-  from{opacity:1}
-  to{opacity:0}
-}
-@keyframes footerValieMobileDraw{
-  0%{stroke-dashoffset:180;opacity:0}
-  8%{opacity:1}
-  100%{stroke-dashoffset:0;opacity:1}
-}
-@keyframes footerValieMobileClear{
-  from{opacity:1}
-  to{opacity:0}
-}
-@keyframes footerValieMobileResolve{
-  0%{opacity:0;filter:blur(1.8px);transform:translateY(.6px)}
-  100%{opacity:1;filter:blur(0);transform:translateY(0)}
 }
 
 
@@ -13938,7 +13918,8 @@ a[data-valie-link-href],
   .review-orbit__viewport{
     overflow-x:auto!important;
     overflow-y:hidden!important;
-    scroll-snap-type:x proximity;
+    scroll-snap-type:none!important;
+    scroll-behavior:auto!important;
     scroll-padding-inline:24px;
     overscroll-behavior-x:contain;
     -webkit-overflow-scrolling:touch;
@@ -13969,7 +13950,7 @@ a[data-valie-link-href],
     width:min(360px,calc(100vw - 48px))!important;
     min-width:min(360px,calc(100vw - 48px))!important;
     max-width:min(360px,calc(100vw - 48px))!important;
-    scroll-snap-align:center;
+    scroll-snap-align:none;
     scroll-snap-stop:normal;
   }
 }
@@ -14176,3 +14157,94 @@ a[data-valie-link-href],
   height:0!important;
 }
 
+@keyframes heroLaneUpMobilePerf{
+  from{transform:translate3d(0,0,0)}
+  to{transform:translate3d(0,-50%,0)}
+}
+@keyframes heroLaneDownMobilePerf{
+  from{transform:translate3d(0,-50%,0)}
+  to{transform:translate3d(0,0,0)}
+}
+
+@media (max-width:700px){
+  .hero-video-wall.is-mobile-live-mode{
+    contain:strict!important;
+    transform:translateZ(0);
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
+  }
+
+  .hero-video-wall.is-mobile-live-mode .hero-media-lane{
+    -webkit-mask-image:none!important;
+    mask-image:none!important;
+    contain:layout paint style!important;
+    transition:none!important;
+    will-change:auto!important;
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
+  }
+
+  .hero-video-wall.is-mobile-live-mode .hero-media-track{
+    will-change:transform!important;
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
+    transform:translate3d(0,0,0);
+  }
+
+  .hero-video-wall.is-mobile-live-mode .hero-media-track--up{
+    animation-name:heroLaneUpMobilePerf!important;
+    animation-duration:58s!important;
+    animation-timing-function:linear!important;
+  }
+
+  .hero-video-wall.is-mobile-live-mode .hero-media-track--down{
+    animation-name:heroLaneDownMobilePerf!important;
+    animation-duration:62s!important;
+    animation-timing-function:linear!important;
+  }
+
+  .hero-video-wall.is-mobile-live-mode .hero-media-sequence{
+    gap:16px!important;
+    padding-bottom:16px!important;
+  }
+
+  .hero-video-wall.is-mobile-live-mode .hero-media-card{
+    display:block!important;
+    opacity:1!important;
+    animation:none!important;
+    filter:none!important;
+    box-shadow:0 12px 28px rgba(0,0,0,.28)!important;
+    contain:paint!important;
+    transform:translateZ(0)!important;
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
+  }
+
+  .hero-video-wall.is-mobile-live-mode .hero-media-card video{
+    opacity:1!important;
+    filter:none!important;
+    transform:none!important;
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
+  }
+
+  .hero-video-wall.is-mobile-live-mode .hero-media-card__glass{
+    background:
+      linear-gradient(180deg,rgba(255,255,255,.025),rgba(3,3,3,.08) 28%,rgba(3,3,3,.22) 74%,rgba(0,0,0,.34)),
+      radial-gradient(circle at 22% 18%,rgba(255,255,255,.045),transparent 34%)!important;
+  }
+
+  .hero-video-wall.is-mobile-live-mode .hero-video-wall__center-mask{
+    background:radial-gradient(ellipse 59% 58% at 50% 49%,rgba(3,3,3,1) 0%,rgba(3,3,3,.985) 49%,rgba(3,3,3,.76) 70%,rgba(3,3,3,.08) 94%,transparent 100%)!important;
+  }
+
+  .hero-video-wall.is-mobile-live-mode .hero-video-wall__edge-mask{
+    background:
+      linear-gradient(to bottom,#030303 0%,rgba(3,3,3,.18) 11%,transparent 22%,transparent 78%,rgba(3,3,3,.18) 91%,#030303 100%),
+      linear-gradient(to right,#030303 0%,transparent 9%,transparent 91%,#030303 100%)!important;
+  }
+
+  .one-hero--video-wall .hero-scroll-cue__circle svg{
+    animation:none!important;
+  }
+}

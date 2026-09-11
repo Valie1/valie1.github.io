@@ -124,6 +124,7 @@ export default function ClientReviews({ headingId = "reviews-title" }: { heading
     let previousTime = 0;
     let userInteracting = false;
     let initialized = false;
+    let autoPosition = 0;
     const autoSpeed = 42;
 
     const sets = () =>
@@ -138,14 +139,20 @@ export default function ClientReviews({ headingId = "reviews-title" }: { heading
     const normalizeLoopPosition = () => {
       const width = loopWidth();
       if (!width) return;
-      while (viewport.scrollLeft < width * 0.55) viewport.scrollLeft += width;
-      while (viewport.scrollLeft > width * 2.45) viewport.scrollLeft -= width;
+      let next = autoPosition;
+      while (next < width * 0.55) next += width;
+      while (next > width * 2.45) next -= width;
+      if (Math.abs(next - autoPosition) > 0.5) {
+        autoPosition = next;
+        viewport.scrollLeft = autoPosition;
+      }
     };
 
     const initialize = () => {
       const width = loopWidth();
       if (!width) return false;
-      viewport.scrollLeft = width;
+      autoPosition = width;
+      viewport.scrollLeft = autoPosition;
       initialized = true;
       return true;
     };
@@ -171,7 +178,12 @@ export default function ClientReviews({ headingId = "reviews-title" }: { heading
 
     const onWheel = () => {
       pauseAuto();
+      autoPosition = viewport.scrollLeft;
       scheduleResume();
+    };
+
+    const syncManualPosition = () => {
+      if (userInteracting) autoPosition = viewport.scrollLeft;
     };
 
     const animate = (time: number) => {
@@ -187,7 +199,8 @@ export default function ClientReviews({ headingId = "reviews-title" }: { heading
         !userInteracting &&
         !reducedMotionQuery.matches
       ) {
-        viewport.scrollLeft += (autoSpeed * elapsed) / 1000;
+        autoPosition += (autoSpeed * elapsed) / 1000;
+        viewport.scrollLeft = autoPosition;
         normalizeLoopPosition();
       }
 
@@ -205,6 +218,7 @@ export default function ClientReviews({ headingId = "reviews-title" }: { heading
     viewport.addEventListener("touchstart", pauseAuto, { passive: true });
     viewport.addEventListener("touchend", resumeAuto, { passive: true });
     viewport.addEventListener("wheel", onWheel, { passive: true });
+    viewport.addEventListener("scroll", syncManualPosition, { passive: true });
 
     return () => {
       window.cancelAnimationFrame(initFrame);
@@ -216,6 +230,7 @@ export default function ClientReviews({ headingId = "reviews-title" }: { heading
       viewport.removeEventListener("touchstart", pauseAuto);
       viewport.removeEventListener("touchend", resumeAuto);
       viewport.removeEventListener("wheel", onWheel);
+      viewport.removeEventListener("scroll", syncManualPosition);
     };
   }, [active]);
 

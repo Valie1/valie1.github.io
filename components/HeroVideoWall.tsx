@@ -11,25 +11,26 @@ type Props = {
 type LaneItem = {
   slug: string;
   loop: string;
+  mobileLoop: string;
   poster: string;
 };
 
 const longLane: LaneItem[] = [
-  { slug: "sequence-01-13", loop: "/media/hero-loops/long-sequence-01-13.mp4", poster: "/media/hero-posters/long-sequence-01-13.webp" },
-  { slug: "sequence-01-12", loop: "/media/hero-loops/long-sequence-01-12.mp4", poster: "/media/hero-posters/long-sequence-01-12.webp" },
-  { slug: "sequence-01-10", loop: "/media/hero-loops/long-sequence-01-10.mp4", poster: "/media/hero-posters/long-sequence-01-10.webp" },
-  { slug: "sequence-01-9", loop: "/media/hero-loops/long-sequence-01-9.mp4", poster: "/media/hero-posters/long-sequence-01-9.webp" },
-  { slug: "sequence-01-8", loop: "/media/hero-loops/long-sequence-01-8.mp4", poster: "/media/hero-posters/long-sequence-01-8.webp" },
-  { slug: "sequence-01-6", loop: "/media/hero-loops/long-sequence-01-6.mp4", poster: "/media/hero-posters/long-sequence-01-6.webp" },
+  { slug: "sequence-01-13", loop: "/media/hero-loops/long-sequence-01-13.mp4", mobileLoop: "/media/hero-mobile/long-sequence-01-13.mp4", poster: "/media/hero-posters/long-sequence-01-13.webp" },
+  { slug: "sequence-01-12", loop: "/media/hero-loops/long-sequence-01-12.mp4", mobileLoop: "/media/hero-mobile/long-sequence-01-12.mp4", poster: "/media/hero-posters/long-sequence-01-12.webp" },
+  { slug: "sequence-01-10", loop: "/media/hero-loops/long-sequence-01-10.mp4", mobileLoop: "/media/hero-mobile/long-sequence-01-10.mp4", poster: "/media/hero-posters/long-sequence-01-10.webp" },
+  { slug: "sequence-01-9", loop: "/media/hero-loops/long-sequence-01-9.mp4", mobileLoop: "/media/hero-mobile/long-sequence-01-9.mp4", poster: "/media/hero-posters/long-sequence-01-9.webp" },
+  { slug: "sequence-01-8", loop: "/media/hero-loops/long-sequence-01-8.mp4", mobileLoop: "/media/hero-mobile/long-sequence-01-8.mp4", poster: "/media/hero-posters/long-sequence-01-8.webp" },
+  { slug: "sequence-01-6", loop: "/media/hero-loops/long-sequence-01-6.mp4", mobileLoop: "/media/hero-mobile/long-sequence-01-6.mp4", poster: "/media/hero-posters/long-sequence-01-6.webp" },
 ];
 
 const shortLane: LaneItem[] = [
-  { slug: "rage-baiting-prank", loop: "/media/hero-loops/rage-baiting-prank.mp4", poster: "/media/hero-posters/rage-baiting-prank.webp" },
-  { slug: "sequence-01", loop: "/media/hero-loops/sequence-01.mp4", poster: "/media/hero-posters/sequence-01.webp" },
-  { slug: "sequence-01-4", loop: "/media/hero-loops/sequence-01-4.mp4", poster: "/media/hero-posters/sequence-01-4.webp" },
-  { slug: "sequence-01-3", loop: "/media/hero-loops/sequence-01-3.mp4", poster: "/media/hero-posters/sequence-01-3.webp" },
-  { slug: "sequence-01-2", loop: "/media/hero-loops/sequence-01-2.mp4", poster: "/media/hero-posters/sequence-01-2.webp" },
-  { slug: "sequence-01-1", loop: "/media/hero-loops/sequence-01-1.mp4", poster: "/media/work-posters/sequence-01-1.webp" },
+  { slug: "rage-baiting-prank", loop: "/media/hero-loops/rage-baiting-prank.mp4", mobileLoop: "/media/hero-mobile/rage-baiting-prank.mp4", poster: "/media/hero-posters/rage-baiting-prank.webp" },
+  { slug: "sequence-01", loop: "/media/hero-loops/sequence-01.mp4", mobileLoop: "/media/hero-mobile/sequence-01.mp4", poster: "/media/hero-posters/sequence-01.webp" },
+  { slug: "sequence-01-4", loop: "/media/hero-loops/sequence-01-4.mp4", mobileLoop: "/media/hero-mobile/sequence-01-4.mp4", poster: "/media/hero-posters/sequence-01-4.webp" },
+  { slug: "sequence-01-3", loop: "/media/hero-loops/sequence-01-3.mp4", mobileLoop: "/media/hero-mobile/sequence-01-3.mp4", poster: "/media/hero-posters/sequence-01-3.webp" },
+  { slug: "sequence-01-2", loop: "/media/hero-loops/sequence-01-2.mp4", mobileLoop: "/media/hero-mobile/sequence-01-2.mp4", poster: "/media/hero-posters/sequence-01-2.webp" },
+  { slug: "sequence-01-1", loop: "/media/hero-loops/sequence-01-1.mp4", mobileLoop: "/media/hero-mobile/sequence-01-1.mp4", poster: "/media/work-posters/sequence-01-1.webp" },
 ];
 
 function LaneSequence({
@@ -58,6 +59,7 @@ function LaneSequence({
             <Skeleton className="hero-media-card__skeleton" />
             <video
               data-hero-src={item.loop}
+              data-hero-mobile-src={item.mobileLoop}
               data-hero-kind={kind}
               poster={item.poster}
               muted
@@ -96,13 +98,20 @@ export default function HeroVideoWall({ projects }: Props) {
     const saveData = Boolean(network?.saveData);
     const slowNetwork = Boolean(network?.effectiveType && /(^|-)2g$/i.test(network.effectiveType));
     const mobileHero = window.matchMedia("(max-width: 700px)").matches;
-    const mobilePlayZoneInset = Math.round((root.getBoundingClientRect().height || window.innerHeight) * 0.24);
-    const constrainedDevice = hardwareConcurrency <= 4 || deviceMemory <= 4 || mobileHero;
-    const maxPlaying = saveData || slowNetwork ? 0 : constrainedDevice ? 2 : 4;
+    const constrainedDevice = hardwareConcurrency <= 4 || deviceMemory <= 4;
+    const maxPlaying = saveData || slowNetwork ? 0 : mobileHero ? (constrainedDevice ? 2 : 4) : constrainedDevice ? 2 : 4;
+    const mobilePerLaneLimit = constrainedDevice ? 1 : 2;
+    const mobileUnloadTimers = new Map<HTMLVideoElement, number>();
+    root.classList.toggle("is-mobile-live-mode", mobileHero);
 
     const ensureSource = (video: HTMLVideoElement) => {
+      const existingTimer = mobileUnloadTimers.get(video);
+      if (existingTimer) {
+        window.clearTimeout(existingTimer);
+        mobileUnloadTimers.delete(video);
+      }
       if (video.getAttribute("src")) return;
-      const src = video.dataset.heroSrc;
+      const src = mobileHero ? video.dataset.heroMobileSrc || video.dataset.heroSrc : video.dataset.heroSrc;
       if (!src) return;
       video.src = src;
       video.load();
@@ -113,12 +122,27 @@ export default function HeroVideoWall({ projects }: Props) {
     };
 
     const resetToPoster = (video: HTMLVideoElement) => {
+      const existingTimer = mobileUnloadTimers.get(video);
+      if (existingTimer) {
+        window.clearTimeout(existingTimer);
+        mobileUnloadTimers.delete(video);
+      }
       pauseVideo(video);
       if (!video.getAttribute("src")) return;
       video.removeAttribute("src");
       try {
         video.load();
       } catch {}
+    };
+
+    const scheduleMobileUnload = (video: HTMLVideoElement) => {
+      pauseVideo(video);
+      if (!mobileHero || !video.getAttribute("src") || mobileUnloadTimers.has(video)) return;
+      const timer = window.setTimeout(() => {
+        mobileUnloadTimers.delete(video);
+        if (!visibleRatios.has(video)) resetToPoster(video);
+      }, 2200);
+      mobileUnloadTimers.set(video, timer);
     };
 
     const unloadAll = () => {
@@ -128,7 +152,7 @@ export default function HeroVideoWall({ projects }: Props) {
 
     const syncPlayback = () => {
       if (!heroVisible || document.hidden || reducedMotion.matches || maxPlaying === 0) {
-        videos.forEach(mobileHero ? resetToPoster : pauseVideo);
+        videos.forEach(pauseVideo);
         return;
       }
 
@@ -138,19 +162,24 @@ export default function HeroVideoWall({ projects }: Props) {
 
       let allowed: Set<HTMLVideoElement>;
       if (mobileHero) {
-        const laneLeaders = new Map<string, HTMLVideoElement>();
-        ranked.forEach(([video]) => {
+        const perLane = new Map<string, number>();
+        const selected: HTMLVideoElement[] = [];
+        for (const [video] of ranked) {
           const kind = video.dataset.heroKind || "hero";
-          if (!laneLeaders.has(kind)) laneLeaders.set(kind, video);
-        });
-        allowed = new Set(Array.from(laneLeaders.values()).slice(0, maxPlaying));
+          const count = perLane.get(kind) || 0;
+          if (count >= mobilePerLaneLimit) continue;
+          perLane.set(kind, count + 1);
+          selected.push(video);
+          if (selected.length >= maxPlaying) break;
+        }
+        allowed = new Set(selected);
       } else {
         allowed = new Set(ranked.slice(0, maxPlaying).map(([video]) => video));
       }
 
       videos.forEach((video) => {
         if (!allowed.has(video)) {
-          if (mobileHero) resetToPoster(video);
+          if (mobileHero) scheduleMobileUnload(video);
           else pauseVideo(video);
           return;
         }
@@ -159,20 +188,23 @@ export default function HeroVideoWall({ projects }: Props) {
       });
     };
 
-    const videoObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const video = entry.target as HTMLVideoElement;
-          if (entry.isIntersecting) visibleRatios.set(video, entry.intersectionRatio);
-          else visibleRatios.delete(video);
-        });
-        syncPlayback();
-      },
-      mobileHero
-        ? { threshold: [0, 0.12, 0.25, 0.5, 0.8], rootMargin: `-${mobilePlayZoneInset}px 0px -${mobilePlayZoneInset}px 0px` }
-        : { threshold: [0, 0.08, 0.25, 0.5, 0.8], rootMargin: "70px 0px" },
-    );
-    videos.forEach((video) => videoObserver.observe(video));
+    let videoObserver: IntersectionObserver | null = null;
+    if (maxPlaying > 0) {
+      videoObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            const video = entry.target as HTMLVideoElement;
+            if (entry.isIntersecting) visibleRatios.set(video, entry.intersectionRatio);
+            else visibleRatios.delete(video);
+          });
+          syncPlayback();
+        },
+        mobileHero
+          ? { threshold: [0, 0.06, 0.18, 0.4, 0.7], rootMargin: "12% 0px" }
+          : { threshold: [0, 0.08, 0.25, 0.5, 0.8], rootMargin: "70px 0px" },
+      );
+      videos.forEach((video) => videoObserver?.observe(video));
+    }
 
     const resetHeroMotion = () => {
       root.style.setProperty("--hero-wall-y", "0px");
@@ -272,7 +304,7 @@ export default function HeroVideoWall({ projects }: Props) {
 
     return () => {
       rootObserver.disconnect();
-      videoObserver.disconnect();
+      videoObserver?.disconnect();
       cancelAnimationFrame(pointerRaf);
       cancelAnimationFrame(scrollRaf);
       if (!mobileHero) {
@@ -284,7 +316,9 @@ export default function HeroVideoWall({ projects }: Props) {
       document.removeEventListener("visibilitychange", onVisibilityChange);
       unbindMotion();
       unloadAll();
-      root.classList.remove("is-offscreen", "is-page-hidden");
+      mobileUnloadTimers.forEach((timer) => window.clearTimeout(timer));
+      mobileUnloadTimers.clear();
+      root.classList.remove("is-offscreen", "is-page-hidden", "is-mobile-live-mode");
       resetHeroMotion();
     };
   }, []);

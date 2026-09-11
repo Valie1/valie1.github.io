@@ -1,0 +1,20 @@
+Pass 123.19 — Mobile Hero Live-Video Parity
+
+Target: keep the main mobile hero smooth without removing any hero videos or cards.
+
+Changes:
+- Restored live MP4 playback on mobile.
+- Retained all six long-form and all six short-form cards in both duplicated lanes.
+- Added 12 phone-optimized H.264 hero loops with the same content and 24 fps timing.
+- Strong phones can play up to four live hero cards at once; constrained phones use two, balanced across lanes.
+- Mobile observer prewarms nearby cards and uses a short unload cooldown to avoid rapid attach/remove decoder churn.
+- GPU translate3d lane animation remains enabled.
+- Moving lane masks and live video CSS filters remain replaced by cheaper static compositing while preserving the dark hero treatment.
+- Desktop hero behavior and original desktop hero loop files are unchanged.
+- Pass 123.17 mobile navigation/VALIE wordmark and all later retained fixes remain intact.
+- Runtime query cache bust is v=123.19.
+
+Validation target:
+- Mobile hero live-video parity audit 22/22.
+- Runtime performance guard remains green.
+- Existing mobile/device/browser/publish audits remain green.

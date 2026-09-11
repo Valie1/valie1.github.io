@@ -1,10 +1,10 @@
-# VALIE Portfolio — Pass 123.15
+# VALIE Portfolio — Pass 123.19
 
-GitHub Pages release for `https://valie1.github.io/`. Pass 123.06 polishes the mobile hero so the description and CTA pair match the compact desktop composition instead of disappearing or expanding into oversized full-width stacked buttons.
+GitHub Pages release for `https://valie1.github.io/`. Pass 123.19 restores full live-video hero parity on mobile while keeping the mobile performance hardening that does not remove content.
 
 Copy the contents of this folder into the local GitHub Desktop checkout for the `valie1.github.io` repository, keep the repository's hidden `.git` folder, commit the replacement, and push. In GitHub repository Settings → Pages, set Source to GitHub Actions.
 
-Use `START-PASS-123.15-NO-WEBSITE-BADGE.bat` for a fresh local development preview at `http://localhost:3000`.
+Use `START-PASS-123.19-MOBILE-HERO-LIVE-PARITY.bat` for a fresh local development preview at `http://localhost:3000`.
 
 ## Pass 123.06
 
@@ -46,3 +46,21 @@ The WEBSITE hover cue now shares the same true center axis as the grey mouse-poi
 
 ## Pass 123.15 — Remove Website Badge
 The red WEBSITE cue/badge has been removed from website cards entirely. The centered pointer circle and click animation remain unchanged.
+
+
+## Pass 123.16 — Mobile Review Autoplay Hardening
+The mobile CLIENT REVIEWS rail now visibly advances by itself like desktop while still allowing native left/right finger swiping. The mobile runtime keeps its own floating-point autoplay position so sub-pixel frame steps cannot be rounded away by a phone browser, disables scroll snapping that could pull tiny autoplay steps back to the same card, syncs autoplay to the user’s manual swipe position, pauses while the user interacts, then resumes after the existing delay. Reduced-motion still keeps manual swipe and disables automatic movement.
+
+
+## Pass 123.17 — Mobile Navigation + VALIE Wordmark Desktop Parity
+Mobile WORK / ABOUT / REVIEWS / CONTACT now use an explicit touch-safe activation path instead of relying only on native anchor click behavior. A short tap on a mobile menu pill closes the menu and reliably scrolls to the matching section, with a pointer-up fallback for mobile browsers that suppress or delay synthetic clicks. The navigation runtime URL is cache-busted so deployed phones receive the new behavior immediately.
+
+The mobile VALIE wordmarks now use the same transformation treatment as desktop: the header keeps the desktop outline draw → subtle glyph settle → solid resolve, and the footer keeps the desktop repeating outline/fill loop. The previous phone-only one-shot clear/resolve animation has been removed. Reduced-motion behavior remains unchanged.
+
+
+## Pass 123.18 — Mobile Hero Performance Hardening
+The phone hero keeps the same moving long-form/short-form lane composition, but mobile no longer decodes MP4s inside the continuously moving wall. It uses the existing poster frames instead, avoids per-card IntersectionObserver playback churn, reduces each duplicated lane sequence from six rendered cards to four on phones, moves the tracks with `translate3d`, removes the mobile reveal/shadow/mask work, simplifies the glass overlay, and disables the tiny infinite arrow bounce. The result keeps the hero visually alive through the moving lanes while dramatically reducing main-thread, decoder, paint, and compositor pressure. Desktop live hero-video playback is unchanged.
+
+
+## Pass 123.19 — Mobile Hero Live-Video Parity
+Mobile now keeps the same six long-form and six short-form hero items as desktop and restores live MP4 playback instead of poster-only motion. Each hero item has a phone-optimized H.264 loop with the same content, 24 fps timing, and poster fallback; desktop continues to use the original 720p/406x720 loops. Mobile playback is bounded per lane, prewarmed near the viewport, and unloaded after a short cooldown when it leaves the active zone so the browser is not decoding every moving card at once. The moving lane animation remains GPU-transformed, while expensive moving lane masks and per-frame video filters stay replaced by static overlays. No hero cards are hidden on mobile.

@@ -42,6 +42,17 @@ const checks = [
     name: "Hidden hero scroll arrows suspend their infinite animation",
     pass: read("app/globals.css").includes("hero-scroll-cues--viewport:not(.is-interactive)"),
   },
+  {
+    name: "Mobile hero keeps live video with bounded decode/compositor work",
+    pass:
+      read("components/HeroVideoWall.tsx").includes('data-hero-mobile-src={item.mobileLoop}') &&
+      read("components/HeroVideoWall.tsx").includes('root.classList.toggle("is-mobile-live-mode", mobileHero)') &&
+      read("components/HeroVideoWall.tsx").includes("const mobilePerLaneLimit = constrainedDevice ? 1 : 2") &&
+      read("components/HeroVideoWall.tsx").includes("scheduleMobileUnload") &&
+      read("app/globals.css").includes("heroLaneUpMobilePerf") &&
+      read("app/globals.css").includes(".hero-video-wall.is-mobile-live-mode .hero-media-card video") &&
+      !read("app/globals.css").includes(".hero-media-card:nth-child(n+5)"),
+  },
 ];
 
 const failed = checks.filter((check) => !check.pass);

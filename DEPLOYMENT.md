@@ -5,7 +5,7 @@ Production URL: `https://valie1.github.io/`
 1. Open the existing `valie1.github.io` repository in GitHub Desktop.
 2. Choose Repository → Show in Explorer.
 3. Keep the hidden `.git` folder and remove the old website files from the repository working tree.
-4. Copy every file and folder from Pass 123.15 into the repository root, including the hidden `.github` folder.
+4. Copy every file and folder from Pass 123.19 into the repository root, including the hidden `.github` folder.
 5. In GitHub Desktop, review the changes, commit them to the current default branch, and Push origin.
 6. On GitHub.com, open Settings → Pages and set Build and deployment → Source to GitHub Actions.
 7. Open the Actions tab and wait for `Deploy VALIE Portfolio to GitHub Pages` to finish successfully.
@@ -37,3 +37,19 @@ No deployment architecture changes. Website card hover/click cues are now compos
 
 ## Pass 123.15 — Remove Website Badge
 The red WEBSITE cue/badge has been removed from website cards entirely. The centered pointer circle and click animation remain unchanged.
+
+
+## Pass 123.16 — Mobile Review Autoplay Hardening
+No deployment architecture changes. This pass hardens the existing client-side mobile review carousel so automatic motion remains visible on mobile browsers while preserving manual left/right touch scrolling.
+
+
+## Pass 123.17 — Mobile Navigation + VALIE Wordmark Desktop Parity
+No deployment architecture changes. The static mobile navigation runtime is cache-busted to `v=123.17`, adds explicit touch-safe section navigation, and the mobile VALIE header/footer animations now mirror the desktop transformations.
+
+
+## Pass 123.18 — Mobile Hero Performance Hardening
+No deployment architecture changes. Mobile now runs the hero wall in poster-motion mode to remove video-decoder and observer churn while preserving the moving composition. Desktop keeps live hero video playback. Runtime query strings are cache-busted to `v=123.18`.
+
+
+## Pass 123.19 — Mobile Hero Live-Video Parity
+No deployment architecture changes. Mobile hero cards now use live phone-optimized MP4 loops from `public/media/hero-mobile/` while desktop keeps the original hero-loop assets. All six items per lane remain rendered. Runtime query strings are cache-busted to `v=123.19`.
