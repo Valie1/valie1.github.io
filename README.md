@@ -1,3 +1,3 @@
-# Valie Portfolio — Pass 123.36
+# Valie Portfolio — Pass 123.38
 
-Pass 123.36 fixes the GitHub Actions build regression introduced in Pass 123.35 while retaining the requested mobile hero SCROLL lifecycle. The cues still use the exact desktop pulse/bounce animations from Pass 123.34, stay compact on phones, fade out after leaving the hero, and fade back in on return. The visibility fallback now derives geometry from the stable hero box and avoids `visualViewport`/RAF state, so it satisfies the existing mobile viewport stability and scroll-cue architecture audits used by the deployment workflow.
+Pass 123.38 fixes the mobile hero SCROLL arrow animation so it matches desktop exactly. The circular button continues to use the desktop `cnhWhiteScrollPulse` animation and the arrow inside now uses the desktop `cnhArrowBounce` up/down animation with the same 2s timing. This forced parity block is intentionally placed last and is also kept active for mobile even when reduced-motion is requested, because the user explicitly asked for the desktop SCROLL cue behavior. All prior hero fade-in / fade-out / return behavior from Pass 123.36 is retained.

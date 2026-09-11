@@ -1,14 +1,13 @@
-# Deployment notes — Pass 123.36
+# Deployment notes — Pass 123.38
 
-## Fix
-Pass 123.35 failed the GitHub Pages build during `mobile:viewport-stability:audit`. The new cue lifecycle used live viewport geometry (`window.innerHeight` / `visualViewport`) and RAF, which violated the project's existing stability guard.
+## What changed
+- Fixed the mobile hero SCROLL arrow so it bounces up/down exactly like desktop.
+- Reasserted the desktop pulse for the mobile circle.
+- Kept the forced mobile animation parity block last in CSS so older overrides cannot cancel it.
+- Retained the hero-only visibility lifecycle from Pass 123.36.
+- Package version bumped to 9.13.38.
 
-Pass 123.36 keeps the desired behavior but restores the expected architecture:
-- stable hero-derived visibility geometry;
-- IntersectionObserver remains the primary lifecycle source;
-- passive scroll/resize/orientation fallbacks for mobile browser chrome edge cases;
-- no `visualViewport` dependency in HeroScrollCues;
-- no requestAnimationFrame scroll-opacity state;
-- desktop pulse/bounce animations and compact mobile sizing retained.
-
-Package version: 9.13.36.
+## Deploy
+1. Replace the previous project with this pass.
+2. Push to GitHub and let Actions rebuild.
+3. Hard refresh on mobile after deploy if the browser still shows an older cached chunk.

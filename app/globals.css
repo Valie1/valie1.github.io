@@ -14286,3 +14286,24 @@ a[data-valie-link-href],
     animation:none!important;
   }
 }
+
+
+/* Pass 123.38 — force exact desktop mobile SCROLL cue animation parity.
+   The user explicitly wants the mobile arrow to move up/down exactly like desktop,
+   so keep the desktop pulse + arrow bounce even under reduced-motion on mobile. */
+@media(max-width:760px){
+  .hero-scroll-cues--viewport.is-armed.is-visible .hero-scroll-cue__circle{
+    animation:cnhWhiteScrollPulse 2s ease-in-out infinite!important;
+  }
+  .hero-scroll-cues--viewport.is-armed.is-visible .hero-scroll-cue__circle svg{
+    animation:cnhArrowBounce 2s ease-in-out infinite!important;
+  }
+}
+@media(max-width:760px) and (prefers-reduced-motion:reduce){
+  .hero-scroll-cues--viewport.is-armed.is-visible .hero-scroll-cue__circle{
+    animation:cnhWhiteScrollPulse 2s ease-in-out infinite!important;
+  }
+  .hero-scroll-cues--viewport.is-armed.is-visible .hero-scroll-cue__circle svg{
+    animation:cnhArrowBounce 2s ease-in-out infinite!important;
+  }
+}
