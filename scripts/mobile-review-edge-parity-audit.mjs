@@ -5,11 +5,11 @@ const root = process.cwd();
 const css = fs.readFileSync(path.join(root, 'app', 'globals.css'), 'utf8');
 const checks = [
   ['mobile parity block is final in source', css.lastIndexOf('@media (max-width:760px){') < css.lastIndexOf('.review-orbit::before,')],
-  ['edge masks share one narrow width', /\.review-orbit::before,\s*\n\s*\.review-orbit::after\{[\s\S]*?width:9px!important/.test(css)],
+  ['edge masks share one ultra-narrow width', /\.review-orbit::before,\s*\n\s*\.review-orbit::after\{[\s\S]*?width:2px!important/.test(css)],
   ['edge masks explicitly drop filters', /filter:none!important/.test(css)],
   ['edge masks explicitly drop shadows', /box-shadow:none!important/.test(css)],
-  ['left fade is narrow mirrored gradient', css.includes('linear-gradient(90deg,rgba(5,5,5,.72) 0%,rgba(5,5,5,.26) 46%,rgba(5,5,5,0) 100%)!important')],
-  ['right fade mirrors left exactly', css.includes('linear-gradient(270deg,rgba(5,5,5,.72) 0%,rgba(5,5,5,.26) 46%,rgba(5,5,5,0) 100%)!important')],
+  ['left fade is ultra-subtle', css.includes('linear-gradient(90deg,rgba(5,5,5,.46) 0%,rgba(5,5,5,0) 100%)!important')],
+  ['right fade mirrors the left by transform', /\.review-orbit::after\{[\s\S]*?background:linear-gradient\(90deg,rgba\(5,5,5,.46\) 0%,rgba\(5,5,5,0\) 100%\)!important;[\s\S]*?transform:scaleX\(-1\)!important/.test(css)],
   ['left side is anchored only left', /\.review-orbit::before\{[\s\S]*?left:0!important;[\s\S]*?right:auto!important;/.test(css)],
   ['right side is anchored only right', /\.review-orbit::after\{[\s\S]*?right:0!important;[\s\S]*?left:auto!important;/.test(css)],
 ];

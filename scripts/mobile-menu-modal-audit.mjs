@@ -14,16 +14,16 @@ const checks = [
   ['Background nodes use native inert isolation', runtime.includes('setNodeInert(node, true)') && runtime.includes('node.setAttribute("inert", "")')],
   ['Background accessibility tree is hidden while menu is open', runtime.includes('node.setAttribute("aria-hidden", "true")')],
   ['Original inert and aria-hidden state is restored on close', runtime.includes('setNodeInert(record.node, record.inert)') && runtime.includes('record.ariaHidden === null')],
-  ['Touch and pen activation uses pointer-up delegation', runtime.includes('menu.addEventListener("pointerup", onMenuPointerUp, true)') && runtime.includes('event.pointerType === "mouse"')],
-  ['Synthetic click duplication is suppressed after touch activation', runtime.includes('suppressClickUntil = now() + 900') && runtime.includes('now() < suppressClickUntil')],
-  ['Menu link activation bypasses global bubbling before navigation', runtime.includes('event.stopPropagation()') && runtime.includes('navigateMobileLink(link)')],
-  ['Same-page navigation closes menu before section positioning', runtime.includes('setOpen(false, false)') && runtime.includes('scrollToTarget(id, url)')],
-  ['Section positioning has a post-close correction pass', runtime.includes('window.setTimeout(function ()') && runtime.includes('Math.abs(nextTop - window.scrollY) > 2')],
+  ['Mobile destinations use native click activation', runtime.includes('menu.addEventListener("click", onMenuClick, false)') && !runtime.includes('onMenuPointerUp')],
+  ['Native anchor default is preserved for destination clicks', !runtime.slice(runtime.indexOf('function onMenuClick'), runtime.indexOf('function onKey')).includes('event.preventDefault()')],
+  ['Menu link activation closes without swallowing the anchor click', runtime.includes('setOpen(false, false)') && runtime.includes('scrollTargetIntoView(id)')],
+  ['Same-page navigation closes menu before post-click section correction', runtime.includes('setOpen(false, false)') && runtime.includes('scrollTargetIntoView(id)')],
+  ['Section positioning has a second correction pass', runtime.includes('}, 120)') && runtime.includes('scrollTargetIntoView(id)')],
   ['Outside pointer input is blocked while modal menu is open', runtime.includes('onDocumentPointerDown') && runtime.includes('event.stopImmediatePropagation()')],
   ['CSS blocks pointer interaction with body siblings while menu is open', css.includes('html.mobile-menu-locked body > :not(.minimal-site-nav):not(script):not(style):not(link)') && css.includes('pointer-events:none!important')],
   ['Navigation remains interactive above the lock', css.includes('html.mobile-menu-locked .minimal-site-nav *') && css.includes('pointer-events:auto')],
   ['Menu overscroll cannot chain into the underlying page', css.includes('.minimal-mobile-menu.is-open{') && css.includes('overscroll-behavior:none!important')],
-  ['Deployed runtime is cache-busted for this pass', layout.includes('site-nav-runtime.js?v=123.27') && layout.includes('site-link-preview-lock.js?v=123.27')],
+  ['Deployed runtime is cache-busted for this pass', layout.includes('site-nav-runtime.js?v=123.30') && layout.includes('site-link-preview-lock.js?v=123.30')],
 ];
 
 let failures = 0;

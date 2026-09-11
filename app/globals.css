@@ -14309,6 +14309,13 @@ a[data-valie-link-href],
     will-change:opacity!important;
   }
 
+  .hero-scroll-cues--viewport.is-armed:not(.is-visible){
+    opacity:0!important;
+  }
+  .hero-scroll-cues--viewport.is-armed.is-visible{
+    opacity:1!important;
+  }
+
   .hero-scroll-cues--viewport .hero-scroll-cue{
     top:auto!important;
     bottom:max(30px,calc(env(safe-area-inset-bottom) + 18px))!important;
@@ -14329,23 +14336,25 @@ a[data-valie-link-href],
   }
 
   .hero-scroll-cues--viewport .hero-scroll-cue__circle{
-    width:60px!important;
-    height:60px!important;
+    width:46px!important;
+    height:46px!important;
     border:1px solid rgba(255,255,255,.82)!important;
     background:rgba(3,3,3,.58)!important;
     color:#fff!important;
-    box-shadow:0 10px 30px rgba(0,0,0,.44),inset 0 0 0 1px rgba(255,255,255,.025)!important;
+    box-shadow:0 8px 22px rgba(0,0,0,.38),inset 0 0 0 1px rgba(255,255,255,.025)!important;
     transform:none!important;
     animation:none!important;
     transition:transform .3s cubic-bezier(.22,1,.36,1),background .3s ease,border-color .3s ease,box-shadow .3s ease!important;
   }
   .hero-scroll-cues--viewport .hero-scroll-cue__circle svg{
+    width:18px!important;
+    height:18px!important;
     transform:none!important;
     animation:pass94ScrollArrowFloat 1.9s ease-in-out infinite!important;
   }
   .hero-scroll-cues--viewport .hero-scroll-cue__label{
     color:rgba(255,255,255,.88)!important;
-    font-size:7px!important;
+    font-size:6.25px!important;
     line-height:1!important;
     font-weight:700!important;
     letter-spacing:.26em!important;
@@ -14359,7 +14368,7 @@ a[data-valie-link-href],
     transform:translateY(4px) scale(1.035)!important;
     border-color:#fff!important;
     background:rgba(255,255,255,.11)!important;
-    box-shadow:0 14px 34px rgba(0,0,0,.52),0 0 0 5px rgba(255,255,255,.055)!important;
+    box-shadow:0 10px 26px rgba(0,0,0,.46),0 0 0 4px rgba(255,255,255,.05)!important;
   }
 }
 
@@ -14372,6 +14381,17 @@ a[data-valie-link-href],
   }
   .hero-scroll-cues--viewport .hero-scroll-cue--right{
     right:max(18px,calc(env(safe-area-inset-right) + 12px))!important;
+  }
+  .hero-scroll-cues--viewport .hero-scroll-cue__circle{
+    width:44px!important;
+    height:44px!important;
+  }
+  .hero-scroll-cues--viewport .hero-scroll-cue__circle svg{
+    width:17px!important;
+    height:17px!important;
+  }
+  .hero-scroll-cues--viewport .hero-scroll-cue__label{
+    font-size:6px!important;
   }
 }
 
@@ -14404,7 +14424,7 @@ a[data-valie-link-href],
 @media (max-width:760px){
   .review-orbit::before,
   .review-orbit::after{
-    width:9px!important;
+    width:2px!important;
     opacity:1!important;
     filter:none!important;
     box-shadow:none!important;
@@ -14412,11 +14432,39 @@ a[data-valie-link-href],
   .review-orbit::before{
     left:0!important;
     right:auto!important;
-    background:linear-gradient(90deg,rgba(5,5,5,.72) 0%,rgba(5,5,5,.26) 46%,rgba(5,5,5,0) 100%)!important;
+    background:linear-gradient(90deg,rgba(5,5,5,.46) 0%,rgba(5,5,5,0) 100%)!important;
   }
   .review-orbit::after{
     right:0!important;
     left:auto!important;
-    background:linear-gradient(270deg,rgba(5,5,5,.72) 0%,rgba(5,5,5,.26) 46%,rgba(5,5,5,0) 100%)!important;
+    background:linear-gradient(90deg,rgba(5,5,5,.46) 0%,rgba(5,5,5,0) 100%)!important;
+    transform:scaleX(-1)!important;
+    transform-origin:center!important;
+  }
+}
+
+@media(max-width:760px){
+  .minimal-mobile-menu{
+    z-index:181!important;
+  }
+  .minimal-mobile-menu__inner{
+    position:relative!important;
+    z-index:2!important;
+    pointer-events:auto!important;
+  }
+  .minimal-mobile-menu__links,
+  .minimal-mobile-menu__links a,
+  .minimal-mobile-menu__links a *{
+    pointer-events:auto!important;
+  }
+  .minimal-mobile-menu__links a{
+    position:relative!important;
+    z-index:3!important;
+    touch-action:manipulation!important;
+    -webkit-tap-highlight-color:rgba(255,255,255,.04)!important;
+  }
+  .one-page-portfolio section[id],
+  .one-anchor-target[id]{
+    scroll-margin-top:calc(70px + env(safe-area-inset-top))!important;
   }
 }

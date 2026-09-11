@@ -8,13 +8,7 @@
   var links = [];
   var open = false;
   var touchY = null;
-  var pointerStart = null;
-  var suppressClickUntil = 0;
   var isolatedNodes = [];
-
-  function now() {
-    return window.performance && performance.now ? performance.now() : Date.now();
-  }
 
   function focusable() {
     return [button].concat(links).filter(Boolean);
@@ -67,6 +61,7 @@
     document.documentElement.classList.toggle("mobile-menu-locked", open);
     document.body.classList.toggle("mobile-menu-locked", open);
     isolateBackground(open);
+
     if (open) {
       window.setTimeout(function () {
         if (!open || !links[0]) return;
@@ -78,80 +73,23 @@
     }
   }
 
-  function storedHref(link) {
-    if (!link) return "";
-    return link.getAttribute("href") || link.getAttribute("data-valie-link-href") || "";
-  }
-
   function decodeHash(hash) {
     if (!hash) return "";
     try { return decodeURIComponent(hash.replace(/^#/, "")); }
     catch (_) { return hash.replace(/^#/, ""); }
   }
 
-  function targetId(link, url) {
-    return (link && link.getAttribute("data-site-target")) || decodeHash(url.hash || "");
+  function targetId(link) {
+    if (!link) return "";
+    return link.getAttribute("data-site-target") || decodeHash(link.hash || link.getAttribute("href") || "");
   }
 
-  function scrollToTarget(id, url) {
-    if (!id) {
-      window.scrollTo(0, 0);
-      return;
-    }
-
+  function scrollTargetIntoView(id) {
+    if (!id) return;
     var target = document.getElementById(id);
-    if (!target) {
-      window.location.assign(url.href);
-      return;
-    }
-
-    var nextHash = "#" + encodeURIComponent(id);
-    var nextUrl = url.pathname + url.search + nextHash;
-    if (window.location.pathname + window.location.search + window.location.hash !== nextUrl) {
-      window.history.pushState(null, "", nextUrl);
-      try { window.dispatchEvent(new HashChangeEvent("hashchange")); }
-      catch (_) { window.dispatchEvent(new Event("hashchange")); }
-    }
-
-    var headerHeight = header ? Math.max(0, header.getBoundingClientRect().height) : 0;
-    var targetTop = window.scrollY + target.getBoundingClientRect().top;
-    var top = Math.max(0, Math.round(targetTop - headerHeight - 8));
-    window.scrollTo(0, top);
-    window.setTimeout(function () {
-      var current = document.getElementById(id);
-      if (!current) return;
-      var nextTop = Math.max(0, Math.round(window.scrollY + current.getBoundingClientRect().top - (header ? header.getBoundingClientRect().height : 0) - 8));
-      if (Math.abs(nextTop - window.scrollY) > 2) window.scrollTo(0, nextTop);
-    }, 90);
-  }
-
-  function navigateMobileLink(link) {
-    var raw = storedHref(link);
-    if (!raw) return;
-
-    var url;
-    try { url = new URL(raw, window.location.href); }
-    catch (_) { return; }
-
-    var id = targetId(link, url);
-    var samePage = url.origin === window.location.origin && url.pathname === window.location.pathname && url.search === window.location.search;
-    setOpen(false, false);
-
-    if (!samePage) {
-      window.location.assign(url.href);
-      return;
-    }
-
-    window.requestAnimationFrame(function () {
-      scrollToTarget(id, url);
-    });
-  }
-
-  function activateMobileLink(event, link) {
-    if (!link) return;
-    if (event && typeof event.preventDefault === "function") event.preventDefault();
-    if (event && typeof event.stopPropagation === "function") event.stopPropagation();
-    navigateMobileLink(link);
+    if (!target) return;
+    try { target.scrollIntoView({ block: "start", behavior: "auto" }); }
+    catch (_) { target.scrollIntoView(true); }
   }
 
   function closestMobileLink(target) {
@@ -160,46 +98,25 @@
     return link instanceof HTMLAnchorElement && menu && menu.contains(link) ? link : null;
   }
 
-  function onMenuPointerDown(event) {
-    if (!open || event.pointerType === "mouse") return;
-    var link = closestMobileLink(event.target);
-    if (!link) {
-      pointerStart = null;
-      return;
-    }
-    pointerStart = { pointerId: event.pointerId, link: link, x: event.clientX, y: event.clientY };
-  }
-
-  function onMenuPointerUp(event) {
-    if (!open || event.pointerType === "mouse" || !pointerStart) return;
-    var start = pointerStart;
-    pointerStart = null;
-    if (start.pointerId !== event.pointerId) return;
-    var link = closestMobileLink(event.target);
-    if (!link || link !== start.link) return;
-    if (Math.abs(event.clientX - start.x) > 38 || Math.abs(event.clientY - start.y) > 38) return;
-    suppressClickUntil = now() + 900;
-    activateMobileLink(event, link);
-  }
-
-  function onMenuPointerCancel() {
-    pointerStart = null;
-  }
-
   function onMenuClick(event) {
     if (!open) return;
     var link = closestMobileLink(event.target);
     if (!link) return;
-    if (now() < suppressClickUntil) {
-      event.preventDefault();
-      event.stopPropagation();
-      return;
-    }
-    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
-      setOpen(false, false);
-      return;
-    }
-    activateMobileLink(event, link);
+
+    var isPrimary = event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
+    var id = targetId(link);
+
+    setOpen(false, false);
+
+    if (!isPrimary || !id) return;
+
+    window.setTimeout(function () {
+      scrollTargetIntoView(id);
+    }, 0);
+
+    window.setTimeout(function () {
+      scrollTargetIntoView(id);
+    }, 120);
   }
 
   function onKey(event) {
@@ -261,10 +178,7 @@
     if (!button || !menu) return;
 
     button.addEventListener("click", function () { setOpen(!open, false); });
-    menu.addEventListener("pointerdown", onMenuPointerDown, true);
-    menu.addEventListener("pointerup", onMenuPointerUp, true);
-    menu.addEventListener("pointercancel", onMenuPointerCancel, true);
-    menu.addEventListener("click", onMenuClick, true);
+    menu.addEventListener("click", onMenuClick, false);
 
     window.addEventListener("keydown", onKey, true);
     window.addEventListener("resize", function () { if (window.innerWidth > 760 && open) setOpen(false, false); }, { passive: true });

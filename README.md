@@ -1,10 +1,23 @@
-# VALIE Portfolio — Pass 123.27
+# VALIE Portfolio — Pass 123.30
 
-GitHub Pages release for `https://valie1.github.io/`. Pass 123.27 restores the two mobile hero SCROLL controls to desktop behavior parity: the same 60px circular treatment, floating-chevron animation, press/focus response, delayed reveal, and hero leave/return fade lifecycle. Only their phone positioning differs, with safer inward/upward offsets that respect mobile safe areas. Pass 123.26 review-edge parity and all earlier fixes remain intact.
+GitHub Pages release for `https://valie1.github.io/`. Pass 123.30 brings the mobile hero SCROLL controls back to the desktop lifecycle while reducing only their phone size: the same delayed reveal is retained, the same floating-chevron animation remains, the controls now reliably fade out when the hero leaves and fade back in when the hero returns, and the visual circles are reduced to 46px (44px on compact phones). Runtime assets are cache-busted to `v=123.30`. Pass 123.29 native mobile menu anchors, Pass 123.28 review-edge hardening, and all prior fixes remain intact.
 
 Copy the contents of this folder into the local GitHub Desktop checkout for the `valie1.github.io` repository, keep the repository's hidden `.git` folder, commit the replacement, and push. In GitHub repository Settings → Pages, set Source to GitHub Actions.
 
-Use `START-PASS-123.27-MOBILE-SCROLL-DESKTOP-PARITY.bat` for a fresh local development preview at `http://localhost:3000`.
+Use `START-PASS-123.30-MOBILE-SCROLL-DESKTOP-LIFECYCLE.bat` for a fresh local production-style preview.
+
+
+## Pass 123.30 — Mobile Scroll Desktop Lifecycle + Smaller Controls
+
+Mobile now keeps the desktop hero SCROLL behavior end-to-end: the shared 9.35s delayed reveal remains, the floating chevron keeps the same desktop animation, the cue fades out once the hero leaves, and it fades back in when the hero is revisited. A previous high-specificity `.is-armed` rule could keep the overlay opacity at 1 after hero exit; Pass 123.30 adds an explicit mobile hidden state that outranks it. Only phone sizing changes: the visible circle is 46px on normal phones and 44px on compact phones, while the larger invisible touch target is preserved. Desktop styling and timing are unchanged.
+
+## Pass 123.29 — Mobile Menu Native Anchor Fix
+
+WORK / ABOUT / REVIEWS / CONTACT now keep their native `#work`, `#about`, `#reviews`, and `#contact` href behavior instead of depending on pointer-up interception and `preventDefault()`. The runtime closes the modal on the actual click but deliberately does not swallow the anchor's default action; it then performs two lightweight `scrollIntoView()` corrections after the menu unlocks. This specifically hardens Android/Chrome/Samsung-browser taps where synthetic pointer/click ordering can differ. The menu link layer also has explicit `pointer-events:auto`, `touch-action:manipulation`, and a higher local z-index.
+
+## Pass 123.28 — Mobile Review Edge Hardening
+
+The mobile CLIENT REVIEWS edge treatment is now only 2px wide on both sides, with no filter or box-shadow. The right edge reuses the exact same gradient as the left and is mirrored with `scaleX(-1)`, preventing the broad dark/blur strip shown over the right side of a review card. Review autoplay, manual swipe, card layout, and desktop styling are unchanged.
 
 ## Pass 123.27 — Mobile Scroll Cues: Desktop Behavior Parity
 

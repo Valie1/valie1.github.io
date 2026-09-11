@@ -2,10 +2,10 @@ import type { CSSProperties } from "react";
 import { site } from "@/lib/content";
 
 const links = [
-  ["/#work", "WORK"],
-  ["/#about", "ABOUT"],
-  ["/#reviews", "REVIEWS"],
-  ["/#contact", "CONTACT"],
+  ["#work", "WORK"],
+  ["#about", "ABOUT"],
+  ["#reviews", "REVIEWS"],
+  ["#contact", "CONTACT"],
 ] as const;
 
 const letters = ["V", "A", "L", "I", "E"] as const;
@@ -14,7 +14,7 @@ export default function SiteNav() {
   return (
     <header className="minimal-site-nav one-page-nav" data-static-site-nav>
       <div className="minimal-nav-inner">
-        <a href="/#top" className="minimal-site-brand minimal-site-brand--draw" aria-label={`${site.name} home`}>
+        <a href="#top" className="minimal-site-brand minimal-site-brand--draw" aria-label={`${site.name} home`}>
           <svg className="animated-valie-wordmark is-drawing minimal-brand-draw" viewBox="0 0 89 32" role="img" aria-label={`${site.name} home`} preserveAspectRatio="xMinYMid meet">
             <defs>
               <filter id="valie-nav-glow" x="-30%" y="-50%" width="160%" height="200%">

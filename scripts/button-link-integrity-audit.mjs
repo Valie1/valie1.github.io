@@ -73,7 +73,7 @@ for (const id of ["top", "work", "about", "reviews", "contact", "long-form", "sh
 }
 
 const nav = read("components/SiteNav.tsx");
-for (const href of ["/#work", "/#about", "/#reviews", "/#contact"]) {
+for (const href of ["#work", "#about", "#reviews", "#contact"]) {
   if (!nav.includes(`"${href}"`)) fail(`Primary/mobile navigation is missing ${href}.`);
 }
 
