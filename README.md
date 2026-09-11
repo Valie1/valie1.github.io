@@ -1,11 +1,15 @@
-# VALIE Portfolio — Pass 123.30
+# VALIE Portfolio — Pass 123.31
 
-GitHub Pages release for `https://valie1.github.io/`. Pass 123.30 brings the mobile hero SCROLL controls back to the desktop lifecycle while reducing only their phone size: the same delayed reveal is retained, the same floating-chevron animation remains, the controls now reliably fade out when the hero leaves and fade back in when the hero returns, and the visual circles are reduced to 46px (44px on compact phones). Runtime assets are cache-busted to `v=123.30`. Pass 123.29 native mobile menu anchors, Pass 123.28 review-edge hardening, and all prior fixes remain intact.
+GitHub Pages release for `https://valie1.github.io/`. Pass 123.31 removes the mobile CLIENT REVIEWS right-edge cover completely, so no dark/black overlay can sit over or clip the right side of a review card. The right `::after` mask is disabled on phones and the review viewport is forced to use no mask image. Pass 123.30 mobile SCROLL desktop-lifecycle behavior and all prior fixes remain intact. Runtime assets are cache-busted to `v=123.31`.
 
 Copy the contents of this folder into the local GitHub Desktop checkout for the `valie1.github.io` repository, keep the repository's hidden `.git` folder, commit the replacement, and push. In GitHub repository Settings → Pages, set Source to GitHub Actions.
 
-Use `START-PASS-123.30-MOBILE-SCROLL-DESKTOP-LIFECYCLE.bat` for a fresh local production-style preview.
+Use `START-PASS-123.31-REMOVE-MOBILE-REVIEW-RIGHT-BLOCK.bat` for a fresh local production-style preview.
 
+
+## Pass 123.31 — Remove Mobile Review Right Block
+
+On phone widths, the CLIENT REVIEWS right-edge pseudo-element is now removed completely (`content:none`, `display:none`, `width:0`) instead of merely narrowing the fade. The review viewport also explicitly disables CSS mask images. This prevents any dark compositor/gradient block from covering the right side of review-card text while preserving horizontal swipe, autoplay logic, card styling, and desktop review presentation.
 
 ## Pass 123.30 — Mobile Scroll Desktop Lifecycle + Smaller Controls
 

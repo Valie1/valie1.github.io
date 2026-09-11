@@ -14468,3 +14468,21 @@ a[data-valie-link-href],
     scroll-margin-top:calc(70px + env(safe-area-inset-top))!important;
   }
 }
+
+@media (max-width:760px){
+  .review-orbit::after{
+    content:none!important;
+    display:none!important;
+    width:0!important;
+    background:none!important;
+    opacity:0!important;
+    filter:none!important;
+    box-shadow:none!important;
+    transform:none!important;
+    pointer-events:none!important;
+  }
+  .review-orbit__viewport{
+    -webkit-mask-image:none!important;
+    mask-image:none!important;
+  }
+}
