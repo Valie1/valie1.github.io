@@ -14,7 +14,7 @@ const names = fs.readdirSync(root);
 
 const checks = [
   ["publish interaction lock exists", viewportRuntime.includes("document.addEventListener(eventName, preventDrag, true)") && css.includes("-webkit-user-drag:none")],
-  ["publish package version is current", pkg.version === "9.13.43"],
+  ["publish package version is current", pkg.version === "9.13.44"],
   ["stable localhost dev command remains", pkg.scripts?.["dev:portfolio"] === "next dev -p 3000"],
   ["GitHub Pages static export is enabled", /output:\s*"export"/.test(read("next.config.mjs")) && /trailingSlash:\s*true/.test(read("next.config.mjs"))],
   ["final release audit is wired into launch check", pkg.scripts?.["launch:check"]?.includes("npm run final:release:audit")],

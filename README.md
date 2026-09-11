@@ -1,5 +1,5 @@
-# VALIE Portfolio — Pass 123.43
+# VALIE Portfolio — Pass 123.44
 
-This package is the mobile menu physical-tap reliability pass.
+This package keeps the Pass 123.43 physical-tap navigation fix and adds a strict modal interaction lock for the mobile menu.
 
-The mobile WORK / ABOUT / REVIEWS / CONTACT rows now navigate from capture-phase pointer/touch activation instead of depending on Android Chrome to synthesize a normal anchor click. The runtime hit-tests the actual row under the finger, closes the menu, updates the section hash, and scrolls to the destination with fixed-header compensation. Normal anchor clicks remain as a fallback for keyboard/mouse input.
+When the mobile menu is open, WORK / ABOUT / REVIEWS / CONTACT and the CLOSE control remain interactive, but the rest of the page cannot receive taps, clicks, focus, text selection, wheel input, touch gestures, context-menu input, or background scrolling. The VALIE brand and desktop navigation are also made inert until the menu closes.

@@ -15,7 +15,7 @@ const checks = [
   ['Mobile menu links keep native same-page hash navigation', nav.includes('["#work", "WORK"]') && nav.includes('["#contact", "CONTACT"]') && navRuntime.includes('scrollTargetIntoView(id)')],
   ['Mobile menu uses the browser-native click path', navRuntime.includes('link.addEventListener("click", directMobileLinkClick, true)') && navRuntime.includes('menu.addEventListener("click", delegatedMenuClick, false)') && !navRuntime.includes('onMenuPointerUp')],
   ['Mobile menu isolates all background body children', navRuntime.includes('function isolateBackground(next)') && navRuntime.includes('setNodeInert(node, true)') && navRuntime.includes('node.setAttribute("aria-hidden", "true")')],
-  ['Mobile menu blocks outside pointer activation', navRuntime.includes('function onDocumentPointerDown(event)') && navRuntime.includes('event.stopImmediatePropagation()')],
+  ['Mobile menu blocks outside pointer activation', navRuntime.includes('function onStrictPointer(event)') && navRuntime.includes('event.stopImmediatePropagation()')],
   ['Mobile menu bypasses global href-preview interception', nav.includes('data-valie-link-preview-skip') && read('public/site-link-preview-lock.js').includes('function shouldSkip(anchor)')],
   ['Cookie Settings uses the shared touch-safe document lock', consent.includes('lockDocumentScroll("cookie-settings-locked")')],
   ['Cookie Settings backdrop uses pointer events for touch', consent.includes('onPointerDown={(event) =>')],

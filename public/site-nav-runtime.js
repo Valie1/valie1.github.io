@@ -8,10 +8,14 @@
   var links = [];
   var open = false;
   var isolatedNodes = [];
+  var isolatedHeaderNodes = [];
   var fallbackTimer = 0;
   var lastActivationAt = 0;
   var lastActivationId = "";
   var press = null;
+  var lockedScrollX = 0;
+  var lockedScrollY = 0;
+  var restoringScroll = false;
 
   function focusable() {
     return [button].concat(links).filter(Boolean);
@@ -24,6 +28,27 @@
     else node.removeAttribute("inert");
   }
 
+  function rememberIsolation(node, bucket) {
+    if (!(node instanceof HTMLElement)) return;
+    bucket.push({
+      node: node,
+      inert: Boolean(node.inert || node.hasAttribute("inert")),
+      ariaHidden: node.getAttribute("aria-hidden")
+    });
+    setNodeInert(node, true);
+    node.setAttribute("aria-hidden", "true");
+  }
+
+  function restoreIsolation(bucket) {
+    bucket.forEach(function (record) {
+      if (!record.node || !record.node.isConnected) return;
+      setNodeInert(record.node, record.inert);
+      if (record.ariaHidden === null) record.node.removeAttribute("aria-hidden");
+      else record.node.setAttribute("aria-hidden", record.ariaHidden);
+    });
+    bucket.length = 0;
+  }
+
   function isolateBackground(next) {
     if (next) {
       if (isolatedNodes.length) return;
@@ -31,29 +56,36 @@
         if (!(node instanceof HTMLElement) || node === header) return;
         var tag = node.tagName;
         if (tag === "SCRIPT" || tag === "STYLE" || tag === "LINK") return;
-        isolatedNodes.push({
-          node: node,
-          inert: Boolean(node.inert || node.hasAttribute("inert")),
-          ariaHidden: node.getAttribute("aria-hidden")
-        });
-        setNodeInert(node, true);
-        node.setAttribute("aria-hidden", "true");
+        rememberIsolation(node, isolatedNodes);
       });
       return;
     }
+    restoreIsolation(isolatedNodes);
+  }
 
-    isolatedNodes.forEach(function (record) {
-      if (!record.node || !record.node.isConnected) return;
-      setNodeInert(record.node, record.inert);
-      if (record.ariaHidden === null) record.node.removeAttribute("aria-hidden");
-      else record.node.setAttribute("aria-hidden", record.ariaHidden);
-    });
-    isolatedNodes = [];
+  function isolateHeaderChrome(next) {
+    if (!header) return;
+    if (next) {
+      if (isolatedHeaderNodes.length) return;
+      var chrome = header.querySelectorAll(".minimal-site-brand, .minimal-site-links");
+      Array.prototype.forEach.call(chrome, function (node) {
+        if (node === button || node === menu || (menu && menu.contains(node))) return;
+        rememberIsolation(node, isolatedHeaderNodes);
+      });
+      return;
+    }
+    restoreIsolation(isolatedHeaderNodes);
   }
 
   function setOpen(next, restore) {
     if (!header || !button || !menu) return;
+    var wasOpen = open;
     open = Boolean(next);
+    if (open && !wasOpen) {
+      lockedScrollX = window.scrollX || window.pageXOffset || 0;
+      lockedScrollY = window.scrollY || window.pageYOffset || 0;
+    }
+
     header.classList.toggle("is-menu-open", open);
     menu.classList.toggle("is-open", open);
     button.setAttribute("aria-expanded", open ? "true" : "false");
@@ -64,6 +96,9 @@
     document.documentElement.classList.toggle("mobile-menu-locked", open);
     document.body.classList.toggle("mobile-menu-locked", open);
     isolateBackground(open);
+    isolateHeaderChrome(open);
+
+    if (!open) press = null;
 
     if (open) {
       window.setTimeout(function () {
@@ -121,6 +156,12 @@
     return event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
   }
 
+  function pointInside(element, x, y) {
+    if (!(element instanceof Element) || typeof x !== "number" || typeof y !== "number") return false;
+    var rect = element.getBoundingClientRect();
+    return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+  }
+
   function linkAtPoint(x, y) {
     if (!open || !links.length) return null;
     var hit = document.elementFromPoint(x, y);
@@ -133,6 +174,23 @@
       if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) return links[i];
     }
     return null;
+  }
+
+  function isAllowedModalTarget(target, x, y) {
+    if (!open) return true;
+    if (target instanceof Node) {
+      if (button && button.contains(target)) return true;
+      if (menu && menu.contains(target)) return true;
+    }
+    if (pointInside(button, x, y)) return true;
+    if (menu && pointInside(menu, x, y)) return true;
+    if (typeof x === "number" && typeof y === "number" && linkAtPoint(x, y)) return true;
+    return false;
+  }
+
+  function blockEvent(event) {
+    if (event.cancelable) event.preventDefault();
+    event.stopImmediatePropagation();
   }
 
   function rememberPress(event) {
@@ -240,23 +298,52 @@
   function onWheel(event) {
     if (!open || !menu) return;
     if (menu.contains(event.target)) return;
-    event.preventDefault();
-    event.stopPropagation();
+    blockEvent(event);
   }
 
   function onTouchMove(event) {
     if (!open || !menu) return;
     if (menu.contains(event.target)) return;
-    event.preventDefault();
-    event.stopPropagation();
+    blockEvent(event);
   }
 
-  function onDocumentPointerDown(event) {
-    if (!open || !header) return;
-    if (header.contains(event.target)) return;
-    if (typeof event.clientX === "number" && typeof event.clientY === "number" && linkAtPoint(event.clientX, event.clientY)) return;
-    event.preventDefault();
-    event.stopImmediatePropagation();
+  function onStrictPointer(event) {
+    if (!open) return;
+    if (isAllowedModalTarget(event.target, event.clientX, event.clientY)) return;
+    blockEvent(event);
+  }
+
+  function onStrictTouch(event) {
+    if (!open) return;
+    var touch = (event.changedTouches && event.changedTouches[0]) || (event.touches && event.touches[0]);
+    var x = touch ? touch.clientX : undefined;
+    var y = touch ? touch.clientY : undefined;
+    if (isAllowedModalTarget(event.target, x, y)) return;
+    blockEvent(event);
+  }
+
+  function onStrictClick(event) {
+    if (!open) return;
+    if (isAllowedModalTarget(event.target, event.clientX, event.clientY)) return;
+    blockEvent(event);
+  }
+
+  function onFocusIn(event) {
+    if (!open) return;
+    if (isAllowedModalTarget(event.target)) return;
+    var target = links[0] || button;
+    if (target) target.focus({ preventScroll: true });
+  }
+
+  function onWindowScroll() {
+    if (!open || restoringScroll) return;
+    var x = window.scrollX || window.pageXOffset || 0;
+    var y = window.scrollY || window.pageYOffset || 0;
+    if (Math.abs(x - lockedScrollX) < 1 && Math.abs(y - lockedScrollY) < 1) return;
+    restoringScroll = true;
+    try { window.scrollTo(lockedScrollX, lockedScrollY); }
+    catch (_) {}
+    window.requestAnimationFrame(function () { restoringScroll = false; });
   }
 
   function bindLinks() {
@@ -283,12 +370,26 @@
     window.addEventListener("keydown", onKey, true);
     window.addEventListener("hashchange", onHashChange, false);
     window.addEventListener("resize", function () { if (window.innerWidth > 760 && open) setOpen(false, false); }, { passive: true });
+    window.addEventListener("scroll", onWindowScroll, { passive: true });
+    window.addEventListener("focusin", onFocusIn, true);
+
     document.addEventListener("wheel", onWheel, { passive: false, capture: true });
     document.addEventListener("touchmove", onTouchMove, { passive: false, capture: true });
+
     document.addEventListener("pointerdown", rememberPress, true);
+    document.addEventListener("pointerdown", onStrictPointer, true);
     document.addEventListener("pointerup", activateFromPointer, true);
+    document.addEventListener("pointerup", onStrictPointer, true);
+    document.addEventListener("pointercancel", function () { press = null; }, true);
+
+    document.addEventListener("touchstart", onStrictTouch, { passive: false, capture: true });
     document.addEventListener("touchend", activateFromTouchEnd, { passive: false, capture: true });
-    document.addEventListener("pointerdown", onDocumentPointerDown, true);
+    document.addEventListener("touchend", onStrictTouch, { passive: false, capture: true });
+
+    document.addEventListener("click", onStrictClick, true);
+    document.addEventListener("dblclick", onStrictClick, true);
+    document.addEventListener("contextmenu", onStrictClick, true);
+
     window.addEventListener("pageshow", function () { if (open) setOpen(false, false); });
     setOpen(false, false);
   }

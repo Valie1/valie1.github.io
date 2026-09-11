@@ -1,0 +1,3 @@
+PASS 123.44 — MOBILE MENU STRICT MODAL LOCK
+
+Fix: Pass 123.43 physical tap navigation is preserved. While the mobile menu is open, only the CLOSE control and the mobile menu are interactive. Background page content, the VALIE brand, desktop navigation, outside pointer/touch/click input, focus, and background scrolling are blocked until the menu closes.

@@ -14455,3 +14455,32 @@ a[data-valie-link-href],
   }
   .minimal-mobile-menu.is-open .minimal-mobile-menu__links a strong{pointer-events:none!important}
 }
+
+:root{--pass12344-mobile-menu-strict-modal-lock:1}
+@media(max-width:760px){
+  .minimal-site-nav.is-menu-open .minimal-nav-inner > .minimal-site-brand,
+  .minimal-site-nav.is-menu-open .minimal-nav-inner > .minimal-site-links{
+    pointer-events:none!important;
+    user-select:none!important;
+    -webkit-user-select:none!important;
+    touch-action:none!important;
+  }
+
+  .minimal-site-nav.is-menu-open .minimal-menu-button,
+  .minimal-site-nav.is-menu-open .minimal-menu-button *,
+  .minimal-site-nav.is-menu-open .minimal-mobile-menu,
+  .minimal-site-nav.is-menu-open .minimal-mobile-menu *{
+    pointer-events:auto!important;
+  }
+
+  html.mobile-menu-locked body > :not(.minimal-site-nav):not(script):not(style):not(link){
+    pointer-events:none!important;
+    user-select:none!important;
+    -webkit-user-select:none!important;
+  }
+
+  html.mobile-menu-locked,
+  body.mobile-menu-locked{
+    overscroll-behavior:none!important;
+  }
+}

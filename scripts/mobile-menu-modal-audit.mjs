@@ -19,11 +19,11 @@ const checks = [
   ['Menu closes from physical tap activation', runtime.includes('finishNavigation(id)') && runtime.includes('setOpen(false, false)')],
   ['Same-page navigation receives explicit hash + section correction', runtime.includes('writeHash(id)') && runtime.includes('scrollTargetIntoView(id)')],
   ['Hash navigation independently clears menu state', runtime.includes('function onHashChange()') && runtime.includes('window.addEventListener("hashchange", onHashChange, false)')],
-  ['Outside pointer input is blocked while modal menu is open', runtime.includes('onDocumentPointerDown') && runtime.includes('event.stopImmediatePropagation()')],
+  ['Outside pointer input is blocked while modal menu is open', runtime.includes('onStrictPointer') && runtime.includes('event.stopImmediatePropagation()')],
   ['CSS blocks pointer interaction with body siblings while menu is open', css.includes('html.mobile-menu-locked body > :not(.minimal-site-nav):not(script):not(style):not(link)') && css.includes('pointer-events:none!important')],
   ['Navigation remains interactive above the lock', css.includes('html.mobile-menu-locked .minimal-site-nav *') && css.includes('pointer-events:auto')],
   ['Menu overscroll cannot chain into the underlying page', css.includes('.minimal-mobile-menu.is-open{') && css.includes('overscroll-behavior:none!important')],
-  ['Deployed runtime is cache-busted for this pass', layout.includes('site-nav-runtime.js?v=123.43') && layout.includes('site-link-preview-lock.js?v=123.43')],
+  ['Deployed runtime is cache-busted for this pass', layout.includes('site-nav-runtime.js?v=123.44') && layout.includes('site-link-preview-lock.js?v=123.44')],
 ];
 
 let failures = 0;
