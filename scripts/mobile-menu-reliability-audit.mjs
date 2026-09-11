@@ -9,7 +9,7 @@ const layout = read('app/layout.tsx');
 const pkg = JSON.parse(read('package.json'));
 
 const checks = [
-  ['Pass 123.44 strict-lock marker exists', css.includes('--pass12344-mobile-menu-strict-modal-lock:1')],
+  ['Pass 123.45 strict-lock marker exists', css.includes('--pass12345-mobile-menu-strict-modal-lock:1')],
   ['Open mobile header rises above normal fixed site chrome', css.includes('z-index:2147482000!important') && css.includes('.minimal-site-nav.is-menu-open')],
   ['Menu is pinned to the live visual viewport', css.includes('left:var(--valie-visual-left,0px)!important') && css.includes('width:var(--valie-visual-width,100dvw)!important') && css.includes('var(--valie-visual-height,100dvh)')],
   ['Menu rows keep phone-safe tap targets', css.includes('min-height:clamp(58px,8.2vh,76px)!important') && css.includes('touch-action:manipulation!important')],
@@ -22,8 +22,8 @@ const checks = [
   ['Hash changes independently close a stuck-open menu', runtime.includes('function onHashChange()') && runtime.includes('if (open) setOpen(false, false)')],
   ['Target scroll compensates for the fixed nav height', runtime.includes('target.getBoundingClientRect().top - headerHeight')],
   ['Background inert isolation still restores on close', runtime.includes('isolateBackground(open)') && runtime.includes('setNodeInert(record.node, record.inert)')],
-  ['Navigation scripts are cache-busted to 123.44', layout.includes('site-nav-runtime.js?v=123.44') && layout.includes('site-link-preview-lock.js?v=123.44')],
-  ['Package version is 9.13.44', pkg.version === '9.13.44'],
+  ['Navigation scripts are cache-busted to 123.45', layout.includes('site-nav-runtime.js?v=123.45') && layout.includes('site-link-preview-lock.js?v=123.45')],
+  ['Package version is 9.13.45', pkg.version === '9.13.45'],
 ];
 
 let failures = 0;

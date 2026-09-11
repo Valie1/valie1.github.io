@@ -16,6 +16,9 @@
   var lockedScrollX = 0;
   var lockedScrollY = 0;
   var restoringScroll = false;
+  var postTapGuardUntil = 0;
+  var postTapShield = null;
+  var postTapShieldTimer = 0;
 
   function focusable() {
     return [button].concat(links).filter(Boolean);
@@ -141,8 +144,38 @@
     catch (_) { window.location.hash = hash; }
   }
 
+  function removePostTapShield() {
+    window.clearTimeout(postTapShieldTimer);
+    postTapShieldTimer = 0;
+    if (postTapShield && postTapShield.parentNode) postTapShield.parentNode.removeChild(postTapShield);
+    postTapShield = null;
+  }
+
+  function armPostTapShield() {
+    postTapGuardUntil = Date.now() + 760;
+    removePostTapShield();
+
+    var shield = document.createElement("div");
+    shield.className = "valie-mobile-menu-posttap-shield";
+    shield.setAttribute("aria-hidden", "true");
+    shield.setAttribute("data-valie-menu-posttap-shield", "");
+
+    function swallow(event) { blockEvent(event); }
+    ["pointerdown", "pointerup", "touchstart", "touchend", "click", "dblclick", "contextmenu"].forEach(function (type) {
+      shield.addEventListener(type, swallow, { capture: true, passive: false });
+    });
+
+    document.body.appendChild(shield);
+    postTapShield = shield;
+    postTapShieldTimer = window.setTimeout(function () {
+      removePostTapShield();
+      if (Date.now() >= postTapGuardUntil) postTapGuardUntil = 0;
+    }, 760);
+  }
+
   function finishNavigation(id) {
     if (!id) return;
+    if (open) armPostTapShield();
     setOpen(false, false);
     writeHash(id);
     window.clearTimeout(fallbackTimer);
@@ -323,6 +356,10 @@
   }
 
   function onStrictClick(event) {
+    if (postTapGuardUntil && Date.now() < postTapGuardUntil) {
+      blockEvent(event);
+      return;
+    }
     if (!open) return;
     if (isAllowedModalTarget(event.target, event.clientX, event.clientY)) return;
     blockEvent(event);
@@ -390,7 +427,7 @@
     document.addEventListener("dblclick", onStrictClick, true);
     document.addEventListener("contextmenu", onStrictClick, true);
 
-    window.addEventListener("pageshow", function () { if (open) setOpen(false, false); });
+    window.addEventListener("pageshow", function () { removePostTapShield(); postTapGuardUntil = 0; if (open) setOpen(false, false); });
     setOpen(false, false);
   }
 

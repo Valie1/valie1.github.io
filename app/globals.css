@@ -14456,7 +14456,7 @@ a[data-valie-link-href],
   .minimal-mobile-menu.is-open .minimal-mobile-menu__links a strong{pointer-events:none!important}
 }
 
-:root{--pass12344-mobile-menu-strict-modal-lock:1}
+:root{--pass12345-mobile-menu-strict-modal-lock:1}
 @media(max-width:760px){
   .minimal-site-nav.is-menu-open .minimal-nav-inner > .minimal-site-brand,
   .minimal-site-nav.is-menu-open .minimal-nav-inner > .minimal-site-links{
@@ -14482,5 +14482,21 @@ a[data-valie-link-href],
   html.mobile-menu-locked,
   body.mobile-menu-locked{
     overscroll-behavior:none!important;
+  }
+}
+
+:root{--pass12345-mobile-menu-ghost-click-shield:1}
+@media(max-width:760px){
+  .valie-mobile-menu-posttap-shield{
+    position:fixed!important;
+    inset:0!important;
+    z-index:2147481999!important;
+    display:block!important;
+    background:transparent!important;
+    pointer-events:auto!important;
+    touch-action:none!important;
+    user-select:none!important;
+    -webkit-user-select:none!important;
+    -webkit-tap-highlight-color:transparent!important;
   }
 }

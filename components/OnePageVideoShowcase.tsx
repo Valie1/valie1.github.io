@@ -48,6 +48,11 @@ export default function OnePageVideoShowcase({ projects, vertical = false }: Pro
   }, []);
 
   const openProject = useCallback((project: Project) => {
+    if (
+      document.documentElement.classList.contains("mobile-menu-locked") ||
+      document.body.classList.contains("mobile-menu-locked") ||
+      document.querySelector("[data-valie-menu-posttap-shield]")
+    ) return;
     openerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     if (closeTimerRef.current) {
       clearTimeout(closeTimerRef.current);

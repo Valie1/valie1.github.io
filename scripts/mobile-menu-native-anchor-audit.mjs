@@ -21,7 +21,7 @@ const checks = [
   ['Fixed-nav scroll correction still runs after activation', runtime.includes('scrollTargetIntoView(id)') && runtime.includes('requestAnimationFrame')],
   ['Hashchange independently recovers from a stuck-open overlay', runtime.includes('window.addEventListener("hashchange", onHashChange, false)')],
   ['Mobile links keep pointer interaction above menu decoration', css.includes('.minimal-mobile-menu.is-open .minimal-mobile-menu__links a{') && css.includes('pointer-events:auto!important')],
-  ['Navigation assets are cache-busted to Pass 123.44', layout.includes('site-nav-runtime.js?v=123.44') && layout.includes('site-link-preview-lock.js?v=123.44')],
+  ['Navigation assets are cache-busted to Pass 123.45', layout.includes('site-nav-runtime.js?v=123.45') && layout.includes('site-link-preview-lock.js?v=123.45')],
 ];
 
 let failures = 0;

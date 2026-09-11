@@ -10,7 +10,7 @@ const layout = read('app/layout.tsx');
 const pkg = JSON.parse(read('package.json'));
 
 const checks = [
-  ['Pass 123.44 strict modal-lock marker exists', css.includes('--pass12344-mobile-menu-strict-modal-lock:1')],
+  ['Pass 123.45 strict modal-lock marker exists', css.includes('--pass12345-mobile-menu-strict-modal-lock:1')],
   ['Mobile menu remains a semantic modal dialog', nav.includes('role="dialog"') && nav.includes('aria-modal="true"')],
   ['Underlying body siblings become inert', runtime.includes('isolateBackground(open)') && runtime.includes('rememberIsolation(node, isolatedNodes)')],
   ['Header brand and desktop nav become inert while menu is open', runtime.includes('function isolateHeaderChrome(next)') && runtime.includes('.minimal-site-brand, .minimal-site-links') && runtime.includes('isolateHeaderChrome(open)')],
@@ -25,8 +25,8 @@ const checks = [
   ['CSS disables brand and desktop-nav pointer interaction while menu is open', css.includes('.minimal-site-nav.is-menu-open .minimal-nav-inner > .minimal-site-brand') && css.includes('.minimal-site-nav.is-menu-open .minimal-nav-inner > .minimal-site-links') && css.includes('pointer-events:none!important')],
   ['CSS explicitly re-enables only close button and menu surfaces', css.includes('.minimal-site-nav.is-menu-open .minimal-menu-button') && css.includes('.minimal-site-nav.is-menu-open .minimal-mobile-menu') && css.includes('pointer-events:auto!important')],
   ['Underlying body children remain pointer-locked', css.includes('html.mobile-menu-locked body > :not(.minimal-site-nav):not(script):not(style):not(link)')],
-  ['Navigation runtime is cache-busted to 123.44', layout.includes('site-nav-runtime.js?v=123.44') && layout.includes('site-link-preview-lock.js?v=123.44')],
-  ['Package version is 9.13.44', pkg.version === '9.13.44'],
+  ['Navigation runtime is cache-busted to 123.45', layout.includes('site-nav-runtime.js?v=123.45') && layout.includes('site-link-preview-lock.js?v=123.45')],
+  ['Package version is 9.13.45', pkg.version === '9.13.45'],
 ];
 
 let failures = 0;
