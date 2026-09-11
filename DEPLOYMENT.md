@@ -5,7 +5,7 @@ Production URL: `https://valie1.github.io/`
 1. Open the existing `valie1.github.io` repository in GitHub Desktop.
 2. Choose Repository → Show in Explorer.
 3. Keep the hidden `.git` folder and remove the old website files from the repository working tree.
-4. Copy every file and folder from Pass 123.24 into the repository root, including the hidden `.github` folder.
+4. Copy every file and folder from Pass 123.27 into the repository root, including the hidden `.github` folder.
 5. In GitHub Desktop, review the changes, commit them to the current default branch, and Push origin.
 6. On GitHub.com, open Settings → Pages and set Build and deployment → Source to GitHub Actions.
 7. Open the Actions tab and wait for `Deploy VALIE Portfolio to GitHub Pages` to finish successfully.
@@ -72,3 +72,15 @@ No deployment architecture changes. The hero scroll controls remain client-rende
 
 ## Pass 123.24 — Mobile Viewport Audit Hotfix
 No deployment architecture changes. This pass removes the remaining `visualViewport` read from `HeroScrollCues` initial visibility geometry so the GitHub Actions `mobile:viewport-stability:audit` passes again. Runtime query strings are cache-busted to `v=123.24`.
+
+
+## Pass 123.25 — Mobile Menu Modal + Navigation Hotfix
+No deployment architecture changes. The static `site-nav-runtime.js` now owns mobile touch/pen activation and modal background isolation, and the runtime query strings are cache-busted to `v=123.27`. Push the replacement normally and let the existing GitHub Actions Pages workflow deploy it.
+
+## Pass 123.27 — Mobile Review Edge Fade Parity
+No deployment architecture changes. This pass is a CSS-only mobile review edge-mask correction plus a targeted audit. Push the replacement normally and let the existing GitHub Actions Pages workflow deploy it.
+
+
+## Pass 123.27 — Mobile Scroll Cues: Desktop Behavior Parity
+
+Mobile hero SCROLL cues now deliberately inherit the desktop behavior and animation treatment. The only mobile-specific difference is their safe-area-aware position. No deployment architecture changes were made.

@@ -50,7 +50,7 @@ export default function SiteNav() {
         </button>
       </div>
 
-      <nav id="minimal-mobile-menu" className="minimal-mobile-menu" aria-label="Mobile navigation" aria-hidden="true" data-site-mobile-menu>
+      <nav id="minimal-mobile-menu" className="minimal-mobile-menu" aria-label="Mobile navigation" aria-hidden="true" role="dialog" aria-modal="true" data-site-mobile-menu>
         <div className="minimal-mobile-menu__inner">
           <div className="minimal-mobile-menu__links">
             {links.map(([href, label], index) => (

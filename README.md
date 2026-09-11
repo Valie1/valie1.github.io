@@ -1,10 +1,16 @@
-# VALIE Portfolio — Pass 123.24
+# VALIE Portfolio — Pass 123.27
 
-GitHub Pages release for `https://valie1.github.io/`. Pass 123.24 fixes the GitHub Actions mobile viewport-stability audit introduced by Pass 123.23 without changing the intended scroll-cue overlay behavior. Initial cue visibility now derives from the stable hero geometry itself instead of reading the live `visualViewport`, so browser chrome cannot re-enter the fade calculation. The two SCROLL controls remain fixed overlays that fade out when the hero leaves and fade back in when it returns. All Pass 123.23 behavior and prior site fixes are retained.
+GitHub Pages release for `https://valie1.github.io/`. Pass 123.27 restores the two mobile hero SCROLL controls to desktop behavior parity: the same 60px circular treatment, floating-chevron animation, press/focus response, delayed reveal, and hero leave/return fade lifecycle. Only their phone positioning differs, with safer inward/upward offsets that respect mobile safe areas. Pass 123.26 review-edge parity and all earlier fixes remain intact.
 
 Copy the contents of this folder into the local GitHub Desktop checkout for the `valie1.github.io` repository, keep the repository's hidden `.git` folder, commit the replacement, and push. In GitHub repository Settings → Pages, set Source to GitHub Actions.
 
-Use `START-PASS-123.24-VIEWPORT-AUDIT-HOTFIX.bat` for a fresh local development preview at `http://localhost:3000`.
+Use `START-PASS-123.27-MOBILE-SCROLL-DESKTOP-PARITY.bat` for a fresh local development preview at `http://localhost:3000`.
+
+## Pass 123.27 — Mobile Scroll Cues: Desktop Behavior Parity
+
+The two hero SCROLL controls on phones now use the same visual and interaction behavior as desktop: 60px circles, the same floating-chevron animation, the same press/focus response, the same delayed reveal, and the same fade-out/fade-in lifecycle as the hero leaves and returns. Only mobile positioning remains phone-specific: the controls sit slightly higher and farther inward with safe-area-aware left/right symmetry so they do not hug or clip against mobile browser chrome.
+
+Pass 123.26 review-edge parity and all prior fixes remain intact.
 
 ## Pass 123.06
 
@@ -87,3 +93,12 @@ The two hero SCROLL controls are now a true portal overlay with mobile geometry 
 ## Pass 123.24 — Mobile Viewport Audit Hotfix
 
 The GitHub Actions failure at **Audit mobile viewport stability** is fixed. `HeroScrollCues` no longer reads `window.visualViewport` when calculating its initial hero visibility. It derives that geometry from the already-stable hero height, while the IntersectionObserver still handles fade-out/fade-in as the hero leaves and re-enters the viewport. This keeps the Pass 123.23 overlay behavior intact and satisfies the deployment guard that intentionally rejects live visual-viewport dependencies in hero geometry. Runtime query strings are cache-busted to `v=123.24`.
+
+
+## Pass 123.25 — Mobile Menu Modal + Navigation Hotfix
+
+The mobile full-screen menu is now a true modal interaction layer. WORK / ABOUT / REVIEWS / CONTACT are activated directly from delegated pointer-up/click handling instead of depending on delayed synthetic mobile clicks. Tapping a destination closes the menu and positions the matching same-page section, with a short correction pass after the fixed header state settles. While the menu is open, the rest of the body is isolated with `inert`, `aria-hidden`, and pointer blocking, so only the four destination pills and CLOSE remain interactive. Original accessibility state is restored when the menu closes. Runtime query strings are cache-busted to `v=123.25`.
+
+## Pass 123.27 — Mobile Review Edge Fade Parity
+
+The mobile CLIENT REVIEWS rail now uses the same narrow edge treatment on both sides. The old broad edge mask is overridden with a 9px mirrored fade, and any filter/box-shadow is explicitly removed from the edge overlays. This keeps the carousel boundary readable without laying a heavy dark blur over the right side of a review card. Carousel autoplay, manual swipe, review-card sizing, and desktop review styling are unchanged.

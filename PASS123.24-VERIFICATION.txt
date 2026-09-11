@@ -1,7 +1,0 @@
-Pass 123.24 — Mobile Viewport Audit Hotfix
-
-- Fixed GitHub Actions failure in `Audit mobile viewport stability`.
-- HeroScrollCues initial visibility now uses stable hero height geometry.
-- No `window.visualViewport` dependency remains in HeroScrollCues.
-- IntersectionObserver fade-out/fade-in behavior from Pass 123.23 is retained.
-- Runtime query cache bust is v=123.24.

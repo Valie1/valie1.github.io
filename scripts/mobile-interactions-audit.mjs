@@ -12,8 +12,10 @@ const navRuntime = read('public/site-nav-runtime.js');
 const checks = [
   ['mobile interaction layer exists', css.includes('.minimal-mobile-menu{') && css.includes('height:var(--valie-visual-height,100dvh)!important')],
   ['Mobile menu uses the static runtime scroll lock', navRuntime.includes('mobile-menu-locked') && navRuntime.includes('document.addEventListener("wheel", onWheel') && navRuntime.includes('document.addEventListener("touchmove", onTouchMove')],
-  ['Mobile menu links have explicit same-page hash navigation', navRuntime.includes('function navigateMobileLink(link)') && navRuntime.includes('window.scrollTo({ top: top') && navRuntime.includes('window.history.pushState')],
-  ['Mobile menu has direct touch-end activation fallback', navRuntime.includes('link.addEventListener("touchend"') && navRuntime.includes('finishLinkTouch') && navRuntime.includes('suppressClickUntil')],
+  ['Mobile menu links have explicit same-page hash navigation', navRuntime.includes('function navigateMobileLink(link)') && (navRuntime.includes('window.scrollTo(0, top)') || navRuntime.includes('window.scrollTo({ top: top')) && navRuntime.includes('window.history.pushState')],
+  ['Mobile menu has direct pointer-up activation fallback', navRuntime.includes('menu.addEventListener("pointerup"') && navRuntime.includes('onMenuPointerUp') && navRuntime.includes('suppressClickUntil')],
+  ['Mobile menu isolates all background body children', navRuntime.includes('function isolateBackground(next)') && navRuntime.includes('setNodeInert(node, true)') && navRuntime.includes('node.setAttribute("aria-hidden", "true")')],
+  ['Mobile menu blocks outside pointer activation', navRuntime.includes('function onDocumentPointerDown(event)') && navRuntime.includes('event.stopImmediatePropagation()')],
   ['Mobile menu bypasses global href-preview interception', nav.includes('data-valie-link-preview-skip') && read('public/site-link-preview-lock.js').includes('function shouldSkip(anchor)')],
   ['Cookie Settings uses the shared touch-safe document lock', consent.includes('lockDocumentScroll("cookie-settings-locked")')],
   ['Cookie Settings backdrop uses pointer events for touch', consent.includes('onPointerDown={(event) =>')],

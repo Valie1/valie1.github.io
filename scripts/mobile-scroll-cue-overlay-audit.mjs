@@ -11,8 +11,11 @@ const checks = [
   ["legacy per-scroll opacity state is removed", !component.includes("heroOpacity") && !component.includes("requestAnimationFrame")],
   ["mobile overlay height uses stable layout token", css.includes("height:var(--valie-mobile-layout-height,100svh)!important")],
   ["mobile overlay is fixed to viewport top", css.includes("inset:0 0 auto 0!important")],
-  ["both cues use stable bottom inset", css.includes("bottom:max(18px,env(safe-area-inset-bottom))!important")],
-  ["mobile cue motion is disabled", css.includes(".hero-scroll-cues--viewport .hero-scroll-cue__circle svg") && css.includes("animation:none!important")],
+  ["phone geometry has its own lower safe-area position", css.includes("bottom:max(30px,calc(env(safe-area-inset-bottom) + 18px))!important")],
+  ["phone left and right positions stay symmetric", css.includes("left:max(22px,calc(env(safe-area-inset-left) + 14px))!important") && css.includes("right:max(22px,calc(env(safe-area-inset-right) + 14px))!important")],
+  ["mobile circle matches desktop 60px treatment", css.includes("width:60px!important") && css.includes("height:60px!important")],
+  ["mobile arrow reuses desktop float animation", css.includes("animation:pass94ScrollArrowFloat 1.9s ease-in-out infinite!important")],
+  ["mobile press state reuses desktop cue response", css.includes("transform:translateY(4px) scale(1.035)!important")],
   ["overlay fades instead of translating", css.includes("transition:opacity .34s cubic-bezier(.22,1,.36,1)!important")],
 ];
 
@@ -21,5 +24,5 @@ for (const [label, ok] of checks) {
   console.log(`${ok ? "✓" : "✗"} ${label}`);
   if (ok) passed += 1;
 }
-console.log(`Mobile scroll-cue overlay audit: ${passed}/${checks.length}`);
+console.log(`Mobile scroll-cue desktop-parity audit: ${passed}/${checks.length}`);
 if (passed !== checks.length) process.exit(1);
