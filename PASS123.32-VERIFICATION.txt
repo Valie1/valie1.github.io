@@ -1,0 +1,9 @@
+VALIE PORTFOLIO — PASS 123.32 VERIFICATION
+
+- Mobile review rail breaks out to 100dvw (100vw fallback).
+- Generic max-width clamp is overridden for the review viewport.
+- BOTH review edge pseudo-elements are disabled on mobile.
+- Review viewport mask images remain disabled.
+- Mobile swipe/autoplay behavior is retained.
+- Desktop review styling remains unchanged.
+- Navigation runtime URLs are cache-busted to v=123.32.

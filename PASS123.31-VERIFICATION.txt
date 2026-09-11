@@ -1,9 +1,0 @@
-VALIE PORTFOLIO — PASS 123.31 VERIFICATION
-
-- Mobile CLIENT REVIEWS right-side pseudo-element is completely disabled.
-- No right-side gradient/blur/shadow/transform remains on phones.
-- Review viewport mask-image is explicitly disabled on phones.
-- Horizontal review swipe/autoplay implementation is unchanged.
-- Desktop review styling is unchanged.
-- Pass 123.30 mobile SCROLL desktop lifecycle is retained.
-- Navigation runtime URLs are cache-busted to v=123.31.

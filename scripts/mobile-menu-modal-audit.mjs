@@ -23,7 +23,7 @@ const checks = [
   ['CSS blocks pointer interaction with body siblings while menu is open', css.includes('html.mobile-menu-locked body > :not(.minimal-site-nav):not(script):not(style):not(link)') && css.includes('pointer-events:none!important')],
   ['Navigation remains interactive above the lock', css.includes('html.mobile-menu-locked .minimal-site-nav *') && css.includes('pointer-events:auto')],
   ['Menu overscroll cannot chain into the underlying page', css.includes('.minimal-mobile-menu.is-open{') && css.includes('overscroll-behavior:none!important')],
-  ['Deployed runtime is cache-busted for this pass', layout.includes('site-nav-runtime.js?v=123.31') && layout.includes('site-link-preview-lock.js?v=123.31')],
+  ['Deployed runtime is cache-busted for this pass', layout.includes('site-nav-runtime.js?v=123.32') && layout.includes('site-link-preview-lock.js?v=123.32')],
 ];
 
 let failures = 0;
