@@ -1,0 +1,6 @@
+Pass 123.39 verification
+- Removed mobile SVG transform:none!important blocker.
+- Mobile arrow uses exact desktop pass94ScrollArrowFloat 1.9s animation.
+- Visible cue forces animation-play-state:running.
+- No stale cnhWhiteScrollPulse/cnhArrowBounce animation names remain.
+- Hero fade lifecycle retained.

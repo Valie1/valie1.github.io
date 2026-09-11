@@ -14066,7 +14066,7 @@ a[data-valie-link-href],
   .hero-scroll-cues--viewport .hero-scroll-cue__circle svg{
     width:18px!important;
     height:18px!important;
-    transform:none!important;
+    transform:none;
     animation:pass94ScrollArrowFloat 1.9s ease-in-out infinite!important;
   }
   .hero-scroll-cues--viewport .hero-scroll-cue__label{
@@ -14273,37 +14273,16 @@ a[data-valie-link-href],
   }
 }
 
-/* Mobile scroll-cue arrows: force the exact same float animation the
-   desktop arrows use (pass94ScrollArrowFloat), so mobile never silently
-   diverges from desktop again. Kept last + maximally specific on purpose. */
 @media(max-width:760px){
   .hero-scroll-cues--viewport.is-armed.is-visible .hero-scroll-cue__circle svg{
     animation:pass94ScrollArrowFloat 1.9s ease-in-out infinite!important;
+    animation-play-state:running!important;
+    will-change:transform,opacity;
   }
 }
 @media(max-width:760px) and (prefers-reduced-motion:reduce){
   .hero-scroll-cues--viewport.is-armed.is-visible .hero-scroll-cue__circle svg{
-    animation:none!important;
-  }
-}
-
-
-/* Pass 123.38 — force exact desktop mobile SCROLL cue animation parity.
-   The user explicitly wants the mobile arrow to move up/down exactly like desktop,
-   so keep the desktop pulse + arrow bounce even under reduced-motion on mobile. */
-@media(max-width:760px){
-  .hero-scroll-cues--viewport.is-armed.is-visible .hero-scroll-cue__circle{
-    animation:cnhWhiteScrollPulse 2s ease-in-out infinite!important;
-  }
-  .hero-scroll-cues--viewport.is-armed.is-visible .hero-scroll-cue__circle svg{
-    animation:cnhArrowBounce 2s ease-in-out infinite!important;
-  }
-}
-@media(max-width:760px) and (prefers-reduced-motion:reduce){
-  .hero-scroll-cues--viewport.is-armed.is-visible .hero-scroll-cue__circle{
-    animation:cnhWhiteScrollPulse 2s ease-in-out infinite!important;
-  }
-  .hero-scroll-cues--viewport.is-armed.is-visible .hero-scroll-cue__circle svg{
-    animation:cnhArrowBounce 2s ease-in-out infinite!important;
+    animation:pass94ScrollArrowFloat 1.9s ease-in-out infinite!important;
+    animation-play-state:running!important;
   }
 }
