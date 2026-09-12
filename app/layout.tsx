@@ -4,6 +4,7 @@ import SiteNav from "@/components/SiteNav";
 import StaticLegalPortalRuntime from "@/components/StaticLegalPortalRuntime";
 import GlobalFeedback from "@/components/GlobalFeedback";
 import BrowserViewportRuntime from "@/components/BrowserViewportRuntime";
+import TabTitleRuntime from "@/components/TabTitleRuntime";
 import RenKotoneSecret from "@/components/RenKotoneSecret";
 import { site } from "@/lib/content";
 import { absoluteUrl, getSiteUrl } from "@/lib/seo";
@@ -22,7 +23,7 @@ export const metadata: Metadata = {
   category: "portfolio",
   alternates: { canonical: absoluteUrl("/") },
   manifest: "/manifest.webmanifest",
-  icons: { icon: "/icon.svg" },
+  icons: { icon: "/icon.svg?v=123.51" },
   robots: { index: true, follow: true },
   openGraph: {
     type: "website",
@@ -33,7 +34,7 @@ export const metadata: Metadata = {
     description: site.seo.description,
     images: [
       {
-        url: absoluteUrl("/opengraph-image"),
+        url: absoluteUrl("/valie-social-preview-12349.png"),
         width: 1200,
         height: 630,
         alt: `${site.name} — ${site.seo.defaultOgLabel}`,
@@ -44,7 +45,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: site.seo.title,
     description: site.seo.description,
-    images: [absoluteUrl("/opengraph-image")],
+    images: [absoluteUrl("/valie-social-preview-12349.png")],
   },
 };
 
@@ -80,6 +81,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <head>
+        <link rel="icon" href="/icon.svg?v=123.51" type="image/svg+xml" sizes="any" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
@@ -90,6 +92,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <script src="/site-nav-runtime.js?v=123.45" defer />
         <script src="/site-link-preview-lock.js?v=123.45" defer />
         <BrowserViewportRuntime />
+        <TabTitleRuntime />
         <SiteNav />
         <GlobalFeedback />
         <RenKotoneSecret />

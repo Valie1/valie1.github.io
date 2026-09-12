@@ -4,7 +4,6 @@ const files = [
   "app/manifest.ts",
   "app/robots.ts",
   "app/sitemap.ts",
-  "app/opengraph-image.tsx",
 ];
 
 let failures = 0;

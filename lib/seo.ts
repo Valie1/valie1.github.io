@@ -37,7 +37,7 @@ export function buildMetadata({
   title,
   description = site.seo.description,
   path = "/",
-  image = "/opengraph-image",
+  image = "/valie-social-preview-12349.png",
   imageAlt,
   keywords = site.seo.keywords,
   noIndex = false,

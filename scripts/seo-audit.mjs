@@ -5,7 +5,7 @@ const checks = [
   ["app/sitemap.ts", "Sitemap generator"],
   ["app/robots.ts", "Robots generator"],
   ["app/manifest.ts", "Web manifest"],
-  ["app/opengraph-image.tsx", "Default Open Graph image"],
+  ["public/valie-social-preview-12349.png", "Default Open Graph image"],
   ["app/privacy/page.tsx", "Privacy page"],
   ["app/policies/page.tsx", "Policies page"],
   ["app/cookies/page.tsx", "Cookie Policy page"],

@@ -12,7 +12,6 @@ const requiredMetadataRoutes = [
   "app/robots.ts",
   "app/sitemap.ts",
   "app/manifest.ts",
-  "app/opengraph-image.tsx",
   "app/icon.svg",
   "app/not-found.tsx",
   "app/error.tsx",

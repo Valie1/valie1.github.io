@@ -1,0 +1,15 @@
+PASS 123.51 — CIRCULAR CENTERED FAVICON
+
+Change:
+- Browser/favicon icon is now a true circle with transparent corners.
+- White V is geometrically centered within the 64×64 icon.
+- Icon metadata and web manifest URLs are cache-busted with v=123.51.
+- All Pass 123.50 tab-title behavior and prior production fixes remain intact.
+
+Validation:
+- favicon audit
+- final release audit
+- publish lock audit
+- SEO audit
+- static metadata audit
+- ZIP integrity

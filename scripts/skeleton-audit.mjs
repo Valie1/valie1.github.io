@@ -15,7 +15,6 @@ const assert = (condition, message) => {
 
 const loading = read("app/loading.tsx");
 const skeleton = read("components/Skeleton.tsx");
-const shell = read("components/SiteLoadingSkeleton.tsx");
 const image = read("components/PortfolioImage.tsx");
 const loadedImage = read("components/LoadedImage.tsx");
 const hero = read("components/HeroVideoWall.tsx");
@@ -26,11 +25,8 @@ const toolkit = read("components/CreativeToolkit.tsx");
 const legalShell = read("components/LegalLoadingSkeleton.tsx");
 const css = read("app/globals.css");
 
-assert(loading.includes("SiteLoadingSkeleton"), "homepage route loading uses the full site skeleton shell");
+assert(/return\s+null\s*;/.test(loading) && !loading.includes("SiteLoadingSkeleton"), "homepage route loading is blank so no full-site skeleton flashes on first paint");
 assert(skeleton.includes("valie-skeleton"), "reusable skeleton primitive exists");
-assert(shell.includes("site-loading-skeleton__hero") && shell.includes("site-loading-skeleton__work-grid"), "homepage shell mirrors hero and work density");
-assert(shell.includes("site-loading-skeleton__contact") && shell.includes("site-loading-skeleton__footer"), "homepage shell now covers contact and footer too");
-assert(shell.includes("site-loading-skeleton__software-card"), "about route shell mirrors software cards instead of a generic block only");
 
 assert(image.includes("showSkeleton") && image.includes("SETTLE_MS") && image.includes("media-skeleton"), "portfolio media delays fast-load skeleton flash and crossfades out after decode");
 assert(loadedImage.includes("SETTLE_MS") && loadedImage.includes("loaded-image__skeleton"), "fixed-size contact/tool images use the same anti-flicker skeleton handoff");
