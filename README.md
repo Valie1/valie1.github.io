@@ -11,3 +11,7 @@ Pass 123.45 adds a short-lived, transparent full-viewport post-tap shield, a doc
 The strict lock while the menu is visibly open remains in place: background page content, videos, links, hero controls, desktop nav/brand, focus escape, and scrolling are blocked. Only the mobile menu rows and CLOSE are interactive.
 
 Navigation assets are cache-busted to `123.45`; package version is `9.13.45`.
+
+
+## Pass 123.46 — Mobile review modal continuity
+On mobile, opening a client review no longer tears down and restarts the review carousel. The rail keeps moving behind the review modal and, when the modal closes, continues from the position it naturally reached. Swipe syncing, seamless looping, reduced-motion behavior, page scroll locking, and modal focus behavior are preserved.

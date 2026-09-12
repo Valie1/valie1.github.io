@@ -1,7 +1,0 @@
-PASS 123.45 — MOBILE MENU GHOST CLICK / VIDEO FALL-THROUGH FIX
-
-Regression addressed: tapping a mobile menu row could close the menu on pointerup, then Android/Chromium could synthesize a click onto a newly exposed video card beneath that coordinate.
-
-Protection: full-viewport post-tap shield + document-level trailing-click guard, armed before menu close and automatically removed after 760 ms.
-
-Retained: strict open-menu modal lock and Pass 123.43 physical-tap navigation.

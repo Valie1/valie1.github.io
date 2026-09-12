@@ -113,7 +113,7 @@ export default function ClientReviews({ headingId = "reviews-title" }: { heading
 
   useEffect(() => {
     const viewport = reviewViewportRef.current;
-    if (!viewport || active) return;
+    if (!viewport) return;
 
     const mobileQuery = window.matchMedia("(max-width: 760px)");
     const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -214,7 +214,7 @@ export default function ClientReviews({ headingId = "reviews-title" }: { heading
       viewport.removeEventListener("wheel", syncManualPosition);
       viewport.removeEventListener("scroll", syncManualPosition);
     };
-  }, [active]);
+  }, []);
 
   useEffect(() => {
     if (!active) return;
