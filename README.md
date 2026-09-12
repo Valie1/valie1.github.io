@@ -1,4 +1,4 @@
-# VALIE Portfolio — Pass 123.51
+# VALIE Portfolio — Pass 123.52
 
 This pass keeps the working Pass 123.43 physical mobile-menu navigation and the Pass 123.44 strict modal lock, then fixes the real-phone **ghost click** shown after tapping a mobile menu destination.
 
@@ -36,3 +36,8 @@ The browser tab now reacts to page visibility without changing any page UI. When
 ## Pass 123.51 — Circular centered browser icon
 
 The browser/favicon mark is now a true circle with transparent corners instead of a rounded square. The white V is geometrically centered inside the 64×64 icon. The favicon URL is cache-busted to `123.51` in both document metadata and the web manifest so browsers are more likely to pick up the new icon immediately. All Pass 123.50 tab-title behavior and prior site fixes are retained.
+
+
+## Pass 123.52 — Single tab title messages
+
+The browser title no longer cycles through many messages during one leave or return. On the first visible load it shows `Welcome to VALIE 🎬` for 6.5 seconds and then restores the normal title. Each time the visitor leaves the tab, exactly one approved away message is selected and held unchanged until they return. On return, exactly one approved return message is shown for 6.5 seconds, then the title returns to `VALIE | Creative Editor & Web Designer`. The approved phrase sets are still used across separate leave and return events, but never rotate while one event is active.

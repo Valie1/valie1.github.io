@@ -12,7 +12,7 @@ const checks=[
   ["favicon remains 64 by 64", icon.includes('viewBox="0 0 64 64"')],
   ["layout icon is cache busted", layout.includes('/icon.svg?v=123.51')],
   ["manifest icon is cache busted", manifest.includes('/icon.svg?v=123.51')],
-  ["package version is 9.13.51", pkg.version === "9.13.51"],
+  ["package version is 9.13.52", pkg.version === "9.13.52"],
 ];
 let failed=0; for(const [name,ok] of checks){console.log(`${ok?"PASS":"FAIL"} — ${name}`); if(!ok) failed++;}
 if(failed){console.error(`Favicon audit failed: ${failed}/${checks.length}`); process.exit(1);}

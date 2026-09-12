@@ -1,4 +1,4 @@
-# Deployment notes — Pass 123.51
+# Deployment notes — Pass 123.52
 
 1. Deploy this archive as the complete site source.
 2. Let GitHub Pages finish the build/deploy workflow.
@@ -32,3 +32,8 @@ Adds the client-only `TabTitleRuntime` visibility behavior. No deployment config
 ## Pass 123.51
 
 The browser favicon is now circular and the V is centered. After deployment, close/reopen the tab or hard refresh once if Chrome is still showing its cached favicon. The icon URL is versioned with `v=123.51` to reduce stale-cache reuse.
+
+
+## Pass 123.52
+
+Tab title behavior is simplified for both desktop and mobile. Initial page entry shows one welcome title for 6.5 seconds. Leaving the tab shows one away title and keeps it unchanged for the whole time the tab is hidden. Returning shows one return title for 6.5 seconds and then restores `VALIE | Creative Editor & Web Designer`. No deployment configuration changes are required.

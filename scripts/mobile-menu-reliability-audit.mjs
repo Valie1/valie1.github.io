@@ -23,7 +23,7 @@ const checks = [
   ['Target scroll compensates for the fixed nav height', runtime.includes('target.getBoundingClientRect().top - headerHeight')],
   ['Background inert isolation still restores on close', runtime.includes('isolateBackground(open)') && runtime.includes('setNodeInert(record.node, record.inert)')],
   ['Navigation scripts are cache-busted to 123.45', layout.includes('site-nav-runtime.js?v=123.45') && layout.includes('site-link-preview-lock.js?v=123.45')],
-  ['Package version includes Pass 123.51', pkg.version === '9.13.51'],
+  ['Package version includes Pass 123.52', pkg.version === '9.13.52'],
 ];
 
 let failures = 0;

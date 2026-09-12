@@ -1,0 +1,9 @@
+PASS 123.52 — SINGLE TAB TITLE MESSAGES
+
+- Initial visible load shows one welcome title only: Welcome to VALIE 🎬
+- Leaving the tab shows exactly one away message and holds it until the visitor returns.
+- Returning shows exactly one return message and holds it for 6.5 seconds.
+- The normal title then restores to VALIE | Creative Editor & Web Designer.
+- No interval based title cycling remains.
+- All approved away and return phrases remain available across separate leave and return events.
+- Pass 123.51 circular centered favicon and all earlier production behavior are retained.

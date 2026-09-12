@@ -20,7 +20,7 @@ const checks = [
   ["Shield lifetime is bounded and removed", runtime.includes("removePostTapShield();") && runtime.includes("}, 760);")],
   ["Page restore clears stale post-tap shielding", runtime.includes("removePostTapShield(); postTapGuardUntil = 0;")],
   ["Navigation runtime is cache-busted to 123.45", layout.includes('site-nav-runtime.js?v=123.45') && layout.includes('site-link-preview-lock.js?v=123.45')],
-  ["Package version includes the newer Pass 123.51 review fix", pkg.version === "9.13.51"],
+  ["Package version includes the newer Pass 123.52 review fix", pkg.version === "9.13.52"],
 ];
 
 let failed = 0;

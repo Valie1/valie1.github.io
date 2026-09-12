@@ -26,7 +26,7 @@ const checks = [
   ['CSS explicitly re-enables only close button and menu surfaces', css.includes('.minimal-site-nav.is-menu-open .minimal-menu-button') && css.includes('.minimal-site-nav.is-menu-open .minimal-mobile-menu') && css.includes('pointer-events:auto!important')],
   ['Underlying body children remain pointer-locked', css.includes('html.mobile-menu-locked body > :not(.minimal-site-nav):not(script):not(style):not(link)')],
   ['Navigation runtime is cache-busted to 123.45', layout.includes('site-nav-runtime.js?v=123.45') && layout.includes('site-link-preview-lock.js?v=123.45')],
-  ['Package version includes Pass 123.51', pkg.version === '9.13.51'],
+  ['Package version includes Pass 123.52', pkg.version === '9.13.52'],
 ];
 
 let failures = 0;

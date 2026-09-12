@@ -2,10 +2,8 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
-const runtimePath = path.join(root, "components", "TabTitleRuntime.tsx");
-const layoutPath = path.join(root, "app", "layout.tsx");
-const runtime = fs.readFileSync(runtimePath, "utf8");
-const layout = fs.readFileSync(layoutPath, "utf8");
+const runtime = fs.readFileSync(path.join(root, "components", "TabTitleRuntime.tsx"), "utf8");
+const layout = fs.readFileSync(path.join(root, "app", "layout.tsx"), "utf8");
 
 const away = [
   "You left the playhead behind 🎬",
@@ -33,14 +31,16 @@ const returned = [
 const checks = [
   [layout.includes('import TabTitleRuntime from "@/components/TabTitleRuntime";'), "runtime imported in root layout"],
   [layout.includes("<TabTitleRuntime />"), "runtime mounted in root layout"],
+  [runtime.includes('const INITIAL_TITLE = "Welcome to VALIE 🎬"'), "single initial welcome title present"],
   [runtime.includes('document.addEventListener("visibilitychange"'), "visibilitychange listener installed"],
+  [runtime.includes('const VISIBLE_MESSAGE_HOLD_MS = 6500'), "welcome and return title hold is 6.5 seconds"],
+  [runtime.includes('document.title = AWAY_TITLES[awayIndex]'), "away state sets exactly one title"],
+  [runtime.includes('document.title = RETURN_TITLES[returnIndex]'), "return state sets exactly one title"],
+  [!runtime.includes("setInterval"), "no title cycling interval remains"],
   [runtime.includes('document.title = DEFAULT_TITLE'), "default title restoration present"],
   [runtime.includes('const DEFAULT_TITLE = "VALIE | Creative Editor & Web Designer"'), "default title exact"],
-  [away.every((message) => runtime.includes(message)), "all away messages present"],
-  [returned.every((message) => runtime.includes(message)), "all return messages present"],
-  [runtime.includes("AWAY_STEP_MS = 1800"), "away title cadence present"],
-  [runtime.includes("RETURN_STEP_MS = 650"), "return title cadence present"],
-  [runtime.includes("RETURN_FINAL_HOLD_MS = 1100"), "final return hold present"],
+  [away.every((message) => runtime.includes(message)), "all approved away messages remain available across separate leave events"],
+  [returned.every((message) => runtime.includes(message)), "all approved return messages remain available across separate return events"],
 ];
 
 let failed = 0;
